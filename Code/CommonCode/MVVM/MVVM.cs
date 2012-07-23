@@ -452,13 +452,16 @@ namespace MVVM.ViewModels
 
         }
 
-
         protected override string GetColumnError(string columnName)
         {
             return _propertyContainerGettersForRead[columnName]((TViewModel)this).Error.Message;
         }
 
+
+
     }
+
+
 
     public struct ErrorEntity
     {
@@ -586,9 +589,18 @@ namespace MVVM.EventRouter
 
     public class EventRouter
     {
-        public static EventRouter Instance { get; private set; }
+        protected EventRouter()
+        { 
 
+        }
+        static EventRouter()
+        {
+            Instance = new EventRouter();
+        }
 
+        public static EventRouter Instance { get; protected set; }
+
+        
 
         public virtual void RaiseEvent<TEventArgs>(object sender, TEventArgs eventArgs) where TEventArgs : EventArgs
         {
@@ -700,4 +712,60 @@ namespace MVVM.EventRouter
         public string TargetViewId { get; set; }
     }
 
+
+
+
+}
+
+
+namespace MVVM.Commands
+{
+
+    //public class EventCommandEventArgs : EventArgs
+    //{
+    //    public Object Parameter { get; set; }
+    //    public static readonly EventCommandEventArgs Empty = new EventCommandEventArgs();
+    //    public static EventCommandEventArgs Create(Object parameter)
+    //    {
+    //        if (parameter == null)
+    //        {
+    //            return Empty;
+    //        }
+    //        else
+    //        {
+    //            return new EventCommandEventArgs { Parameter = parameter };
+    //        }
+    //    }
+    //}
+    public abstract class EventCommandBase : ICommand
+    {
+        public event Action<EventCommandBase, Object> CommandExecute;
+        protected void OnCommandExecute(object args)
+        {
+            if (CommandExecute != null)
+            {
+                CommandExecute(this, args);
+            }
+        }
+
+
+        public abstract bool CanExecute(object parameter);
+
+
+        public event EventHandler CanExecuteChanged;
+        protected void OnCanExecuteChanged()
+        {
+            if (CanExecuteChanged != null)
+            {
+                CanExecuteChanged(this, EventArgs.Empty);
+            }
+        }
+        public virtual void Execute(object parameter)
+        {
+            if (CanExecute(parameter))
+            {
+                OnCommandExecute(parameter);
+            }
+        }
+    }
 }

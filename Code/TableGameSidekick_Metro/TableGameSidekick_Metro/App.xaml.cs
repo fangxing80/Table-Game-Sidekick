@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MVVM.EventRouter;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -13,7 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
+using MVVM.Reactive;
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
 namespace TableGameSidekick_Metro
@@ -31,7 +32,21 @@ namespace TableGameSidekick_Metro
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            var noneedDispose = MainEventRouter.GetEventObject<NavigateEventArgs>().GetRouterEventObservable()
+                .Subscribe(
+                    ep =>
+                    { 
+                        
+                    
+                    }
+                );
+                
+                
+
         }
+
+        public static EventRouter MainEventRouter =EventRouter.Instance ;
+        
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
