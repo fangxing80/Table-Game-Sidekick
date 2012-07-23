@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGSK_Sketch", "TGSK_Sketch\TGSK_Sketch.csproj", "{42e8a998-552e-4768-9e55-c6d49a0257a5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGSK_SketchScreens", "TGSK_Sketch\TGSK_SketchScreens\TGSK_SketchScreens.csproj", "{c305d9b9-ba3f-4a2b-863c-71fd6cfc90e3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42E8A998-552E-4768-9E55-C6D49A0257A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42E8A998-552E-4768-9E55-C6D49A0257A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42E8A998-552E-4768-9E55-C6D49A0257A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42E8A998-552E-4768-9E55-C6D49A0257A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C305D9B9-BA3F-4A2B-863C-71FD6CFC90E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C305D9B9-BA3F-4A2B-863C-71FD6CFC90E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C305D9B9-BA3F-4A2B-863C-71FD6CFC90E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C305D9B9-BA3F-4A2B-863C-71FD6CFC90E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
