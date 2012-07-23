@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CodeSnippets  xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <!--View Model Property-->
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>View Model Property</Title>
+      <Shortcut>vmprop</Shortcut>
+      <Description>Property of View Model for WPF &amp; Silverlight MVVM </Description>
+      <Author>Wayne Wang</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>type</ID>
+          <ToolTip>Property Type</ToolTip>
+          <Default>int</Default>
+        </Literal>
+        <Literal>
+          <ID>property</ID>
+          <ToolTip>Property Name</ToolTip>
+          <Default>MyProperty</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+        <![CDATA[
+        public $type$ $property$
+        {
+            get { return m_$property$ContainerLocator(this).Value; }
+            set { m_$property$ContainerLocator(this).SetValueAndTryNotify(value); }
+        }        
+        #region Property $type$ $property$ Setup        
+        protected PropertyContainer<$type$> m_$property$;  
+        protected static Func<object, PropertyContainer<$type$>> m_$property$ContainerLocator =
+            RegisterContainerLocator<$type$>(
+                "$property$",
+                model =>
+                    model.m_$property$ = 
+                        model.m_$property$
+                        ??
+                        new PropertyContainer<$type$>("$property$"));
+        #endregion
+        
+        
+        
+        
+$end$]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+  
+  <!--View Model Class-->
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>View Model Class</Title>
+      <Shortcut>vmcls</Shortcut>
+      <Description>View Model for WPF &amp; Silverlight MVVM </Description>
+      <Author>Wayne Wang</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>class</ID>
+          <ToolTip>View Model Class Name</ToolTip>
+          <Default>SomeViewModel</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+        <![CDATA[
+        
+    public class $class$ : ViewModelBase<$class$> 
+    {
+        public $class$()
+        {
+            // Use propery to init value here:
+            
+        }
+
+        //Use vmprop + tab  to create a new property of vm here:
+           
+
+    }
+     
+        
+        
+        
+$end$]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+
+  <!--View Model Command With Resource-->
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>View Model Command With Resource</Title>
+      <Shortcut>vmcmd</Shortcut>
+      <Description>Command Model of View Model for WPF &amp; Silverlight MVVM </Description>
+      <Author>Wayne Wang</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>commandType</ID>
+          <ToolTip>View Model Command Type</ToolTip>
+          <Default>SomeCommand</Default>
+        </Literal>
+        <Literal>
+          <ID>commandName</ID>
+          <ToolTip>View Model Command Type</ToolTip>
+          <Default>SomeCommandType</Default>
+        </Literal>
+        <Literal>
+          <ID>resourceType</ID>
+          <ToolTip>View Model Class Name</ToolTip>
+          <Default>SomeResource</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp" >
+        <![CDATA[
+        CommandModel<$commandType$, $resourceType$> m_$commandName$
+            = new $commandType$().CreateCommandModel(default($resourceType$));
+        public CommandModel<$commandType$, $resourceType$> $commandName$
+        {
+            get { return m_$commandName$; }
+            protected set { m_$commandName$ = value; }
+        }        
+$end$]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+
+  <!--View Model Command Without Resource-->
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>View Model Command Without Resources</Title>
+      <Shortcut>vmcmdnr</Shortcut>
+      <Description>Command Model of View Model for WPF &amp; Silverlight MVVM </Description>
+      <Author>Wayne Wang</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>commandType</ID>
+          <ToolTip>View Model Command Type</ToolTip>
+          <Default>SomeCommandType</Default>
+        </Literal>
+        <Literal>
+          <ID>commandName</ID>
+          <ToolTip>View Model Command Type</ToolTip>
+          <Default>SomeCommand</Default>
+        </Literal>
+
+      </Declarations>
+      <Code Language="csharp" >
+        <![CDATA[
+        CommandModel<$commandType$> m_$commandName$
+            = new $commandType$().CreateCommandModel();
+        public CommandModel<$commandType$> $commandName$
+        {
+            get { return m_$commandName$; }
+            protected set { m_$commandName$ = value; }
+        }        
+$end$]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

@@ -100,9 +100,15 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="..\..\CommonCode\MVVM\IView.cs">
+      <Link>MVVM\IView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\CommonCode\MVVM\MVVM.cs">
+      <Link>MVVM\MVVM.cs</Link>
+    </Compile>
+    <Compile Include="..\..\CommonCode\MVVM\MVVMRxExtensions.cs">
+      <Link>MVVM\MVVMRxExtensions.cs</Link>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -115,6 +121,10 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="..\..\CommonCode\MVVM\MVVM.snippet">
+      <Link>MVVM\MVVM.snippet</Link>
+    </None>
+    <None Include="packages.config" />
     <None Include="TableGameSidekick_Metro_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +146,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Reactive">
+      <HintPath>..\packages\Rx_Experimental-Main.1.1.11111\lib\WinRT45\System.Reactive.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
