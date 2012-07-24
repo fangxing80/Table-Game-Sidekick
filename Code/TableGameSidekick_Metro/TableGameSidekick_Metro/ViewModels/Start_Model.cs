@@ -5,9 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MVVM.EventRouter;
 using MVVM.Reactive;
 using MVVM.ViewModels;
 using TableGameSidekick_Metro.DataEntity;
+using System.Reactive.Linq;
+using System.Reactive;
 namespace TableGameSidekick_Metro.ViewModels
 {
     public class Start_Model : ViewModelBase<Start_Model>
@@ -18,6 +21,16 @@ namespace TableGameSidekick_Metro.ViewModels
         {
             m_CancellationTokenSource = new CancellationTokenSource();
             m_CancellationTokenSource.RegisterDispose(this);
+
+
+            this.Games = new ObservableCollection<GameInfomation>
+            {
+                new GameInfomation { Id=Guid.NewGuid (), LastEditTime=DateTime.Now ,  StartTime=DateTime.Now     },
+                new GameInfomation { Id=Guid.NewGuid (), LastEditTime=DateTime.Now ,  StartTime=DateTime.Now     },
+                new GameInfomation { Id=Guid.NewGuid (), LastEditTime=DateTime.Now ,  StartTime=DateTime.Now     },
+                new GameInfomation { Id=Guid.NewGuid (), LastEditTime=DateTime.Now ,  StartTime=DateTime.Now     },
+            };
+
 
         }
 
@@ -61,34 +74,81 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
-        
 
 
-        CommandModel<ReactiveAsyncCommand, string> m_NewGameCommand
-            = new CommandModel<ReactiveAsyncCommand, string>
-            (
-                new ReactiveAsyncCommand(),
-                "NewGameCommand"
-            );
 
-        public CommandModel<ReactiveAsyncCommand, string> NewGameCommand
+        private CommandModel<ReactiveCommand, string> m_NewGameCommand
+            = new ReactiveCommand()
+            .CreateCommandModel("NewGameCommand");
+
+        public CommandModel<ReactiveCommand, string> NewGameCommand
         {
-            get { return m_NewGameCommand; }
-            set { m_NewGameCommand = value; }
+            get { 
+                return m_NewGameCommand;
+            }
+
+        }
+        private CommandModel<ReactiveCommand, string> m_ContinueCommand
+            = new ReactiveCommand()
+            .CreateCommandModel("ContinueCommand");
+
+        public CommandModel<ReactiveCommand, string> ContinueCommand
+        {
+            get { 
+                return m_ContinueCommand; 
+            }
+       
         }
 
-        CommandModel<ReactiveAsyncCommand, string> m_ContinueCommand
-           = new CommandModel<ReactiveAsyncCommand, string>
-           (
-               new ReactiveAsyncCommand(),
-               "ContinueCommand"
-           );
 
-        public CommandModel<ReactiveAsyncCommand, string> ContinueCommand
+        void ConfigCommands()
         {
-            get { return m_ContinueCommand; }
-            set { m_ContinueCommand = value; }
+            m_NewGameCommand.CommandCore
+                .Subscribe
+                (
+                    _ =>
+                        App.MainEventRouter.RaiseEvent(
+                        this,
+                        new NavigateCommandEventArgs()
+                        {
+                            SourceViewId = App.Views.MainPage,
+                            TargetViewId = App.Views.NewGame
+                        })
+                )
+                .RegisterDispose(this); ;
+
+
+            this.GetPropertyContainer(x => x.SelectedGame)
+                .GetValueChangeObservable()
+                .Select(e => e.EventArgs != null)
+                .Subscribe(m_ContinueCommand.CommandCore.CanExecuteObserver)
+                .RegisterDispose(this);
+
+
+            m_ContinueCommand.CommandCore
+                .Subscribe
+                (
+                    _ =>
+                        App.MainEventRouter.RaiseEvent(
+                        this,
+                        new NavigateCommandEventArgs()
+                        {
+                            SourceViewId = App.Views.MainPage,
+                            TargetViewId = App.Views.GamePlay,
+                            ParameterDictionary = new Dictionary<string, Object>() 
+                            {
+                                {App.Views.MainPage_NavigateParameters.bool_IsNewGame ,false},
+                                {App.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame,this.SelectedGame}
+                            }
+                        })
+                )
+                .RegisterDispose(this);
+
+
+
+
         }
+
 
 
 

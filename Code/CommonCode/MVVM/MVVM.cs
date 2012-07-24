@@ -518,6 +518,9 @@ namespace MVVM.ViewModels
     public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>
         where TCommand : ICommand
     {
+        public CommandModel()
+        { }
+
         public CommandModel(TCommand commandCore, TResource resource)
         {
             CommandCore = commandCore;
@@ -590,7 +593,7 @@ namespace MVVM.EventRouter
     public class EventRouter
     {
         protected EventRouter()
-        { 
+        {
 
         }
         static EventRouter()
@@ -600,7 +603,7 @@ namespace MVVM.EventRouter
 
         public static EventRouter Instance { get; protected set; }
 
-        
+
 
         public virtual void RaiseEvent<TEventArgs>(object sender, TEventArgs eventArgs) where TEventArgs : EventArgs
         {
@@ -622,15 +625,15 @@ namespace MVVM.EventRouter
 
         }
 
-        static protected readonly ConcurrentDictionary<Type, IEventObject<EventArgs>> EventObjects
-             = new ConcurrentDictionary<Type, IEventObject<EventArgs>>();
-        static protected IEventObject<EventArgs> GetInstance(Type argsType)
+        static protected readonly ConcurrentDictionary<Type, IEventObject> EventObjects
+             = new ConcurrentDictionary<Type, IEventObject>();
+        static protected IEventObject GetInstance(Type argsType)
         {
 
             var rval = EventObjects.GetOrAdd(
                 argsType,
                 t =>
-                    Activator.CreateInstance(typeof(EventObject<>).MakeGenericType(t)) as IEventObject<EventArgs>
+                    Activator.CreateInstance(typeof(EventObject<>).MakeGenericType(t)) as IEventObject
                 );
 
             if (rval.BaseArgsTypeInstance == null)
@@ -652,50 +655,56 @@ namespace MVVM.EventRouter
 
 
 
-        protected interface IEventObject<in TEventArgs>
-            where TEventArgs : EventArgs
+        protected interface IEventObject
         {
-            IEventObject<EventArgs> BaseArgsTypeInstance { get; set; }
-            void RaiseEvent(object sender, TEventArgs args);
+            IEventObject BaseArgsTypeInstance { get; set; }
+            void RaiseEvent(object sender, EventArgs args);
         }
 
 
-        public class EventObject<TEventArgs> : IEventObject<TEventArgs>
+        public class EventObject<TEventArgs> : IEventObject
             where TEventArgs : EventArgs
         {
-            protected EventObject()
+            public EventObject()
             {
             }
 
             public event EventHandler<TEventArgs> Event;
 
 
-            void IEventObject<TEventArgs>.RaiseEvent(object sender, TEventArgs args)
+
+
+            IEventObject IEventObject.BaseArgsTypeInstance
             {
-                var a = args as TEventArgs;
+                get;
+                set;
+            }
+
+            public void RaiseEvent(object sender, EventArgs args)
+            {
+                RaiseEvent(sender, args as TEventArgs);
+            }
+
+            public void RaiseEvent(object sender, TEventArgs args)
+            {
+                var a = args;
                 if (a != null && Event != null)
                 {
                     Event(sender, a);
                 }
-            }
-
-            IEventObject<EventArgs> IEventObject<TEventArgs>.BaseArgsTypeInstance
-            {
-                get;
-                set;
             }
         }
 
 
     }
 
-    public class NavigateEventArgs : EventArgs
+    public class NavigateCommandEventArgs : EventArgs
     {
-        public NavigateEventArgs()
+        public NavigateCommandEventArgs()
         {
             ParameterDictionary = new System.Dynamic.ExpandoObject();
         }
-        public NavigateEventArgs(IDictionary<string, object> dic)
+        public NavigateCommandEventArgs(IDictionary<string, object> dic)
             : this()
         {
             foreach (var item in dic)
@@ -721,26 +730,28 @@ namespace MVVM.EventRouter
 namespace MVVM.Commands
 {
 
-    //public class EventCommandEventArgs : EventArgs
-    //{
-    //    public Object Parameter { get; set; }
-    //    public static readonly EventCommandEventArgs Empty = new EventCommandEventArgs();
-    //    public static EventCommandEventArgs Create(Object parameter)
-    //    {
-    //        if (parameter == null)
-    //        {
-    //            return Empty;
-    //        }
-    //        else
-    //        {
-    //            return new EventCommandEventArgs { Parameter = parameter };
-    //        }
-    //    }
-    //}
+    public class EventCommandEventArgs : EventArgs
+    {
+        public Object Parameter { get; set; }
+        public static readonly EventCommandEventArgs Empty = new EventCommandEventArgs();
+        public static EventCommandEventArgs Create(Object parameter)
+        {
+            if (parameter == null)
+            {
+                return Empty;
+            }
+            else
+            {
+                return new EventCommandEventArgs { Parameter = parameter };
+            }
+        }
+    }
     public abstract class EventCommandBase : ICommand
     {
-        public event Action<EventCommandBase, Object> CommandExecute;
-        protected void OnCommandExecute(object args)
+
+
+        public event EventHandler<EventCommandEventArgs> CommandExecute;
+        protected void OnCommandExecute(EventCommandEventArgs args)
         {
             if (CommandExecute != null)
             {
@@ -764,7 +775,7 @@ namespace MVVM.Commands
         {
             if (CanExecute(parameter))
             {
-                OnCommandExecute(parameter);
+                OnCommandExecute(EventCommandEventArgs.Create (parameter));
             }
         }
     }

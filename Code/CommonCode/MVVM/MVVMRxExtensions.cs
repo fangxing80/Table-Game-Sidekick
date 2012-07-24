@@ -20,44 +20,40 @@ namespace MVVM.Reactive
 {
 
 
-    public static class EventPair
+    public static class EventTuple
     {
-        public static EventPair<TSource, TEventArgs> Create<TSource, TEventArgs>(TSource source, TEventArgs eventArgs)
+        public static EventTuple<TSource, TEventArgs> Create<TSource, TEventArgs>(TSource source, TEventArgs eventArgs)
         {
-            return new EventPair<TSource, TEventArgs> { Source = source, EventArgs = eventArgs };
+            return new EventTuple<TSource, TEventArgs> { Source = source, EventArgs = eventArgs };
         }
 
     }
-    public struct EventPair<TSource, TEventArgs>
+    public struct EventTuple<TSource, TEventArgs>
     {
         public TSource Source { get; set; }
-
         public TEventArgs EventArgs { get; set; }
-
     }
 
     public static class MVVMRxExtensions
     {
-        public static IObservable<EventPair<PropertyContainer<TValue>, TValue>> GetValueChangeObservable<TValue>
+        public static IObservable<EventTuple<PropertyContainer<TValue>, TValue>> GetValueChangeObservable<TValue>
             (
                 this PropertyContainer<TValue> source
 
             )
         {
 
-            return Observable.FromEvent<EventHandler<ValueChangedEventArgs<TValue>>, ValueChangedEventArgs<TValue>>(
+            return Observable.FromEventPattern<EventHandler<ValueChangedEventArgs<TValue>>, ValueChangedEventArgs<TValue>>(
                     eh => source.ValueChanged += eh,
                     eh => source.ValueChanged -= eh)
                     .Select(
-                        x => EventPair.Create(source, x.NewValue)
+                        x => EventTuple.Create(source, x.EventArgs.NewValue)
 
                     );
 
         }
 
-
-
-        public static IObservable<EventPair<PropertyContainer<TValue>, ValueChangedEventArgs<TValue>>>
+        public static IObservable<EventTuple<PropertyContainer<TValue>, ValueChangedEventArgs<TValue>>>
             GetValueChangeEventArgObservable<TValue>(this PropertyContainer<TValue> source)
         {
 
@@ -65,35 +61,39 @@ namespace MVVM.Reactive
                     eh => source.ValueChanged += eh,
                     eh => source.ValueChanged -= eh);
             return eventArgSeq.Select(
-                        x => EventPair.Create(source, x)
+                        x => EventTuple.Create(source, x)
                     );
             ;
         }
 
 
-        public static IObservable<EventPair<Object, TEventArgs>> GetRouterEventObservable<TEventArgs>
-
-        (
-            this MVVM.EventRouter.EventRouter.EventObject<TEventArgs> source
-
-        )
+        public static IObservable<EventPattern<TEventArgs>>
+            GetRouterEventObservable<TEventArgs>(this MVVM.EventRouter.EventRouter.EventObject<TEventArgs> source)
                    where TEventArgs : EventArgs
         {
-
-            var eventArgSeq = Observable.FromEvent<EventHandler<TEventArgs>, TEventArgs>(
-                    eh => source.Event += eh,
-                    eh => source.Event -= eh);
-            return eventArgSeq.Select(x => EventPair.Create(source as object, x));
+            var eventArgSeq = Observable.FromEventPattern<EventHandler<TEventArgs>, TEventArgs>(
+        eh => source.Event += eh,
+        eh => source.Event -= eh);
+            return eventArgSeq;
         }
+
+        public static T ConfigCommand<T>(this  T cmd, Action<T> configAction)
+            where T : ICommand
+        {
+            configAction(cmd);
+            return cmd;
+        }
+
+
     }
 
 
-    public class ReactiveCommand : EventCommandBase, ICommand, IObservable<EventPair<ReactiveCommand, Object>>
+    public class ReactiveCommand : EventCommandBase, ICommand, IObservable<EventPattern<EventCommandEventArgs>>
     {
 
 
 
-        protected Lazy<IObservable<EventPair<ReactiveCommand, object>>> m_LazyObservableExecute;
+        protected Lazy<IObservable<EventPattern<EventCommandEventArgs>>> m_LazyObservableExecute;
         protected Lazy<IObserver<bool>> m_LazyObserverCanExecute;
         protected bool m_CurrentCanExecuteObserverValue;
 
@@ -112,15 +112,18 @@ namespace MVVM.Reactive
 
         virtual protected void ConfigReactive()
         {
-            m_LazyObservableExecute = new Lazy<IObservable<EventPair<ReactiveCommand, object>>>
+            m_LazyObservableExecute = new Lazy<IObservable<EventPattern<EventCommandEventArgs>>>
             (
                 () =>
-                    Observable.FromEvent<Action<EventCommandBase, object>, object>
+                {
+                    var ob = Observable.FromEventPattern<EventHandler<EventCommandEventArgs>, EventCommandEventArgs>
                 (
                     eh => this.CommandExecute += eh,
                     eh => this.CommandExecute -= eh
-                )
-                .Select(e => EventPair.Create(this, e))
+                );
+
+                    return ob;
+                }
             );
 
             m_LazyObserverCanExecute = new Lazy<IObserver<bool>>
@@ -148,15 +151,16 @@ namespace MVVM.Reactive
         }
 
 
-        public virtual IDisposable Subscribe(IObserver<EventPair<ReactiveCommand, object>> observer)
+
+
+
+
+        public IDisposable Subscribe(IObserver<EventPattern<EventCommandEventArgs>> observer)
         {
             return m_LazyObservableExecute
-                .Value
-                .Subscribe(observer);
+                  .Value
+                  .Subscribe(observer);
         }
-
-
-
     }
 
 
@@ -172,7 +176,7 @@ namespace MVVM.Reactive
 
     public class ReactiveAsyncCommand : ReactiveAsyncCommand<object>
     {
-        protected ReactiveAsyncCommand(ExeuteBehavior behavior )
+        protected ReactiveAsyncCommand(ExeuteBehavior behavior)
             : base(behavior)
         {
 
@@ -186,7 +190,7 @@ namespace MVVM.Reactive
     }
 
 
-    public class ReactiveAsyncCommand<TProgress> : EventCommandBase, ICommand, IObservable<EventPair<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>
+    public class ReactiveAsyncCommand<TProgress> : EventCommandBase, ICommand, IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>
     {
         public ReactiveAsyncCommand(ExeuteBehavior behavior = Reactive.ExeuteBehavior.CannotExecute)
         {
@@ -201,7 +205,7 @@ namespace MVVM.Reactive
             m_CurrentCanExecuteObserverValue = canExecute;
         }
 
-        protected Lazy<IObservable<EventPair<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>> m_LazyObservableExecute;
+        protected Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>> m_LazyObservableExecute;
         protected Lazy<IObserver<bool>> m_LazyObserverCanExecute;
         protected bool m_CurrentCanExecuteObserverValue;
         public CancellationTokenSource CancellationTokenSource { get; private set; }
@@ -210,7 +214,7 @@ namespace MVVM.Reactive
 
         bool IsExecuting { get { return m_ExecutingCount != 0; } }
         internal int m_ExecutingCount = 0;
-        public IDisposable Subscribe(IObserver<EventPair<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>> observer)
+        public IDisposable Subscribe(IObserver<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>> observer)
         {
             return m_LazyObservableExecute.Value.Subscribe(
                     fac =>
@@ -233,28 +237,28 @@ namespace MVVM.Reactive
 
         virtual protected void ConfigReactive()
         {
-            m_LazyObservableExecute = new Lazy<IObservable<EventPair<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>>
+            m_LazyObservableExecute = new Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>>
             (
                 () =>
-                    Observable.FromEvent<Action<EventCommandBase, object>, object>
+                    Observable.FromEventPattern<EventHandler<EventCommandEventArgs>, EventCommandEventArgs>
                 (
                     eh => this.CommandExecute += eh,
                     eh => this.CommandExecute -= eh
                 )
                 .Select(e =>
-                    EventPair.Create(
+                    EventTuple.Create(
                       new Func<AsyncRunningDisposableContext>
                       (
                           () =>
                             new AsyncRunningDisposableContext(this)
                             {
                                 CancellationToken = CancellationTokenSource == null ? CancellationToken.None : CancellationTokenSource.Token,
-                                Parameter = e,
+                                Parameter = e.EventArgs.Parameter,
                                 Progress = this.Progress
 
                             }
                       ),
-                      e
+                      e.EventArgs.Parameter
                       )
                 )
             );

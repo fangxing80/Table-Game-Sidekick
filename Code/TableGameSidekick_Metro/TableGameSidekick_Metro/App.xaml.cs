@@ -24,6 +24,38 @@ namespace TableGameSidekick_Metro
     /// </summary>
     sealed partial class App : Application
     {
+
+        public static class Views
+        {
+            public static readonly string MainPage = typeof(MainPage).Name;
+            public static readonly string Start = typeof(Start).Name;
+            public static readonly string NewGame = typeof(NewGame).Name;
+            public static readonly string GamePlay = typeof(GamePlay).Name;
+
+            //static Dictionary<string, Lazy<Page>> viewCache
+            //    = new Dictionary<string, Lazy<Page>> 
+            //    { 
+            //        {MainPage , new Lazy<Page>( ()=>new MainPage ()) },
+            //        {Start,new Lazy<Page>( ()=>new Start () { ViewModel = new ViewModels.Start_Model ()}   )  },
+            //        {NewGame ,new Lazy<Page>( ()=>new NewGame  ()) },
+            //        { GamePlay ,new Lazy<Page>( ()=>new GamePlay ())},
+            //    };
+
+
+            //public static Page GetViewFromCache(string name)
+            //{
+            //    return viewCache[name].Value;
+            //}
+
+            public static class MainPage_NavigateParameters
+            {
+
+                public static readonly string GameInfomation_ChosenGame = "GameInfomation_ChosenGame";
+                public static readonly string bool_IsNewGame = "bool_IsNewGame";
+
+            }
+        }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -32,21 +64,25 @@ namespace TableGameSidekick_Metro
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            var noneedDispose = MainEventRouter.GetEventObject<NavigateEventArgs>().GetRouterEventObservable()
+            var noneedDispose = MainEventRouter.GetEventObject<NavigateCommandEventArgs>().GetRouterEventObservable()
                 .Subscribe(
                     ep =>
-                    { 
-                        
-                    
+                    {
+                        var pg = ep.Sender as Page;
+                        if (pg!=null )
+                        {
+                            pg.Frame.Navigate(Type.GetType(ep.EventArgs.TargetViewId));
+                        }
+
                     }
                 );
-                
-                
+
+
 
         }
 
-        public static EventRouter MainEventRouter =EventRouter.Instance ;
-        
+        public static EventRouter MainEventRouter = EventRouter.Instance;
+
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -71,7 +107,7 @@ namespace TableGameSidekick_Metro
 
             // Create a Frame to act navigation context and navigate to the first page
             var rootFrame = new Frame();
-            if (!rootFrame.Navigate(typeof(MainPage)))
+            if (!rootFrame.Navigate(typeof(Start)))
             {
                 throw new Exception("Failed to create initial page");
             }

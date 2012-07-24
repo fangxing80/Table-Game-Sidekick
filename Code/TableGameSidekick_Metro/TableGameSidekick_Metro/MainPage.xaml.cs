@@ -34,5 +34,7 @@ namespace TableGameSidekick_Metro
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
         }
+
+        
     }
 }

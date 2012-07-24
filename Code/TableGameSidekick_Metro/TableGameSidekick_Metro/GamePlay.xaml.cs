@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MVVM.Views;
-using TableGameSidekick_Metro.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.ViewManagement;
@@ -23,16 +21,13 @@ namespace TableGameSidekick_Metro
     /// A page that displays a group title, a list of items within the group, and details for
     /// the currently selected item.
     /// </summary>
-    public sealed partial class Start : TableGameSidekick_Metro.Common.LayoutAwarePage
+    public sealed partial class GamePlay : TableGameSidekick_Metro.Common.LayoutAwarePage
     {
-        public Start()
+        public GamePlay()
         {
             this.InitializeComponent();
-
-            this.DefaultViewModel["Model"] = new Start_Model();
         }
-  
-        
+
         #region Page state management
 
         /// <summary>
@@ -186,5 +181,7 @@ namespace TableGameSidekick_Metro
         }
 
         #endregion
+
+       
     }
 }
