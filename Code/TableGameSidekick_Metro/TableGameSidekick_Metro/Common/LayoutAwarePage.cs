@@ -89,7 +89,7 @@ namespace TableGameSidekick_Metro.Common
         /// An implementation of <see cref="IObservableMap&lt;String, Object&gt;"/> designed to be
         /// used as a trivial view model.
         /// </summary>
-        protected IObservableMap<String, Object> DefaultViewModel
+        public IObservableMap<String, Object> DefaultViewModel
         {
             get
             {

@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using MVVM.Reactive;
 using TableGameSidekick_Metro.Storages;
 using TableGameSidekick_Metro.DataEntity;
+using TableGameSidekick_Metro.Common;
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
 namespace TableGameSidekick_Metro
@@ -34,6 +35,17 @@ namespace TableGameSidekick_Metro
             public static readonly string NewGame = typeof(NewGame).FullName;
             public static readonly string GamePlay = typeof(GamePlay).FullName;
 
+            public static Dictionary<string, Action<LayoutAwarePage>>
+                ViewModelDelecators = new Dictionary<string, Action<LayoutAwarePage>> { 
+                {
+                    Start , 
+                    p=>
+                    {
+                        
+                    
+                    }},
+                
+                };
             //static Dictionary<string, Lazy<Page>> viewCache
             //    = new Dictionary<string, Lazy<Page>> 
             //    { 

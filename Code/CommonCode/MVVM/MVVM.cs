@@ -515,7 +515,7 @@ namespace MVVM.ViewModels
         { }
 
     }
-    public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>
+    public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>, ICommand
         where TCommand : ICommand
     {
         public CommandModel()
@@ -524,26 +524,53 @@ namespace MVVM.ViewModels
         public CommandModel(TCommand commandCore, TResource resource)
         {
             CommandCore = commandCore;
+            commandCore.CanExecuteChanged += commandCore_CanExecuteChanged;
             Resource = resource;
         }
 
-
-        public TCommand CommandCore
+        void commandCore_CanExecuteChanged(object sender, EventArgs e)
         {
-            get { return m_CommandCoreContainerLocator(this).Value; }
-            private set { m_CommandCoreContainerLocator(this).SetValueAndTryNotify(value); }
+            this.CanExecuteChanged(this, e);
+
         }
-        #region Property TCommand CommandCore Setup
-        protected PropertyContainer<TCommand> m_CommandCore;
-        protected static Func<object, PropertyContainer<TCommand>> m_CommandCoreContainerLocator =
-            RegisterContainerLocator<TCommand>(
-                "CommandCore",
+
+
+
+        protected TCommand CommandCore
+        {
+            get;
+             set;
+
+        }
+
+        public CommandModel<TCommand, TResource> ConfigCommandCore(Action<TCommand> commandConfigAction)
+        {
+            commandConfigAction(CommandCore);
+            return this;
+        }
+
+
+        public bool LastCanExecuteValue
+        {
+            get { return m_LastCanExecuteValueContainerLocator(this).Value; }
+            protected set { m_LastCanExecuteValueContainerLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property bool LastCanExecuteValue Setup
+        protected PropertyContainer<bool> m_LastCanExecuteValue;
+        protected static Func<object, PropertyContainer<bool>> m_LastCanExecuteValueContainerLocator =
+            RegisterContainerLocator<bool>(
+                "LastCanExecuteValue",
                 model =>
-                    model.m_CommandCore =
-                        model.m_CommandCore
+                    model.m_LastCanExecuteValue =
+                        model.m_LastCanExecuteValue
                         ??
-                        new PropertyContainer<TCommand>("CommandCore"));
+                        new PropertyContainer<bool>("LastCanExecuteValue"));
         #endregion
+
+
+
+
+
 
 
         public TResource Resource
@@ -564,6 +591,20 @@ namespace MVVM.ViewModels
         #endregion
 
 
+
+        public bool CanExecute(object parameter)
+        {
+            var s = CommandCore.CanExecute(parameter);
+            LastCanExecuteValue = s;
+            return s;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            CommandCore.Execute(parameter);
+        }
     }
 }
 
@@ -766,7 +807,7 @@ namespace MVVM.Commands
         {
             if (CanExecute(parameter))
             {
-                OnCommandExecute(EventCommandEventArgs.Create (parameter));
+                OnCommandExecute(EventCommandEventArgs.Create(parameter));
             }
         }
     }

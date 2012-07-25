@@ -83,7 +83,8 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public CommandModel<ReactiveCommand, string> NewGameCommand
         {
-            get { 
+            get
+            {
                 return m_NewGameCommand;
             }
 
@@ -96,58 +97,68 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public CommandModel<ReactiveCommand, string> ContinueCommand
         {
-            get { 
-                return m_ContinueCommand; 
+            get
+            {
+                return m_ContinueCommand;
             }
-       
+
         }
 
 
         void ConfigCommands()
         {
-            m_NewGameCommand.CommandCore
-                .Subscribe
-                (
-                    _ =>
-                        App.MainEventRouter.RaiseEvent(
-                        this,
-                        new NavigateCommandEventArgs()
-                        {
-                            SourceViewId = App.Views.MainPage,
-                            TargetViewId = App.Views.NewGame
-                        })
-                )
-                .RegisterDispose(this); ;
+            m_NewGameCommand
+                .ConfigCommandCore(
+                    core =>
+                    {
+                        core
+                            .Subscribe
+                            (
+                                _ =>
+                                    App.MainEventRouter.RaiseEvent(
+                                    this,
+                                    new NavigateCommandEventArgs()
+                                    {
+                                        SourceViewId = App.Views.MainPage,
+                                        TargetViewId = App.Views.NewGame
+                                    })
+                            )
+                            .RegisterDispose(this);
+                    }
+                );
+
+            m_ContinueCommand
+                .ConfigCommandCore(
+                    core =>
+                    {
+                        this.GetPropertyContainer(x => x.SelectedGame)
+                            .GetValueChangeObservable()
+                            .Select(e =>
+                                e.EventArgs != null)
+                            .Subscribe(core.CanExecuteObserver)
+                            .RegisterDispose(this);
 
 
-            this.GetPropertyContainer(x => x.SelectedGame)
-                .GetValueChangeObservable()
-                .Select(e =>
-                    e.EventArgs != null)
-                .Subscribe(m_ContinueCommand.CommandCore.CanExecuteObserver)
-                .RegisterDispose(this);
+                        core
+                            .Subscribe
+                            (
+                                _ =>
+                                    App.MainEventRouter.RaiseEvent(
+                                    this,
+                                    new NavigateCommandEventArgs()
+                                    {
+                                        SourceViewId = App.Views.MainPage,
+                                        TargetViewId = App.Views.GamePlay,
+                                        ParameterDictionary = new Dictionary<string, Object>() 
+                                        {
+                                            {App.Views.MainPage_NavigateParameters.bool_IsNewGame ,false},
+                                            {App.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame,this.SelectedGame}
+                                        }
+                                    })
+                            )
+                            .RegisterDispose(this);
 
-
-            m_ContinueCommand.CommandCore
-                .Subscribe
-                (
-                    _ =>
-                        App.MainEventRouter.RaiseEvent(
-                        this,
-                        new NavigateCommandEventArgs()
-                        {
-                            SourceViewId = App.Views.MainPage,
-                            TargetViewId = App.Views.GamePlay,
-                            ParameterDictionary = new Dictionary<string, Object>() 
-                            {
-                                {App.Views.MainPage_NavigateParameters.bool_IsNewGame ,false},
-                                {App.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame,this.SelectedGame}
-                            }
-                        })
-                )
-                .RegisterDispose(this);
-
-
+                });
 
 
         }

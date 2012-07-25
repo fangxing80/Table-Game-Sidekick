@@ -77,12 +77,7 @@ namespace MVVM.Reactive
             return eventArgSeq;
         }
 
-        public static T ConfigCommand<T>(this  T cmd, Action<T> configAction)
-            where T : ICommand
-        {
-            configAction(cmd);
-            return cmd;
-        }
+     
 
 
     }
