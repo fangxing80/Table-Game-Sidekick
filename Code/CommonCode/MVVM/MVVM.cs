@@ -530,7 +530,10 @@ namespace MVVM.ViewModels
 
         void commandCore_CanExecuteChanged(object sender, EventArgs e)
         {
-            this.CanExecuteChanged(this, e);
+            if (CanExecuteChanged != null)
+            {
+                this.CanExecuteChanged(this, e);
+            }
 
         }
 
@@ -539,7 +542,7 @@ namespace MVVM.ViewModels
         protected TCommand CommandCore
         {
             get;
-             set;
+            set;
 
         }
 
