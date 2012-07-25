@@ -103,9 +103,45 @@ namespace TableGameSidekick_Metro.DataEntity
                     model.m_Id =
                         model.m_Id
                         ??
-                        new PropertyContainer<Guid>("Id"));
+                        new PropertyContainer<Guid>("Id")           );
         #endregion
 
+
+        [DataMember]
+        public GameType  GameType
+        {
+            get { return m_GameTypeContainerLocator(this).Value; }
+            set { m_GameTypeContainerLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property GameType  GameType Setup
+        protected PropertyContainer<GameType > m_GameType;
+        protected static Func<object, PropertyContainer<GameType >> m_GameTypeContainerLocator =
+            RegisterContainerLocator<GameType >(
+                "GameType",
+                model =>
+                    model.m_GameType =
+                        model.m_GameType
+                        ??
+                        new PropertyContainer<GameType >("GameType"));
+        #endregion
+
+        [DataMember]
+        public string AdvanceGameKey
+        {
+            get { return m_AdvanceGameKeyContainerLocator(this).Value; }
+            set { m_AdvanceGameKeyContainerLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property string AdvanceGameKey Setup
+        protected PropertyContainer<string> m_AdvanceGameKey;
+        protected static Func<object, PropertyContainer<string>> m_AdvanceGameKeyContainerLocator =
+            RegisterContainerLocator<string>(
+                "AdvanceGameKey",
+                model =>
+                    model.m_AdvanceGameKey =
+                        model.m_AdvanceGameKey
+                        ??
+                        new PropertyContainer<string>("AdvanceGameKey"));
+        #endregion
 
 
 

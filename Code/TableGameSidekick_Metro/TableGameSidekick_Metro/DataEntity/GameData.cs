@@ -30,5 +30,28 @@ namespace TableGameSidekick_Metro.DataEntity
                         new PropertyContainer<Guid>("Id"));
         #endregion
 
+
+
+        public GameInfomation GameInfomation
+        {
+            get { return m_GameInfomationContainerLocator(this).Value; }
+            set { m_GameInfomationContainerLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property GameInfomation GameInfomation Setup
+        protected PropertyContainer<GameInfomation> m_GameInfomation;
+        protected static Func<object, PropertyContainer<GameInfomation>> m_GameInfomationContainerLocator =
+            RegisterContainerLocator<GameInfomation>(
+                "GameInfomation",
+                model =>
+                    model.m_GameInfomation =
+                        model.m_GameInfomation
+                        ??
+                        new PropertyContainer<GameInfomation>("GameInfomation"));
+        #endregion
+
+
+
+
+        
     }
 }

@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using MVVM.Reactive;
+using TableGameSidekick_Metro.Storages;
+using TableGameSidekick_Metro.DataEntity;
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
 namespace TableGameSidekick_Metro
@@ -24,13 +26,13 @@ namespace TableGameSidekick_Metro
     /// </summary>
     sealed partial class App : Application
     {
-
+        public static Frame MainFrame;
         public static class Views
         {
-            public static readonly string MainPage = typeof(MainPage).Name;
-            public static readonly string Start = typeof(Start).Name;
-            public static readonly string NewGame = typeof(NewGame).Name;
-            public static readonly string GamePlay = typeof(GamePlay).Name;
+            public static readonly string MainPage = typeof(MainPage).FullName;
+            public static readonly string Start = typeof(Start).FullName;
+            public static readonly string NewGame = typeof(NewGame).FullName;
+            public static readonly string GamePlay = typeof(GamePlay).FullName;
 
             //static Dictionary<string, Lazy<Page>> viewCache
             //    = new Dictionary<string, Lazy<Page>> 
@@ -55,6 +57,13 @@ namespace TableGameSidekick_Metro
 
             }
         }
+        public class Storages
+        {
+            public CollectionStorage<GameInfomation> GameInfomationsStorage = new CollectionStorage<GameInfomation>("GameInfomations.json");
+            public Dictionary<Guid, IStorage<GameData>> GameDatasStorages = new Dictionary<Guid, IStorage<GameData>>();
+            public CollectionStorage<PlayerInfomation> PlayerInfomationStorage = new CollectionStorage<PlayerInfomation>("PlayerInfomations.json");
+            
+        }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -68,12 +77,7 @@ namespace TableGameSidekick_Metro
                 .Subscribe(
                     ep =>
                     {
-                        var pg = ep.Sender as Page;
-                        if (pg!=null )
-                        {
-                            pg.Frame.Navigate(Type.GetType(ep.EventArgs.TargetViewId));
-                        }
-
+                        MainFrame.Navigate(Type.GetType(ep.EventArgs.TargetViewId));
                     }
                 );
 
@@ -106,14 +110,14 @@ namespace TableGameSidekick_Metro
             }
 
             // Create a Frame to act navigation context and navigate to the first page
-            var rootFrame = new Frame();
-            if (!rootFrame.Navigate(typeof(Start)))
+            MainFrame = new Frame();
+            if (!MainFrame.Navigate(typeof(Start)))
             {
                 throw new Exception("Failed to create initial page");
             }
 
             // Place the frame in the current Window and ensure that it is active
-            Window.Current.Content = rootFrame;
+            Window.Current.Content = MainFrame;
             Window.Current.Activate();
         }
 

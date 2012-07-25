@@ -168,8 +168,7 @@ namespace MVVM.Reactive
     {
 
         CannotExecute,
-        CanExecuteCancelRunningTask,
-        CanExecuteIgnoreRuningTask
+        CanExecuteCancelRunningTask
 
     }
 

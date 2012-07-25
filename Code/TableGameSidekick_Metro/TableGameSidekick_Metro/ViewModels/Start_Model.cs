@@ -31,7 +31,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 new GameInfomation { Id=Guid.NewGuid (), LastEditTime=DateTime.Now ,  StartTime=DateTime.Now     },
             };
 
-
+            ConfigCommands();
         }
 
 
@@ -78,7 +78,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
         private CommandModel<ReactiveCommand, string> m_NewGameCommand
-            = new ReactiveCommand()
+            = new ReactiveCommand(true)
             .CreateCommandModel("NewGameCommand");
 
         public CommandModel<ReactiveCommand, string> NewGameCommand
@@ -88,8 +88,10 @@ namespace TableGameSidekick_Metro.ViewModels
             }
 
         }
+
+
         private CommandModel<ReactiveCommand, string> m_ContinueCommand
-            = new ReactiveCommand()
+            = new ReactiveCommand(false)
             .CreateCommandModel("ContinueCommand");
 
         public CommandModel<ReactiveCommand, string> ContinueCommand
@@ -120,7 +122,8 @@ namespace TableGameSidekick_Metro.ViewModels
 
             this.GetPropertyContainer(x => x.SelectedGame)
                 .GetValueChangeObservable()
-                .Select(e => e.EventArgs != null)
+                .Select(e =>
+                    e.EventArgs != null)
                 .Subscribe(m_ContinueCommand.CommandCore.CanExecuteObserver)
                 .RegisterDispose(this);
 

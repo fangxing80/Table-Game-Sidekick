@@ -9,7 +9,7 @@
     xmlns:common="using:TableGameSidekick_Metro.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d" >
 
     <Page.Resources>
 
@@ -28,6 +28,7 @@
                 </Border>
                 <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,0,0,0">
                     <TextBlock Text="{Binding Id}" Style="{StaticResource TitleTextStyle}" TextWrapping="NoWrap"/>
+                    <TextBlock Text="{Binding GameType}" Style="{StaticResource TitleTextStyle}" TextWrapping="NoWrap"/>
                     <TextBlock Text="{Binding StartTime}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap"/>
                     <TextBlock Text="{Binding LastEditTime}" Style="{StaticResource BodyTextStyle}" MaxHeight="60"/>
                 </StackPanel>
@@ -38,7 +39,9 @@
         <AppBar >
             
             <StackPanel Margin="100,0,0,0">
-                <Button Content="{Binding DefaultViewModel.Model.NewGameCommand.CommandCore.Resource, ElementName=pageRoot}"  Command="{Binding NewGameCommand.CommandCore}" />
+                <Button   Command="{Binding Model.NewGameCommand.CommandCore}" >
+                    <TextBlock Text="{Binding Model.NewGameCommand.Resource}"></TextBlock>
+                </Button>
             </StackPanel>
         </AppBar>
     </common:LayoutAwarePage.BottomAppBar>
@@ -83,6 +86,7 @@
             Padding="120,0,0,60"
             ItemsSource="{Binding Source={StaticResource itemsViewSource}}"
             IsSwipeEnabled="False"
+            SelectedItem="{Binding ElementName=pageRoot,Path=DefaultViewModel.Model.SelectedGame,Mode=TwoWay}"
             SelectionChanged="ItemListView_SelectionChanged"
             ItemTemplate="{StaticResource GamesItemTemplate}"/>
 
@@ -109,10 +113,12 @@
 
                 <Image Grid.Row="1" Margin="0,0,20,0" Width="180" Height="180" Source="{Binding Image}" Stretch="UniformToFill"/>
                 <StackPanel x:Name="itemDetailTitlePanel" Grid.Row="1" Grid.Column="1">
-                    <TextBlock x:Name="itemTitle" Margin="0,-10,0,0" Text="{Binding Id}" Style="{StaticResource SubheaderTextStyle}"/>
-                    <TextBlock x:Name="itemSubtitle" Margin="0,0,0,20" Text="{Binding StartTime}" Style="{StaticResource TitleTextStyle}"/>
+                    <TextBlock x:Name="Id" Margin="0,-10,0,0" Text="{Binding Id}" Style="{StaticResource SubheaderTextStyle}"/>
+                    <TextBlock x:Name="gameType" Margin="0,-10,0,0" Text="{Binding GameType}" Style="{StaticResource SubheaderTextStyle}"/>
+                    <TextBlock x:Name="startTime" Margin="0,0,0,20" Text="{Binding StartTime}" Style="{StaticResource TitleTextStyle}"/>
                 </StackPanel>
-                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,20,0,0" Text="{Binding LastEditTime}" Style="{StaticResource BodyTextStyle}"/>
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,20,0,118" Text="{Binding LastEditTime}" Style="{StaticResource BodyTextStyle}"/>
+                <Button DataContext="{Binding Path=DefaultViewModel,ElementName=pageRoot}" Content="{Binding Model.ContinueCommand.Resource}" Command="{Binding Model.ContinueCommand.CommandCore}" Grid.Column="1" HorizontalAlignment="Left" Height="57" Margin="91,390,0,0" Grid.Row="2" VerticalAlignment="Top" Width="226"/>
             </Grid>
         </ScrollViewer>
 

@@ -564,15 +564,6 @@ namespace MVVM.ViewModels
         #endregion
 
 
-
-
-
-
-
-
-
-
-
     }
 }
 
