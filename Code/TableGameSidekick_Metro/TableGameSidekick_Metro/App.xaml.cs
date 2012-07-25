@@ -18,6 +18,7 @@ using MVVM.Reactive;
 using TableGameSidekick_Metro.Storages;
 using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.Common;
+using TableGameSidekick_Metro.ViewModels;
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
 namespace TableGameSidekick_Metro
@@ -34,17 +35,36 @@ namespace TableGameSidekick_Metro
             public static readonly string Start = typeof(Start).FullName;
             public static readonly string NewGame = typeof(NewGame).FullName;
             public static readonly string GamePlay = typeof(GamePlay).FullName;
-
+            public static readonly string DefaultTypedViewModelName= "model";
             public static Dictionary<string, Action<LayoutAwarePage>>
-                ViewModelDelecators = new Dictionary<string, Action<LayoutAwarePage>> { 
-                {
-                    Start , 
-                    p=>
+                ViewModelDefaultDelecators = new Dictionary<string, Action<LayoutAwarePage>> 
+                { 
                     {
-                        
+                        Start , 
+                        (async p=>
+                        {
+                            var st=Storages.Instance.GameInfomationsStorage;
+                            await Storages.Instance.GameInfomationsStorage.Refresh();
+                            var vm = new Start_Model()
+                            {
+                                Games = new System.Collections.ObjectModel.ObservableCollection<GameInfomation> (
+                                        st.Value
+                                            .OrderByDescending (g=>g.LastEditTime )
+                                    )
+                            };
+                            p.DefaultViewModel[DefaultTypedViewModelName] = vm;
                     
-                    }},
+                        })
+                    },
                 
+                    {
+                        GamePlay , 
+                        (async p=>
+                        {
+                            
+                    
+                        })
+                    },
                 };
             //static Dictionary<string, Lazy<Page>> viewCache
             //    = new Dictionary<string, Lazy<Page>> 
@@ -71,10 +91,12 @@ namespace TableGameSidekick_Metro
         }
         public class Storages
         {
+            public static Storages Instance = new Storages();
+
             public CollectionStorage<GameInfomation> GameInfomationsStorage = new CollectionStorage<GameInfomation>("GameInfomations.json");
             public Dictionary<Guid, IStorage<GameData>> GameDatasStorages = new Dictionary<Guid, IStorage<GameData>>();
             public CollectionStorage<PlayerInfomation> PlayerInfomationStorage = new CollectionStorage<PlayerInfomation>("PlayerInfomations.json");
-            
+
         }
 
         /// <summary>
