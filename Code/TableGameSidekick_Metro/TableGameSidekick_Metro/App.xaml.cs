@@ -29,15 +29,33 @@ namespace TableGameSidekick_Metro
     sealed partial class App : Application
     {
         public static Frame MainFrame;
+        public static class DefaultViewModelKeys
+        {
+            public static readonly string DefaultTypedViewModelName = "Model";
+            
+        }
+        public static class NavigateParameterKeys
+        {
+            public static readonly string ViewInitActionName = "InitAction";
+        
+        }
+
         public static class Views
         {
             public static readonly string MainPage = typeof(MainPage).FullName;
             public static readonly string Start = typeof(Start).FullName;
             public static readonly string NewGame = typeof(NewGame).FullName;
             public static readonly string GamePlay = typeof(GamePlay).FullName;
-            public static readonly string DefaultTypedViewModelName= "model";
+
+
+                public static Dictionary<string, Action<LayoutAwarePage>>
+                SaveStateActions =new Dictionary<string,Action<LayoutAwarePage>> 
+                {
+                
+                };
+
             public static Dictionary<string, Action<LayoutAwarePage>>
-                ViewModelDefaultDelecators = new Dictionary<string, Action<LayoutAwarePage>> 
+                PageInitActions = new Dictionary<string, Action<LayoutAwarePage>> 
                 { 
                     {
                         Start , 
@@ -52,7 +70,7 @@ namespace TableGameSidekick_Metro
                                             .OrderByDescending (g=>g.LastEditTime )
                                     )
                             };
-                            p.DefaultViewModel[DefaultTypedViewModelName] = vm;
+                            p.DefaultViewModel = vm;
                     
                         })
                     },
@@ -111,7 +129,14 @@ namespace TableGameSidekick_Metro
                 .Subscribe(
                     ep =>
                     {
-                        MainFrame.Navigate(Type.GetType(ep.EventArgs.TargetViewId));
+                        Action<LayoutAwarePage> initAction=null;
+                        if (Views.PageInitActions.TryGetValue(ep.EventArgs.SourceViewId, out initAction))
+                        {
+                            ep.EventArgs.ParameterDictionary[NavigateParameterKeys.ViewInitActionName] = initAction;
+                        }
+
+
+                        MainFrame.Navigate(Type.GetType(ep.EventArgs.TargetViewId),ep.EventArgs.ParameterDictionary);
                     }
                 );
 

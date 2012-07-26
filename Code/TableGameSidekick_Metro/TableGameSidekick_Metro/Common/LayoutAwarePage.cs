@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using MVVM.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
@@ -40,8 +41,8 @@ namespace TableGameSidekick_Metro.Common
         /// Identifies the <see cref="DefaultViewModel"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty DefaultViewModelProperty =
-            DependencyProperty.Register("DefaultViewModel", typeof(IObservableMap<String, Object>),
-            typeof(LayoutAwarePage), null);
+            DependencyProperty.Register("DefaultViewModel", typeof(ViewModelBase),
+            typeof(LayoutAwarePage),new PropertyMetadata (new DefaultViewModel()));
 
         private List<Control> _layoutAwareControls;
 
@@ -53,7 +54,7 @@ namespace TableGameSidekick_Metro.Common
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
 
             // Create an empty default view model
-            this.DefaultViewModel = new ObservableDictionary<String, Object>();
+            //this.DefaultViewModel = new ObservableDictionary<String, Object>();
 
             // When this page is part of the visual tree make two changes:
             // 1) Map application view state to visual state for the page
@@ -85,20 +86,17 @@ namespace TableGameSidekick_Metro.Common
             };
         }
 
-        /// <summary>
-        /// An implementation of <see cref="IObservableMap&lt;String, Object&gt;"/> designed to be
-        /// used as a trivial view model.
-        /// </summary>
-        public IObservableMap<String, Object> DefaultViewModel
+
+        public ViewModelBase DefaultViewModel
         {
             get
             {
-                return this.GetValue(DefaultViewModelProperty) as IObservableMap<String, Object>;
+                return this.GetValue(DefaultViewModelProperty) as ViewModelBase;
             }
 
             set
             {
-                this.SetValue(DefaultViewModelProperty, value);
+                this.SetValue(DefaultViewModelProperty, value) ;
             }
         }
 
@@ -330,12 +328,13 @@ namespace TableGameSidekick_Metro.Common
         /// property provides the group to be displayed.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
             // Returning to a cached page through navigation shouldn't trigger state loading
             if (this._pageKey != null) return;
 
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
             this._pageKey = "Page-" + this.Frame.BackStackDepth;
-
+            var dic = e.Parameter as Dictionary<string, object>;
             if (e.NavigationMode == NavigationMode.New)
             {
                 // Clear existing state for forward navigation when adding a new page to the
@@ -347,9 +346,24 @@ namespace TableGameSidekick_Metro.Common
                     nextPageIndex++;
                     nextPageKey = "Page-" + nextPageIndex;
                 }
+                
+                if (dic != null)
+                {
+                    object init = null;
+                    if (dic.TryGetValue(TableGameSidekick_Metro.App.NavigateParameterKeys.ViewInitActionName, out init))
+                    { 
+                        dic.Remove (TableGameSidekick_Metro.App.NavigateParameterKeys.ViewInitActionName);
+                    }
+
+                    var initAction = init as Action<LayoutAwarePage>;
+                    if (initAction!=null)
+                    {
+                        initAction(this);
+                    }
+                }
 
                 // Pass the navigation parameter to the new page
-                this.LoadState(e.Parameter, null);
+                this.LoadState(e.Parameter, dic);
             }
             else
             {
@@ -368,7 +382,7 @@ namespace TableGameSidekick_Metro.Common
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
-            var pageState = new Dictionary<String, Object>();
+            var pageState = new Dictionary<string, object> {{"" , DefaultViewModel  } };
             this.SaveState(pageState);
             frameState[_pageKey] = pageState;
         }
@@ -384,6 +398,8 @@ namespace TableGameSidekick_Metro.Common
         /// session.  This will be null the first time a page is visited.</param>
         protected virtual void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
+          
+
         }
 
         /// <summary>
@@ -394,6 +410,7 @@ namespace TableGameSidekick_Metro.Common
         /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
         protected virtual void SaveState(Dictionary<String, Object> pageState)
         {
+
         }
 
         #endregion

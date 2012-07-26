@@ -49,13 +49,20 @@ namespace System.ComponentModel
 
 namespace MVVM.ViewModels
 {
+
+    
+    public class DefaultViewModel : ViewModelBase<DefaultViewModel>
+    { 
+    
+    }
+
     [DataContract]
     public abstract class ViewModelBase
         : IDisposable, INotifyPropertyChanged, IDataErrorInfo
     {
 
 
-
+        public abstract object this[string colName] { get; set; }
 
         private List<Action> _disposeActions = new List<Action>();
 
@@ -171,8 +178,9 @@ namespace MVVM.ViewModels
     }
 
 
-    public class PropertyContainer<TProperty> : IErrorInfo, IValueCanSet<TProperty>, IValueCanGet<TProperty>
+    public class PropertyContainer<TProperty> : IErrorInfo, IValueCanSet<TProperty>, IValueCanGet<TProperty>, IPropertyContainer
     {
+
         public event EventHandler<ValueChangedEventArgs<TProperty>> ValueChanged = (o, e) => { };
 
         /// <summary>
@@ -215,6 +223,8 @@ namespace MVVM.ViewModels
             EqualityComparer = equalityComparer;
             PropertyName = info;
             _value = initValue;
+
+            PropertyType = typeof(TProperty);
             // _eventObject = new ValueChangedEventObject<TProperty>(this);
         }
 
@@ -306,9 +316,29 @@ namespace MVVM.ViewModels
         public ViewModelBase ViewModel { get; internal set; }
 
 
-        /// <summary>
-        /// 该容器出现的错误
-        /// </summary>
+
+
+
+
+        object IPropertyContainer.Value
+        {
+            get
+            {
+                return Value;
+            }
+            set
+            {
+                SetValueAndTryNotify((TProperty)value);
+            }
+        }
+
+
+
+        public Type PropertyType
+        {
+            get;
+            private set;
+        }
 
         public ErrorEntity Error
         {
@@ -357,6 +387,29 @@ namespace MVVM.ViewModels
     public abstract class ViewModelBase<TViewModel> : ViewModelBase where TViewModel : ViewModelBase<TViewModel>
     {
         protected static Task _EmptyStartedTask = Task.Factory.StartNew(() => { });
+        public override object this[string colName]
+        {
+            get
+            {
+                var lc = GetOrCreatePlainLocator(colName,this);
+                return lc((TViewModel)this).Value;
+            }
+            set {
+                var lc = GetOrCreatePlainLocator(colName,this);
+                lc((TViewModel)this).Value = value;
+            }
+        }
+
+        private static Func<TViewModel, IPropertyContainer> GetOrCreatePlainLocator(string colName,ViewModelBase vm)
+        {
+            Func<TViewModel, IPropertyContainer> pf;
+            if (!_plainPropertyContainerGetters.TryGetValue(colName, out pf))
+            {
+                var p = new PropertyContainer<object>(colName) {  ViewModel =vm};
+                pf = _ => p;
+            }
+            return pf;
+        }
 
         protected static class TypeDic<TProperty>
         {
@@ -364,7 +417,7 @@ namespace MVVM.ViewModels
 
         }
         protected static Dictionary<string, string> _names = new Dictionary<string, string>();
-        protected static Dictionary<string, Func<TViewModel, IPropertyContainerForRead<Object>>> _propertyContainerGettersForRead = new Dictionary<string, Func<TViewModel, IPropertyContainerForRead<object>>>();
+        protected static Dictionary<string, Func<TViewModel, IPropertyContainer>> _plainPropertyContainerGetters = new Dictionary<string, Func<TViewModel, IPropertyContainer>>();
         protected static String GetExpressionMemberName<TEntity, TProperty>(Expression<Func<TEntity, TProperty>> expression)
         {
             MemberExpression body = expression.Body as MemberExpression;
@@ -402,8 +455,9 @@ namespace MVVM.ViewModels
                     return r;
                 };
             _names.Add(propertyName, propertyName);
-            _propertyContainerGettersForRead.Add(propertyName, m => rval(m) as IPropertyContainerForRead<object>);
+
             TypeDic<TProperty>._propertyContainerGetters[propertyName] = rval;
+            _plainPropertyContainerGetters[propertyName] = (v) => rval(v) as IPropertyContainer;
             return o => rval((TViewModel)o);
         }
 
@@ -454,7 +508,7 @@ namespace MVVM.ViewModels
 
         protected override string GetColumnError(string columnName)
         {
-            return _propertyContainerGettersForRead[columnName]((TViewModel)this).Error.Message;
+            return _plainPropertyContainerGetters[columnName]((TViewModel)this).Error.Message;
         }
 
 
@@ -483,8 +537,10 @@ namespace MVVM.ViewModels
         T Value { get; }
     }
 
-    public interface IPropertyContainerForRead<T> : IErrorInfo, IValueCanGet<T>
+    public interface IPropertyContainer : IErrorInfo
     {
+        Type PropertyType { get; }
+        Object Value { get; set; }
     }
 
 
@@ -737,7 +793,7 @@ namespace MVVM.EventRouter
     {
         public NavigateCommandEventArgs()
         {
-            ParameterDictionary = new System.Dynamic.ExpandoObject();
+            ParameterDictionary = new Dictionary<string, object>();
         }
         public NavigateCommandEventArgs(IDictionary<string, object> dic)
             : this()
@@ -749,14 +805,18 @@ namespace MVVM.EventRouter
             }
 
         }
-        public dynamic ParameterDictionary { get; set; }
+        public Dictionary<string, object> ParameterDictionary { get; set; }
 
         public string SourceViewId { get; set; }
 
         public string TargetViewId { get; set; }
     }
 
-
+    public class SaveStateEventArgs : EventArgs
+    {
+        public string ViewKeyId { get; set; }
+        public Dictionary<string, object> State { get; set; }
+    }
 
 
 }

@@ -36,6 +36,11 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
+
+
+        
+
+
         public ObservableCollection<GameInfomation> Games
         {
             get { return m_GamesContainerLocator(this).Value; }

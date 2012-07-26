@@ -4,19 +4,20 @@
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     IsTabStop="false"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:vm="using:TableGameSidekick_Metro.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TableGameSidekick_Metro"
     xmlns:common="using:TableGameSidekick_Metro.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" >
+    mc:Ignorable="d"  >
 
     <Page.Resources>
 
         <!-- Collection of items displayed by this page -->
         <CollectionViewSource
             x:Name="itemsViewSource"
-            Source="{Binding Model.Games}"/>
+            Source="{Binding Games}"/>
         <DataTemplate x:Key="GamesItemTemplate">
             <Grid Height="110" Margin="6">
                 <Grid.ColumnDefinitions>
@@ -35,12 +36,15 @@
             </Grid>
         </DataTemplate>
     </Page.Resources>
+    <common:LayoutAwarePage.DefaultViewModel>
+       <vm:Start_Model></vm:Start_Model>
+    </common:LayoutAwarePage.DefaultViewModel>
     <common:LayoutAwarePage.BottomAppBar >
         <AppBar >
             
             <StackPanel Margin="100,0,0,0">
-                <Button   Command="{Binding Model.NewGameCommand}" >
-                    <TextBlock Text="{Binding Model.NewGameCommand.Resource}"></TextBlock>
+                <Button   Command="{Binding NewGameCommand}" >
+                    <TextBlock Text="{Binding NewGameCommand.Resource}"></TextBlock>
                 </Button>
             </StackPanel>
         </AppBar>
@@ -86,7 +90,7 @@
             Padding="120,0,0,60"
             ItemsSource="{Binding Source={StaticResource itemsViewSource}}"
             IsSwipeEnabled="False"
-            SelectedItem="{Binding ElementName=pageRoot,Path=DefaultViewModel.Model.SelectedGame,Mode=TwoWay}"
+            SelectedItem="{Binding ElementName=pageRoot,Path=DefaultViewModel.SelectedGame,Mode=TwoWay}"
             SelectionChanged="ItemListView_SelectionChanged"
             ItemTemplate="{StaticResource GamesItemTemplate}"/>
 
@@ -118,7 +122,7 @@
                     <TextBlock x:Name="startTime" Margin="0,0,0,20" Text="{Binding StartTime}" Style="{StaticResource TitleTextStyle}"/>
                 </StackPanel>
                 <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,20,0,118" Text="{Binding LastEditTime}" Style="{StaticResource BodyTextStyle}"/>
-                <Button DataContext="{Binding Path=DefaultViewModel,ElementName=pageRoot}" Content="{Binding Model.ContinueCommand.Resource}" Command="{Binding Model.ContinueCommand}" Grid.Column="1" HorizontalAlignment="Left" Height="57" Margin="91,390,0,0" Grid.Row="2" VerticalAlignment="Top" Width="226"/>
+                <Button DataContext="{Binding Path=DefaultViewModel,ElementName=pageRoot}" Content="{Binding ContinueCommand.Resource}" Command="{Binding ContinueCommand}" Grid.Column="1" HorizontalAlignment="Left" Height="57" Margin="91,390,0,0" Grid.Row="2" VerticalAlignment="Top" Width="226"/>
             </Grid>
         </ScrollViewer>
 
