@@ -15,39 +15,59 @@ namespace TableGameSidekick_Metro.DataEntity
         [DataMember]
         public Guid Id
         {
-            get { return m_IdContainerLocator(this).Value; }
-            set { m_IdContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_Id.Locate(this).Value; }
+            set { m_Id.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property Guid Id Setup
-        protected PropertyContainer<Guid> m_Id;
-        protected static Func<object, PropertyContainer<Guid>> m_IdContainerLocator =
+        protected Property<Guid> m_Id = new Property<Guid>(m_IdLocator);
+        static Func<ViewModelBase, ValueContainer<Guid>> m_IdLocator =
             RegisterContainerLocator<Guid>(
                 "Id",
                 model =>
-                    model.m_Id =
-                        model.m_Id
+                    model.m_Id.Container =
+                        model.m_Id.Container
                         ??
-                        new PropertyContainer<Guid>("Id"));
+                        new ValueContainer<Guid>("Id", model));
         #endregion
 
 
 
-        public GameInfomation GameInfomation
+        
+
+
+
+
+
+
+        [DataMember]
+              public GameInfomation GameInfomation
         {
-            get { return m_GameInfomationContainerLocator(this).Value; }
-            set { m_GameInfomationContainerLocator(this).SetValueAndTryNotify(value); }
-        }
-        #region Property GameInfomation GameInfomation Setup
-        protected PropertyContainer<GameInfomation> m_GameInfomation;
-        protected static Func<object, PropertyContainer<GameInfomation>> m_GameInfomationContainerLocator =
+            get { return m_GameInfomation.Locate(this).Value; }
+            set { m_GameInfomation.Locate(this).SetValueAndTryNotify(value); }
+        }        
+        #region Property GameInfomation GameInfomation Setup        
+        protected Property<GameInfomation> m_GameInfomation = new Property<GameInfomation>( m_GameInfomationLocator);
+        static Func<ViewModelBase,ValueContainer<GameInfomation>> m_GameInfomationLocator=
             RegisterContainerLocator<GameInfomation>(
                 "GameInfomation",
                 model =>
-                    model.m_GameInfomation =
-                        model.m_GameInfomation
+                    model.m_GameInfomation.Container = 
+                        model.m_GameInfomation.Container
                         ??
-                        new PropertyContainer<GameInfomation>("GameInfomation"));
+                        new ValueContainer<GameInfomation>("GameInfomation",model));          
         #endregion
+        
+              
+        
+
+        
+              
+        
+
+
+
+
+        
 
 
 

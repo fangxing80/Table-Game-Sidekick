@@ -25,26 +25,24 @@
         </Literal>
       </Declarations>
       <Code Language="csharp">
-        <![CDATA[
-        public $type$ $property$
+<![CDATA[        public $type$ $property$
         {
-            get { return m_$property$ContainerLocator(this).Value; }
-            set { m_$property$ContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_$property$.Locate(this).Value; }
+            set { m_$property$.Locate(this).SetValueAndTryNotify(value); }
         }        
         #region Property $type$ $property$ Setup        
-        protected PropertyContainer<$type$> m_$property$;  
-        protected static Func<object, PropertyContainer<$type$>> m_$property$ContainerLocator =
+        protected Property<$type$> m_$property$ = new Property<$type$>( m_$property$Locator);
+        static Func<ViewModelBase,ValueContainer<$type$>> m_$property$Locator=
             RegisterContainerLocator<$type$>(
                 "$property$",
                 model =>
-                    model.m_$property$ = 
-                        model.m_$property$
+                    model.m_$property$.Container = 
+                        model.m_$property$.Container
                         ??
-                        new PropertyContainer<$type$>("$property$"));
+                        new ValueContainer<$type$>("$property$",model));          
         #endregion
         
-        
-        
+              
         
 $end$]]>
       </Code>

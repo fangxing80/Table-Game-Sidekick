@@ -13,81 +13,111 @@ namespace TableGameSidekick_Metro.DataEntity
     {
 
         [DataMember]
-        public String Name
+        public string Name
         {
-            get { return m_NameContainerLocator(this).Value; }
-            set { m_NameContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_Name.Locate(this).Value; }
+            set { m_Name.Locate(this).SetValueAndTryNotify(value); }
         }
-        #region Property String Name Setup
-        protected PropertyContainer<String> m_Name;
-        protected static Func<object, PropertyContainer<String>> m_NameContainerLocator =
-            RegisterContainerLocator<String>(
+        #region Property string Name Setup
+        protected Property<string> m_Name = new Property<string>(m_NameLocator);
+        static Func<ViewModelBase, ValueContainer<string>> m_NameLocator =
+            RegisterContainerLocator<string>(
                 "Name",
                 model =>
-                    model.m_Name =
-                        model.m_Name
+                    model.m_Name.Container =
+                        model.m_Name.Container
                         ??
-                        new PropertyContainer<String>("Name"));
+                        new ValueContainer<string>("Name", model));
         #endregion
+
+
+
+        
+
+
+
+        
 
 
         [DataMember]
         public bool IsContact
         {
-            get { return m_IsContactContainerLocator(this).Value; }
-            set { m_IsContactContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_IsContact.Locate(this).Value; }
+            set { m_IsContact.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property bool IsContact Setup
-        protected PropertyContainer<bool> m_IsContact;
-        protected static Func<object, PropertyContainer<bool>> m_IsContactContainerLocator =
+        protected Property<bool> m_IsContact = new Property<bool>(m_IsContactLocator);
+        static Func<ViewModelBase, ValueContainer<bool>> m_IsContactLocator =
             RegisterContainerLocator<bool>(
                 "IsContact",
                 model =>
-                    model.m_IsContact =
-                        model.m_IsContact
+                    model.m_IsContact.Container =
+                        model.m_IsContact.Container
                         ??
-                        new PropertyContainer<bool>("IsContact"));
+                        new ValueContainer<bool>("IsContact", model));
         #endregion
+
+
+
+        
+
+
+
+        
 
 
 
 
         [DataMember]
-        public string ConractOrResourceKey
+        public string ContactKeyOrResourceKey
         {
-            get { return m_ConractOrResourceKeyContainerLocator(this).Value; }
-            set { m_ConractOrResourceKeyContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_ContactKeyOrResourceKey.Locate(this).Value; }
+            set { m_ContactKeyOrResourceKey.Locate(this).SetValueAndTryNotify(value); }
         }
-        #region Property string  ConractOrResourceKey Setup
-        protected PropertyContainer<string> m_ConractOrResourceKey;
-        protected static Func<object, PropertyContainer<string>> m_ConractOrResourceKeyContainerLocator =
+        #region Property string ContactKeyOrResourceKey Setup
+        protected Property<string> m_ContactKeyOrResourceKey = new Property<string>(m_ContactKeyOrResourceKeyLocator);
+        static Func<ViewModelBase, ValueContainer<string>> m_ContactKeyOrResourceKeyLocator =
             RegisterContainerLocator<string>(
-                "ConractOrResourceKey",
+                "ContactKeyOrResourceKey",
                 model =>
-                    model.m_ConractOrResourceKey =
-                        model.m_ConractOrResourceKey
+                    model.m_ContactKeyOrResourceKey.Container =
+                        model.m_ContactKeyOrResourceKey.Container
                         ??
-                        new PropertyContainer<string>("ConractOrResourceKey"));
+                        new ValueContainer<string>("ContactKeyOrResourceKey", model));
         #endregion
+
+
+
+        
+
+        
 
 
         [DataMember]
         public Guid Id
         {
-            get { return m_IdContainerLocator(this).Value; }
-            set { m_IdContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_Id.Locate(this).Value; }
+            set { m_Id.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property Guid Id Setup
-        protected PropertyContainer<Guid> m_Id;
-        protected static Func<object, PropertyContainer<Guid>> m_IdContainerLocator =
+        protected Property<Guid> m_Id = new Property<Guid>(m_IdLocator);
+        static Func<ViewModelBase, ValueContainer<Guid>> m_IdLocator =
             RegisterContainerLocator<Guid>(
                 "Id",
                 model =>
-                    model.m_Id =
-                        model.m_Id
+                    model.m_Id.Container =
+                        model.m_Id.Container
                         ??
-                        new PropertyContainer<Guid>("Id"));
+                        new ValueContainer<Guid>("Id", model));
         #endregion
+
+
+
+        
+
+
+
+        
 
 
 

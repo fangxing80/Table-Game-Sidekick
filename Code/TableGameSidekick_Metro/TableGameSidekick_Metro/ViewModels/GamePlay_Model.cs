@@ -11,37 +11,46 @@ namespace TableGameSidekick_Metro.ViewModels
     {
 
         public GamePlay_Model()
-        { 
-            
-        
+        {
+
+
         }
 
 
         public GameInfomation CurrentGameInfomation
         {
-            get { return m_CurrentGameInfomationContainerLocator(this).Value; }
-            set { m_CurrentGameInfomationContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_CurrentGameInfomation.Locate(this).Value; }
+            set { m_CurrentGameInfomation.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property GameInfomation CurrentGameInfomation Setup
-        protected PropertyContainer<GameInfomation> m_CurrentGameInfomation;
-        protected static Func<object, PropertyContainer<GameInfomation>> m_CurrentGameInfomationContainerLocator =
+        protected Property<GameInfomation> m_CurrentGameInfomation = new Property<GameInfomation>(m_CurrentGameInfomationLocator);
+        static Func<ViewModelBase, ValueContainer<GameInfomation>> m_CurrentGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
                 "CurrentGameInfomation",
                 model =>
-                    model.m_CurrentGameInfomation =
-                        model.m_CurrentGameInfomation
+                    model.m_CurrentGameInfomation.Container =
+                        model.m_CurrentGameInfomation.Container
                         ??
-                        new PropertyContainer<GameInfomation>("CurrentGameInfomation"));
+                        new ValueContainer<GameInfomation>("CurrentGameInfomation", model));
         #endregion
 
 
-        
-
-        
 
 
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

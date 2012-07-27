@@ -50,10 +50,10 @@ namespace System.ComponentModel
 namespace MVVM.ViewModels
 {
 
-    
+
     public class DefaultViewModel : ViewModelBase<DefaultViewModel>
-    { 
-    
+    {
+
     }
 
     [DataContract]
@@ -145,7 +145,7 @@ namespace MVVM.ViewModels
 
 
 
-        public abstract string Error { get; }
+        public abstract string Error { get; protected set; }
 
 
 
@@ -176,10 +176,34 @@ namespace MVVM.ViewModels
             vm.AddDisposable(item);
         }
     }
-
-
-    public class PropertyContainer<TProperty> : IErrorInfo, IValueCanSet<TProperty>, IValueCanGet<TProperty>, IPropertyContainer
+    public class Property<TProperty>
     {
+        public Property(Func<ViewModelBase, ValueContainer<TProperty>> locatorFunc)
+        {
+            m_LocatorFunc = locatorFunc;
+        }
+
+        public ValueContainer<TProperty> Locate(ViewModelBase viewModel)
+        {
+
+            return m_LocatorFunc(viewModel);
+        }
+
+
+        Func<ViewModelBase, ValueContainer<TProperty>> m_LocatorFunc;
+
+
+        public ValueContainer<TProperty> Container
+        {
+            get;
+            set;
+        }
+
+    }
+    public class ValueContainer<TProperty> : IErrorInfo, IValueCanSet<TProperty>, IValueCanGet<TProperty>, IPropertyContainer
+    {
+
+
 
         public event EventHandler<ValueChangedEventArgs<TProperty>> ValueChanged = (o, e) => { };
 
@@ -187,8 +211,8 @@ namespace MVVM.ViewModels
         /// 创建属性值容器
         /// </summary>
         /// <param name="info">属性名</param>
-        public PropertyContainer(string info)
-            : this(info, (v1, v2) => v1.Equals(v2), default(TProperty))
+        public ValueContainer(string info, ViewModelBase vm)
+            : this(info, (v1, v2) => v1.Equals(v2), default(TProperty), vm)
         {
         }
 
@@ -197,8 +221,8 @@ namespace MVVM.ViewModels
         /// </summary>
         /// <param name="info">属性名</param>
         /// <param name="equalityComparer">判断两个值是否相等的比较器</param>
-        public PropertyContainer(string info, Func<TProperty, TProperty, bool> equalityComparer)
-            : this(info, equalityComparer, default(TProperty))
+        public ValueContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, ViewModelBase vm)
+            : this(info, equalityComparer, default(TProperty), vm)
         {
         }
 
@@ -207,8 +231,8 @@ namespace MVVM.ViewModels
         /// </summary>
         /// <param name="info">属性名</param>
         /// <param name="initValue">初始值</param>
-        public PropertyContainer(string info, TProperty initValue)
-            : this(info, (v1, v2) => v1.Equals(v2), initValue)
+        public ValueContainer(string info, TProperty initValue, ViewModelBase vm)
+            : this(info, (v1, v2) => v1.Equals(v2), initValue, vm)
         {
         }
 
@@ -218,13 +242,14 @@ namespace MVVM.ViewModels
         /// <param name="info">属性名</param>
         /// <param name="equalityComparer">判断两个值是否相等的比较器</param>
         /// <param name="initValue">初始值</param>
-        public PropertyContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, TProperty initValue)
+        public ValueContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, TProperty initValue, ViewModelBase vm)
         {
             EqualityComparer = equalityComparer;
             PropertyName = info;
             _value = initValue;
 
             PropertyType = typeof(TProperty);
+            ViewModel = vm;
             // _eventObject = new ValueChangedEventObject<TProperty>(this);
         }
 
@@ -391,21 +416,22 @@ namespace MVVM.ViewModels
         {
             get
             {
-                var lc = GetOrCreatePlainLocator(colName,this);
+                var lc = GetOrCreatePlainLocator(colName, this);
                 return lc((TViewModel)this).Value;
             }
-            set {
-                var lc = GetOrCreatePlainLocator(colName,this);
+            set
+            {
+                var lc = GetOrCreatePlainLocator(colName, this);
                 lc((TViewModel)this).Value = value;
             }
         }
 
-        private static Func<TViewModel, IPropertyContainer> GetOrCreatePlainLocator(string colName,ViewModelBase vm)
+        private static Func<TViewModel, IPropertyContainer> GetOrCreatePlainLocator(string colName, ViewModelBase viewModel)
         {
             Func<TViewModel, IPropertyContainer> pf;
             if (!_plainPropertyContainerGetters.TryGetValue(colName, out pf))
             {
-                var p = new PropertyContainer<object>(colName) {  ViewModel =vm};
+                var p = new ValueContainer<object>(colName, viewModel);
                 pf = _ => p;
             }
             return pf;
@@ -413,7 +439,7 @@ namespace MVVM.ViewModels
 
         protected static class TypeDic<TProperty>
         {
-            public static Dictionary<string, Func<TViewModel, PropertyContainer<TProperty>>> _propertyContainerGetters = new Dictionary<string, Func<TViewModel, PropertyContainer<TProperty>>>();
+            public static Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>> _propertyContainerGetters = new Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>>();
 
         }
         protected static Dictionary<string, string> _names = new Dictionary<string, string>();
@@ -426,39 +452,47 @@ namespace MVVM.ViewModels
 
 
 
+
         public override string Error
         {
-            get { return _ErrorContainerLocator(this).Value; }
-
+            get { return m_Error.Locate(this).Value; }
+            protected set { m_Error.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property string Error Setup
-        protected PropertyContainer<string> _Error;
-        protected static Func<object, PropertyContainer<string>> _ErrorContainerLocator =
+        protected Property<string> m_Error = new Property<string>(m_ErrorLocator);
+        static Func<ViewModelBase, ValueContainer<string>> m_ErrorLocator =
             RegisterContainerLocator<string>(
                 "Error",
                 model =>
-                    model._Error =
-                        model._Error
+                    model.m_Error.Container =
+                        model.m_Error.Container
                         ??
-                        new PropertyContainer<string>("Error"));
+                        new ValueContainer<string>("Error", model));
         #endregion
 
 
 
-        protected static Func<object, PropertyContainer<TProperty>> RegisterContainerLocator<TProperty>(string propertyName, Func<TViewModel, PropertyContainer<TProperty>> getOrCreateLocatorMethod)
-        {
-            Func<TViewModel, PropertyContainer<TProperty>> rval =
-                model =>
-                {
-                    var r = getOrCreateLocatorMethod(model); //让PropertyContainer具有ViewModel引用 此机制很重要
-                    r.ViewModel = model;
-                    return r;
-                };
-            _names.Add(propertyName, propertyName);
 
-            TypeDic<TProperty>._propertyContainerGetters[propertyName] = rval;
-            _plainPropertyContainerGetters[propertyName] = (v) => rval(v) as IPropertyContainer;
-            return o => rval((TViewModel)o);
+
+
+
+
+        //public static void AddIfNotIn<TK, TV>(this IDictionary<TK, TV> dic, TK key, TV value)
+        //{
+        //    if (!dic.ContainsKey(key))
+        //    {
+        //        dic.Add(key, value);
+        //    }
+
+        //}
+
+        protected static Func<ViewModelBase, ValueContainer<TProperty>> RegisterContainerLocator<TProperty>(string propertyName, Func<TViewModel, ValueContainer<TProperty>> getOrCreateLocatorMethod)
+        {
+
+            _names[propertyName] = propertyName;
+            TypeDic<TProperty>._propertyContainerGetters[propertyName] = getOrCreateLocatorMethod;
+            _plainPropertyContainerGetters[propertyName] = (v) => getOrCreateLocatorMethod(v) as IPropertyContainer;
+            return o => getOrCreateLocatorMethod((TViewModel)o);
         }
 
 
@@ -486,9 +520,9 @@ namespace MVVM.ViewModels
         //}
 
 
-        public PropertyContainer<TProperty> GetPropertyContainer<TProperty>(string propertyName)
+        public ValueContainer<TProperty> GetPropertyContainer<TProperty>(string propertyName)
         {
-            Func<TViewModel, PropertyContainer<TProperty>> contianerGetterCreater;
+            Func<TViewModel, ValueContainer<TProperty>> contianerGetterCreater;
             if (!TypeDic<TProperty>._propertyContainerGetters.TryGetValue(propertyName, out contianerGetterCreater))
             {
                 throw new Exception("Property Not Exists!");
@@ -498,7 +532,7 @@ namespace MVVM.ViewModels
             return contianerGetterCreater((TViewModel)(Object)this);
 
         }
-        public PropertyContainer<TProperty> GetPropertyContainer<TProperty>(Expression<Func<TViewModel, TProperty>> expression)
+        public ValueContainer<TProperty> GetPropertyContainer<TProperty>(Expression<Func<TViewModel, TProperty>> expression)
         {
 
             var propName = GetExpressionMemberName(expression);
@@ -611,21 +645,24 @@ namespace MVVM.ViewModels
 
         public bool LastCanExecuteValue
         {
-            get { return m_LastCanExecuteValueContainerLocator(this).Value; }
-            protected set { m_LastCanExecuteValueContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_LastCanExecuteValue.Locate(this).Value; }
+            set { m_LastCanExecuteValue.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property bool LastCanExecuteValue Setup
-        protected PropertyContainer<bool> m_LastCanExecuteValue;
-        protected static Func<object, PropertyContainer<bool>> m_LastCanExecuteValueContainerLocator =
+        protected Property<bool> m_LastCanExecuteValue = new Property<bool>(m_LastCanExecuteValueLocator);
+        static Func<ViewModelBase, ValueContainer<bool>> m_LastCanExecuteValueLocator =
             RegisterContainerLocator<bool>(
                 "LastCanExecuteValue",
                 model =>
-                    model.m_LastCanExecuteValue =
-                        model.m_LastCanExecuteValue
+                    model.m_LastCanExecuteValue.Container =
+                        model.m_LastCanExecuteValue.Container
                         ??
-                        new PropertyContainer<bool>("LastCanExecuteValue"));
+                        new ValueContainer<bool>("LastCanExecuteValue", model));
         #endregion
 
+
+
+        
 
 
 
@@ -634,20 +671,28 @@ namespace MVVM.ViewModels
 
         public TResource Resource
         {
-            get { return m_ResourceContainerLocator(this).Value; }
-            set { m_ResourceContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_Resource.Locate(this).Value; }
+            set { m_Resource.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property TResource Resource Setup
-        protected PropertyContainer<TResource> m_Resource;
-        protected static Func<object, PropertyContainer<TResource>> m_ResourceContainerLocator =
+        protected Property<TResource> m_Resource = new Property<TResource>(m_ResourceLocator);
+        static Func<ViewModelBase, ValueContainer<TResource>> m_ResourceLocator =
             RegisterContainerLocator<TResource>(
                 "Resource",
                 model =>
-                    model.m_Resource =
-                        model.m_Resource
+                    model.m_Resource.Container =
+                        model.m_Resource.Container
                         ??
-                        new PropertyContainer<TResource>("Resource"));
+                        new ValueContainer<TResource>("Resource", model));
         #endregion
+
+
+
+
+
+
+
+
 
 
 

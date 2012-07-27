@@ -36,9 +36,9 @@ namespace MVVM.Reactive
 
     public static class MVVMRxExtensions
     {
-        public static IObservable<EventTuple<PropertyContainer<TValue>, TValue>> GetValueChangeObservable<TValue>
+        public static IObservable<EventTuple<ValueContainer<TValue>, TValue>> GetValueChangeObservable<TValue>
             (
-                this PropertyContainer<TValue> source
+                this ValueContainer<TValue> source
 
             )
         {
@@ -53,8 +53,8 @@ namespace MVVM.Reactive
 
         }
 
-        public static IObservable<EventTuple<PropertyContainer<TValue>, ValueChangedEventArgs<TValue>>>
-            GetValueChangeEventArgObservable<TValue>(this PropertyContainer<TValue> source)
+        public static IObservable<EventTuple<ValueContainer<TValue>, ValueChangedEventArgs<TValue>>>
+            GetValueChangeEventArgObservable<TValue>(this ValueContainer<TValue> source)
         {
 
             var eventArgSeq = Observable.FromEvent<EventHandler<ValueChangedEventArgs<TValue>>, ValueChangedEventArgs<TValue>>(

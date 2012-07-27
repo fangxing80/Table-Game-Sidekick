@@ -11,7 +11,7 @@ namespace TableGameSidekick_Metro.Storages
 {
     public class Storage<T> : ViewModelBase<Storage<T>>, TableGameSidekick_Metro.Storages.IStorage<T>
     {
-        public Storage(string fileName, StorageFolder folder =null)
+        public Storage(string fileName, StorageFolder folder = null)
         {
             Folder = folder ?? Windows.Storage.ApplicationData.Current.LocalFolder;
             m_FileName = fileName;
@@ -24,22 +24,31 @@ namespace TableGameSidekick_Metro.Storages
 
 
 
-        public StorageFolder  Folder
+
+        public StorageFolder Folder
         {
-            get { return m_FolderContainerLocator(this).Value; }
-            set { m_FolderContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_Folder.Locate(this).Value; }
+            set { m_Folder.Locate(this).SetValueAndTryNotify(value); }
         }
-        #region Property StorageFolder  Folder Setup
-        protected PropertyContainer<StorageFolder > m_Folder;
-        protected static Func<object, PropertyContainer<StorageFolder >> m_FolderContainerLocator =
-            RegisterContainerLocator<StorageFolder >(
+        #region Property StorageFolder Folder Setup
+        protected Property<StorageFolder> m_Folder = new Property<StorageFolder>(m_FolderLocator);
+        static Func<ViewModelBase, ValueContainer<StorageFolder>> m_FolderLocator =
+            RegisterContainerLocator<StorageFolder>(
                 "Folder",
                 model =>
-                    model.m_Folder =
-                        model.m_Folder
+                    model.m_Folder.Container =
+                        model.m_Folder.Container
                         ??
-                        new PropertyContainer<StorageFolder >("Folder"));
+                        new ValueContainer<StorageFolder>("Folder", model));
         #endregion
+
+
+
+
+
+
+
+
 
 
 
@@ -140,20 +149,25 @@ namespace TableGameSidekick_Metro.Storages
 
         public T Value
         {
-            get { return m_ValueContainerLocator(this).Value; }
-            set { m_ValueContainerLocator(this).SetValueAndTryNotify(value); }
+            get { return m_Value.Locate(this).Value; }
+            set { m_Value.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property T Value Setup
-        protected PropertyContainer<T> m_Value;
-        protected static Func<object, PropertyContainer<T>> m_ValueContainerLocator =
+        protected Property<T> m_Value = new Property<T>(m_ValueLocator);
+        static Func<ViewModelBase, ValueContainer<T>> m_ValueLocator =
             RegisterContainerLocator<T>(
                 "Value",
                 model =>
-                    model.m_Value =
-                        model.m_Value
+                    model.m_Value.Container =
+                        model.m_Value.Container
                         ??
-                        new PropertyContainer<T>("Value"));
+                        new ValueContainer<T>("Value", model));
         #endregion
+
+
+
+
+
 
 
 
@@ -174,9 +188,10 @@ namespace TableGameSidekick_Metro.Storages
     }
 
 
-    public class CollectionStorage<T> : Storage<CollectionStorageTray<T>>,IStorage<IEnumerable<T>>
+    public class CollectionStorage<T> : Storage<CollectionStorageTray<T>>, IStorage<IEnumerable<T>>
     {
-        public CollectionStorage(string fileName, StorageFolder folder = null) :base (fileName,folder)
+        public CollectionStorage(string fileName, StorageFolder folder = null)
+            : base(fileName, folder)
         {
         }
 
@@ -201,11 +216,11 @@ namespace TableGameSidekick_Metro.Storages
         }
     }
 
-    [DataContract ]
+    [DataContract]
     public class CollectionStorageTray<T>
     {
         [DataMember]
         public IList<T> Items { get; set; }
     }
-     
+
 }
