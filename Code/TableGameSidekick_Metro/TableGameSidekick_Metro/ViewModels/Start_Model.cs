@@ -34,12 +34,12 @@ namespace TableGameSidekick_Metro.ViewModels
             ConfigCommands();
         }
 
-        public Start_Model(Storages.CollectionStorage<GameInfomation> gameInfoStorage)
+        public Start_Model(Storages.IStorage<IEnumerable<GameInfomation>> gameInfoStorage)
         {
             // TODO: Complete member initialization
             this.m_GameInfoStorage = gameInfoStorage;
             RefreshDataFromStorages();
-
+            ConfigCommands();
         }
 
 
@@ -127,7 +127,7 @@ namespace TableGameSidekick_Metro.ViewModels
         private CommandModel<ReactiveCommand, string> m_ContinueCommand
             = new ReactiveCommand(false)
             .CreateCommandModel("ContinueCommand");
-        private Storages.CollectionStorage<GameInfomation> m_GameInfoStorage;
+        private Storages.IStorage<IEnumerable<GameInfomation>> m_GameInfoStorage;
 
         public CommandModel<ReactiveCommand, string> ContinueCommand
         {

@@ -77,7 +77,7 @@ namespace MVVM.Reactive
             return eventArgSeq;
         }
 
-     
+
 
 
     }
@@ -113,8 +113,14 @@ namespace MVVM.Reactive
                 {
                     var ob = Observable.FromEventPattern<EventHandler<EventCommandEventArgs>, EventCommandEventArgs>
                 (
-                    eh => this.CommandExecute += eh,
-                    eh => this.CommandExecute -= eh
+                    eh =>
+                    {
+                        this.CommandExecute += eh;
+                    },
+                    eh =>
+                    {
+                        this.CommandExecute -= eh;
+                    }
                 );
 
                     return ob;
@@ -170,7 +176,7 @@ namespace MVVM.Reactive
 
     public class ReactiveAsyncCommand : ReactiveAsyncCommand<object>
     {
-        protected ReactiveAsyncCommand(ExeuteBehavior behavior)
+        public ReactiveAsyncCommand(ExeuteBehavior behavior)
             : base(behavior)
         {
 

@@ -32,6 +32,26 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
 
+        [DataMember]
+        public byte[] Image
+        {
+            get { return m_Image.Locate(this).Value; }
+            set { m_Image.Locate(this).SetValueAndTryNotify(value); }
+        }
+        #region Property byte[] Image Setup
+        protected Property<byte[]> m_Image = new Property<byte[]>(m_ImageLocator);
+        static Func<ViewModelBase, ValueContainer<byte[]>> m_ImageLocator =
+            RegisterContainerLocator<byte[]>(
+                "Image",
+                model =>
+                    model.m_Image.Container =
+                        model.m_Image.Container
+                        ??
+                        new ValueContainer<byte[]>("Image", model));
+        #endregion
+
+
+
         
 
 
@@ -91,26 +111,6 @@ namespace TableGameSidekick_Metro.DataEntity
         
 
         
-
-
-        [DataMember]
-        public Guid Id
-        {
-            get { return m_Id.Locate(this).Value; }
-            set { m_Id.Locate(this).SetValueAndTryNotify(value); }
-        }
-        #region Property Guid Id Setup
-        protected Property<Guid> m_Id = new Property<Guid>(m_IdLocator);
-        static Func<ViewModelBase, ValueContainer<Guid>> m_IdLocator =
-            RegisterContainerLocator<Guid>(
-                "Id",
-                model =>
-                    model.m_Id.Container =
-                        model.m_Id.Container
-                        ??
-                        new ValueContainer<Guid>("Id", model));
-        #endregion
-
 
 
         

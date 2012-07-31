@@ -62,7 +62,9 @@ namespace MVVM.ViewModels
     public abstract class ViewModelBase
         : IDisposable, INotifyPropertyChanged, IDataErrorInfo
     {
+        
 
+        public abstract IEnumerable<string> FieldNames { get; }
 
         public abstract object this[string colName] { get; set; }
 
@@ -423,6 +425,7 @@ namespace MVVM.ViewModels
             }
             set
             {
+
                 var lc = GetOrCreatePlainLocator(colName, this);
                 lc((TViewModel)this).Value = value;
             }
@@ -435,6 +438,7 @@ namespace MVVM.ViewModels
             {
                 var p = new ValueContainer<object>(colName, viewModel);
                 pf = _ => p;
+                _plainPropertyContainerGetters[colName] = pf;
             }
             return pf;
         }
@@ -444,8 +448,12 @@ namespace MVVM.ViewModels
             public static Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>> _propertyContainerGetters = new Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>>();
 
         }
-        protected static Dictionary<string, string> _names = new Dictionary<string, string>();
-        protected static Dictionary<string, Func<TViewModel, IPropertyContainer>> _plainPropertyContainerGetters = new Dictionary<string, Func<TViewModel, IPropertyContainer>>();
+
+
+
+        protected static SortedDictionary<string, Func<TViewModel, IPropertyContainer>>
+            _plainPropertyContainerGetters =
+            new SortedDictionary<string, Func<TViewModel, IPropertyContainer>>(StringComparer.CurrentCultureIgnoreCase);
         protected static String GetExpressionMemberName<TEntity, TProperty>(Expression<Func<TEntity, TProperty>> expression)
         {
             MemberExpression body = expression.Body as MemberExpression;
@@ -491,7 +499,7 @@ namespace MVVM.ViewModels
         protected static Func<ViewModelBase, ValueContainer<TProperty>> RegisterContainerLocator<TProperty>(string propertyName, Func<TViewModel, ValueContainer<TProperty>> getOrCreateLocatorMethod)
         {
 
-            _names[propertyName] = propertyName;
+            //_names[propertyName] = propertyName;
             TypeDic<TProperty>._propertyContainerGetters[propertyName] = getOrCreateLocatorMethod;
             _plainPropertyContainerGetters[propertyName] = (v) => getOrCreateLocatorMethod(v) as IPropertyContainer;
             return o => getOrCreateLocatorMethod((TViewModel)o);
@@ -549,6 +557,28 @@ namespace MVVM.ViewModels
 
 
 
+
+        public override IEnumerable<string> FieldNames
+        {
+            get { return _plainPropertyContainerGetters.Keys; }
+        }
+
+        public TViewModel Clone()
+        {
+            var x = (TViewModel)Activator.CreateInstance(typeof(TViewModel));
+            CopyTo(x);
+            return x;
+        }
+
+        public void CopyTo(TViewModel x)
+        {
+            foreach (var item in FieldNames)
+            {
+                x[item] = this[item];
+            }
+        }
+
+        
     }
 
 
@@ -589,14 +619,14 @@ namespace MVVM.ViewModels
             return new CommandModel<TCommand, TResource>(command, resource);
         }
 
-        public static CommandModel<TCommand,object> CreateCommandModel<TCommand>(this TCommand command, object resource = null)
+        public static CommandModel<TCommand, object> CreateCommandModel<TCommand>(this TCommand command, object resource = null)
         where TCommand : ICommand
         {
-            return new CommandModel<TCommand,object>(command, null);
+            return new CommandModel<TCommand, object>(command, null);
         }
 
-        public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, Object viewModel)          
-            where TCommand:ICommand
+        public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, Object viewModel)
+            where TCommand : ICommand
         {
             cmdModel.ConfigCommandCore
                 (
@@ -887,33 +917,33 @@ namespace MVVM.Commands
     {
         public Object Parameter { get; set; }
         public Object ViewModel { get; set; }
-        
-        public static EventCommandEventArgs Create(Object parameter,Object viewModel)
+
+        public static EventCommandEventArgs Create(Object parameter, Object viewModel)
         {
-         
-                return new EventCommandEventArgs { Parameter = parameter,  ViewModel=viewModel };
-            
+
+            return new EventCommandEventArgs { Parameter = parameter, ViewModel = viewModel };
+
         }
     }
 
     public static class EventCommandHelper
     {
         public static TCommand WithViewModel<TCommand>(this TCommand cmd, Object viewModel)
-            where TCommand:EventCommandBase 
+            where TCommand : EventCommandBase
         {
             cmd.ViewModel = viewModel;
             return cmd;
         }
-    
+
     }
-   public  interface ICommandWithViewModel:ICommand
+    public interface ICommandWithViewModel : ICommand
     {
-        Object  ViewModel { get; set; }
+        Object ViewModel { get; set; }
     }
     public abstract class EventCommandBase : ICommandWithViewModel
     {
-        public Object  ViewModel { get; set; }
-        
+        public Object ViewModel { get; set; }
+
         public event EventHandler<EventCommandEventArgs> CommandExecute;
         protected void OnCommandExecute(EventCommandEventArgs args)
         {
@@ -923,7 +953,7 @@ namespace MVVM.Commands
             }
         }
 
-        
+
 
         public abstract bool CanExecute(object parameter);
 
@@ -940,7 +970,7 @@ namespace MVVM.Commands
         {
             if (CanExecute(parameter))
             {
-                OnCommandExecute(EventCommandEventArgs.Create(parameter,ViewModel));
+                OnCommandExecute(EventCommandEventArgs.Create(parameter, ViewModel));
             }
         }
     }

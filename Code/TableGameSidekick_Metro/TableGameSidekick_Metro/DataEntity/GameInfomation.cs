@@ -32,7 +32,27 @@ namespace TableGameSidekick_Metro.DataEntity
         #endregion
 
 
+        [DataMember]
+        public String GameDescription
+        {
+            get { return m_GameDescription.Locate(this).Value; }
+            set { m_GameDescription.Locate(this).SetValueAndTryNotify(value); }
+        }
+        #region Property String GameDescription Setup
+        protected Property<String> m_GameDescription = new Property<String>(m_GameDescriptionLocator);
+        static Func<ViewModelBase, ValueContainer<String>> m_GameDescriptionLocator =
+            RegisterContainerLocator<String>(
+                "GameDescription",
+                model =>
+                    model.m_GameDescription.Container =
+                        model.m_GameDescription.Container
+                        ??
+                        new ValueContainer<String>("GameDescription", model));
+        #endregion
 
+
+
+        
 
 
 
