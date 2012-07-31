@@ -13,6 +13,8 @@ using System.Collections.Concurrent;
 using MVVM.ViewModels;
 using System.Dynamic;
 
+using MVVM.Commands;
+
 #if NETFX_CORE
 // Summary:
 //     Provides the functionality to offer custom error information that a user
@@ -587,24 +589,40 @@ namespace MVVM.ViewModels
             return new CommandModel<TCommand, TResource>(command, resource);
         }
 
-        public static CommandModel<TCommand> CreateCommandModel<TCommand>(this TCommand command, object resource = null)
+        public static CommandModel<TCommand,object> CreateCommandModel<TCommand>(this TCommand command, object resource = null)
         where TCommand : ICommand
         {
-            return new CommandModel<TCommand>(command, null);
+            return new CommandModel<TCommand,object>(command, null);
         }
 
+        public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, Object viewModel)          
+            where TCommand:ICommand
+        {
+            cmdModel.ConfigCommandCore
+                (
+                    cmd =>
+                    {
+                        var cmd2 = cmd as ICommandWithViewModel;
+                        if (cmd2 != null)
+                        {
+                            cmd2.ViewModel = viewModel;
+                        }
 
+                    }
+                );
+            return cmdModel;
+        }
     }
 
 
-    public class CommandModel<TCommand> : CommandModel<TCommand, Object>
-             where TCommand : ICommand
-    {
-        public CommandModel(TCommand commandCore, object resource)
-            : base(commandCore, resource)
-        { }
+    //public class CommandModel<TCommand> : CommandModel<TCommand, Object>
+    //         where TCommand : ICommand
+    //{
+    //    public CommandModel(TCommand commandCore, object resource)
+    //        : base(commandCore, resource)
+    //    { }
 
-    }
+    //}
     public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>, ICommand
         where TCommand : ICommand
     {
@@ -659,11 +677,6 @@ namespace MVVM.ViewModels
                         ??
                         new ValueContainer<bool>("LastCanExecuteValue", model));
         #endregion
-
-
-
-        
-
 
 
 
@@ -873,23 +886,34 @@ namespace MVVM.Commands
     public class EventCommandEventArgs : EventArgs
     {
         public Object Parameter { get; set; }
-        public static readonly EventCommandEventArgs Empty = new EventCommandEventArgs();
-        public static EventCommandEventArgs Create(Object parameter)
+        public Object ViewModel { get; set; }
+        
+        public static EventCommandEventArgs Create(Object parameter,Object viewModel)
         {
-            if (parameter == null)
-            {
-                return Empty;
-            }
-            else
-            {
-                return new EventCommandEventArgs { Parameter = parameter };
-            }
+         
+                return new EventCommandEventArgs { Parameter = parameter,  ViewModel=viewModel };
+            
         }
     }
-    public abstract class EventCommandBase : ICommand
+
+    public static class EventCommandHelper
     {
-
-
+        public static TCommand WithViewModel<TCommand>(this TCommand cmd, Object viewModel)
+            where TCommand:EventCommandBase 
+        {
+            cmd.ViewModel = viewModel;
+            return cmd;
+        }
+    
+    }
+   public  interface ICommandWithViewModel:ICommand
+    {
+        Object  ViewModel { get; set; }
+    }
+    public abstract class EventCommandBase : ICommandWithViewModel
+    {
+        public Object  ViewModel { get; set; }
+        
         public event EventHandler<EventCommandEventArgs> CommandExecute;
         protected void OnCommandExecute(EventCommandEventArgs args)
         {
@@ -899,6 +923,7 @@ namespace MVVM.Commands
             }
         }
 
+        
 
         public abstract bool CanExecute(object parameter);
 
@@ -915,7 +940,7 @@ namespace MVVM.Commands
         {
             if (CanExecute(parameter))
             {
-                OnCommandExecute(EventCommandEventArgs.Create(parameter));
+                OnCommandExecute(EventCommandEventArgs.Create(parameter,ViewModel));
             }
         }
     }

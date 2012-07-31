@@ -32,12 +32,12 @@ namespace TableGameSidekick_Metro
         public static class DefaultViewModelKeys
         {
             public static readonly string DefaultTypedViewModelName = "Model";
-            
+
         }
         public static class NavigateParameterKeys
         {
             public static readonly string ViewInitActionName = "InitAction";
-        
+
         }
 
         public static class Views
@@ -48,11 +48,11 @@ namespace TableGameSidekick_Metro
             public static readonly string GamePlay = typeof(GamePlay).FullName;
 
 
-                public static Dictionary<string, Action<LayoutAwarePage>>
-                SaveStateActions =new Dictionary<string,Action<LayoutAwarePage>> 
-                {
-                
-                };
+            public static Dictionary<string, Action<LayoutAwarePage>>
+            SaveStateActions = new Dictionary<string, Action<LayoutAwarePage>>
+            {
+
+            };
 
             public static Dictionary<string, Action<LayoutAwarePage>>
                 PageInitActions = new Dictionary<string, Action<LayoutAwarePage>> 
@@ -62,19 +62,21 @@ namespace TableGameSidekick_Metro
                         (async p=>
                         {
                             var st=Storages.Instance.GameInfomationsStorage;
-                            await Storages.Instance.GameInfomationsStorage.Refresh();
-                            var vm = new Start_Model()
-                            {
-                                Games = new System.Collections.ObjectModel.ObservableCollection<GameInfomation> (
-                                        st.Value
-                                            .OrderByDescending (g=>g.LastEditTime )
-                                    )
-                            };
+
+                            var vm = new Start_Model(st);
+                      
                             p.DefaultViewModel = vm;
                     
                         })
                     },
-                
+                    {
+                        NewGame , 
+                        (async p=>
+                        {
+                            
+                    
+                        })
+                    },
                     {
                         GamePlay , 
                         (async p=>
@@ -129,14 +131,14 @@ namespace TableGameSidekick_Metro
                 .Subscribe(
                     ep =>
                     {
-                        Action<LayoutAwarePage> initAction=null;
+                        Action<LayoutAwarePage> initAction = null;
                         if (Views.PageInitActions.TryGetValue(ep.EventArgs.SourceViewId, out initAction))
                         {
                             ep.EventArgs.ParameterDictionary[NavigateParameterKeys.ViewInitActionName] = initAction;
                         }
 
 
-                        MainFrame.Navigate(Type.GetType(ep.EventArgs.TargetViewId),ep.EventArgs.ParameterDictionary);
+                        MainFrame.Navigate(Type.GetType(ep.EventArgs.TargetViewId), ep.EventArgs.ParameterDictionary);
                     }
                 );
 
@@ -170,7 +172,7 @@ namespace TableGameSidekick_Metro
 
             // Create a Frame to act navigation context and navigate to the first page
             MainFrame = new Frame();
-            if (!MainFrame.Navigate(typeof(Start)))
+            if (!MainFrame.Navigate(typeof(Start), App.Views.PageInitActions[typeof(Start).FullName]))
             {
                 throw new Exception("Failed to create initial page");
             }

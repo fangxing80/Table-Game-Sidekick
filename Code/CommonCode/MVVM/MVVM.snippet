@@ -25,7 +25,7 @@
         </Literal>
       </Declarations>
       <Code Language="csharp">
-<![CDATA[        public $type$ $property$
+        <![CDATA[        public $type$ $property$
         {
             get { return m_$property$.Locate(this).Value; }
             set { m_$property$.Locate(this).SetValueAndTryNotify(value); }
@@ -48,7 +48,7 @@ $end$]]>
       </Code>
     </Snippet>
   </CodeSnippet>
-  
+
   <!--View Model Class-->
   <CodeSnippet Format="1.0.0">
     <Header>
@@ -127,7 +127,7 @@ $end$]]>
             = new $commandType$().CreateCommandModel(default($resourceType$));
         public CommandModel<$commandType$, $resourceType$> $commandName$
         {
-            get { return m_$commandName$; }
+            get { return m_$commandName$.WithViewModel(this); }
             protected set { m_$commandName$ = value; }
         }        
 $end$]]>
@@ -135,7 +135,7 @@ $end$]]>
     </Snippet>
   </CodeSnippet>
 
-  <!--View Model Command Without Resource-->
+  <!--View Model Command Without Resource--><!--
   <CodeSnippet Format="1.0.0">
     <Header>
       <Title>View Model Command Without Resources</Title>
@@ -172,7 +172,7 @@ $end$]]>
 $end$]]>
       </Code>
     </Snippet>
-  </CodeSnippet>
+  </CodeSnippet>-->
 
 
 

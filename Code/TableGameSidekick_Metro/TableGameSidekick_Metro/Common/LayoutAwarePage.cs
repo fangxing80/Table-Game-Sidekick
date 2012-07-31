@@ -330,6 +330,12 @@ namespace TableGameSidekick_Metro.Common
         {
             base.OnNavigatedTo(e);
             // Returning to a cached page through navigation shouldn't trigger state loading
+
+            if (e.Parameter is Action<LayoutAwarePage>)
+            {
+                (e.Parameter as Action<LayoutAwarePage>)(this);
+            }
+
             if (this._pageKey != null) return;
 
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);

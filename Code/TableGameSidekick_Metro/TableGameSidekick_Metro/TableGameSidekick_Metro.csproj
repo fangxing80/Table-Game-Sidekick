@@ -145,6 +145,7 @@
     <Compile Include="Storages\IStorage.cs" />
     <Compile Include="Storages\Storage.cs" />
     <Compile Include="ViewModels\GamePlay_Model.cs" />
+    <Compile Include="ViewModels\NewGame_Model.cs" />
     <Compile Include="ViewModels\Start_Model.cs" />
   </ItemGroup>
   <ItemGroup>

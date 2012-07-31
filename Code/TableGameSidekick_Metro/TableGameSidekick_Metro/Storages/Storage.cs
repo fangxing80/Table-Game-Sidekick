@@ -200,10 +200,18 @@ namespace TableGameSidekick_Metro.Storages
         {
             get
             {
+                if (base.Value ==null)
+                {
+                    base.Value = new CollectionStorageTray<T>();
+                }
                 return base.Value.Items;
             }
             set
             {
+                if (base.Value==null)
+                {
+                    base.Value = new CollectionStorageTray<T>();
+                }
                 if (value is IList<T>)
                 {
                     base.Value.Items = value as IList<T>;
@@ -219,8 +227,15 @@ namespace TableGameSidekick_Metro.Storages
     [DataContract]
     public class CollectionStorageTray<T>
     {
+
         [DataMember]
-        public IList<T> Items { get; set; }
+        public IList<T> m_Items;
+
+        public IList<T> Items
+        {
+            get { return m_Items= m_Items?? new List<T>(); }
+            set { m_Items = value; }
+        }
     }
 
 }

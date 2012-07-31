@@ -34,28 +34,42 @@ namespace TableGameSidekick_Metro.ViewModels
             ConfigCommands();
         }
 
+        public Start_Model(Storages.CollectionStorage<GameInfomation> gameInfoStorage)
+        {
+            // TODO: Complete member initialization
+            this.m_GameInfoStorage = gameInfoStorage;
+            RefreshDataFromStorages();
+
+        }
+
+
+        private async void RefreshDataFromStorages()
+        {
+            await m_GameInfoStorage.Refresh();
+            this.Games = new ObservableCollection<GameInfomation>(
+                m_GameInfoStorage.Value.OrderByDescending(g => g.LastEditTime));
+
+        }
 
 
 
 
 
-
-
-        public ObservableCollection<GameInfomation>  Games
+        public ObservableCollection<GameInfomation> Games
         {
             get { return m_Games.Locate(this).Value; }
             set { m_Games.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property ObservableCollection<GameInfomation>  Games Setup
-        protected Property<ObservableCollection<GameInfomation> > m_Games = new Property<ObservableCollection<GameInfomation> >(m_GamesLocator);
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<GameInfomation> >> m_GamesLocator =
-            RegisterContainerLocator<ObservableCollection<GameInfomation> >(
+        protected Property<ObservableCollection<GameInfomation>> m_Games = new Property<ObservableCollection<GameInfomation>>(m_GamesLocator);
+        static Func<ViewModelBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GamesLocator =
+            RegisterContainerLocator<ObservableCollection<GameInfomation>>(
                 "Games",
                 model =>
                     model.m_Games.Container =
                         model.m_Games.Container
                         ??
-                        new ValueContainer<ObservableCollection<GameInfomation> >("Games", model));
+                        new ValueContainer<ObservableCollection<GameInfomation>>("Games", model));
         #endregion
 
 
@@ -85,11 +99,11 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
-        
 
 
 
-        
+
+
 
 
 
@@ -104,7 +118,7 @@ namespace TableGameSidekick_Metro.ViewModels
         {
             get
             {
-                return m_NewGameCommand;
+                return m_NewGameCommand.WithViewModel(this);
             }
 
         }
@@ -113,6 +127,7 @@ namespace TableGameSidekick_Metro.ViewModels
         private CommandModel<ReactiveCommand, string> m_ContinueCommand
             = new ReactiveCommand(false)
             .CreateCommandModel("ContinueCommand");
+        private Storages.CollectionStorage<GameInfomation> m_GameInfoStorage;
 
         public CommandModel<ReactiveCommand, string> ContinueCommand
         {
@@ -177,7 +192,7 @@ namespace TableGameSidekick_Metro.ViewModels
                             )
                             .RegisterDispose(this);
 
-                });
+                    });
 
 
         }
