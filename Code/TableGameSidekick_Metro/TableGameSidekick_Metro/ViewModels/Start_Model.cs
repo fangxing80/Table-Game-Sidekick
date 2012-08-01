@@ -153,7 +153,7 @@ namespace TableGameSidekick_Metro.ViewModels
                                     this,
                                     new NavigateCommandEventArgs()
                                     {
-                                        SourceViewId = App.Views.MainPage,
+                                        SourceViewId = App.Views.Start,
                                         TargetViewId = App.Views.NewGame
                                     })
                             )
@@ -181,7 +181,7 @@ namespace TableGameSidekick_Metro.ViewModels
                                     this,
                                     new NavigateCommandEventArgs()
                                     {
-                                        SourceViewId = App.Views.MainPage,
+                                        SourceViewId = App.Views.Start,
                                         TargetViewId = App.Views.GamePlay,
                                         ParameterDictionary = new Dictionary<string, Object>() 
                                         {

@@ -29,95 +29,9 @@ namespace TableGameSidekick_Metro
     sealed partial class App : Application
     {
         public static Frame MainFrame;
-        public static class DefaultViewModelKeys
-        {
-            public static readonly string DefaultTypedViewModelName = "Model";
-
-        }
-        public static class NavigateParameterKeys
-        {
-            public static readonly string ViewInitActionName = "InitAction";
-
-        }
-
-        public static class Views
-        {
-            public static readonly string MainPage = typeof(MainPage).FullName;
-            public static readonly string Start = typeof(Start).FullName;
-            public static readonly string NewGame = typeof(NewGame).FullName;
-            public static readonly string GamePlay = typeof(GamePlay).FullName;
 
 
-            public static Dictionary<string, Action<LayoutAwarePage>>
-            SaveStateActions = new Dictionary<string, Action<LayoutAwarePage>>
-            {
 
-            };
-
-            public static Dictionary<string, Action<LayoutAwarePage>>
-                PageInitActions = new Dictionary<string, Action<LayoutAwarePage>> 
-                { 
-                    {
-                        Start , 
-                        (async p=>
-                        {
-                            var st=Storages.Instance.GameInfomationsStorage;
-
-                            var vm = new Start_Model(st);
-                      
-                            p.DefaultViewModel = vm;
-                    
-                        })
-                    },
-                    {
-                        NewGame , 
-                        (async p=>
-                        {
-                            
-                    
-                        })
-                    },
-                    {
-                        GamePlay , 
-                        (async p=>
-                        {
-                            
-                    
-                        })
-                    },
-                };
-            //static Dictionary<string, Lazy<Page>> viewCache
-            //    = new Dictionary<string, Lazy<Page>> 
-            //    { 
-            //        {MainPage , new Lazy<Page>( ()=>new MainPage ()) },
-            //        {Start,new Lazy<Page>( ()=>new Start () { ViewModel = new ViewModels.Start_Model ()}   )  },
-            //        {NewGame ,new Lazy<Page>( ()=>new NewGame  ()) },
-            //        { GamePlay ,new Lazy<Page>( ()=>new GamePlay ())},
-            //    };
-
-
-            //public static Page GetViewFromCache(string name)
-            //{
-            //    return viewCache[name].Value;
-            //}
-
-            public static class MainPage_NavigateParameters
-            {
-
-                public static readonly string GameInfomation_ChosenGame = "GameInfomation_ChosenGame";
-                public static readonly string bool_IsNewGame = "bool_IsNewGame";
-
-            }
-        }
-        public class Storages
-        {
-            public static Storages Instance = new Storages();
-
-            public CollectionStorage<GameInfomation> GameInfomationsStorage = new CollectionStorage<GameInfomation>("GameInfomations.json");
-            public Dictionary<Guid, IStorage<GameData>> GameDatasStorages = new Dictionary<Guid, IStorage<GameData>>();
-            public CollectionStorage<PlayerInfomation> PlayerInfomationStorage = new CollectionStorage<PlayerInfomation>("PlayerInfomations.json");
-
-        }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -132,7 +46,7 @@ namespace TableGameSidekick_Metro
                     ep =>
                     {
                         Action<LayoutAwarePage> initAction = null;
-                        if (Views.PageInitActions.TryGetValue(ep.EventArgs.SourceViewId, out initAction))
+                        if (Views.PageInitActions.TryGetValue(ep.EventArgs.TargetViewId, out initAction))
                         {
                             ep.EventArgs.ParameterDictionary[NavigateParameterKeys.ViewInitActionName] = initAction;
                         }
@@ -171,7 +85,7 @@ namespace TableGameSidekick_Metro
             }
 
             // Create a Frame to act navigation context and navigate to the first page
-            MainFrame = new Frame();
+            MainFrame = MainFrame ?? new Frame();
             if (!MainFrame.Navigate(typeof(Start), App.Views.PageInitActions[typeof(Start).FullName]))
             {
                 throw new Exception("Failed to create initial page");
@@ -194,6 +108,18 @@ namespace TableGameSidekick_Metro
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+            if (args.Kind == ActivationKind.ContactPicker)
+            {
+                var page = new SelectPlayers();
+                Window.Current.Content = page;
+                //page.OnNavigatedTo(null);
+                Window.Current.Activate();
+            }
         }
     }
 }
