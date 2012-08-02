@@ -9,14 +9,14 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Reactive.Linq;
-using MVVM.ViewModels;
+using MVVMSidekick.ViewModels;
 using System.Windows.Input;
 using System.Reactive.Subjects;
 using System.Reactive;
-using MVVM.Commands;
+using MVVMSidekick.Commands;
 
 
-namespace MVVM.Reactive
+namespace MVVMSidekick.Reactive
 {
 
 
@@ -68,7 +68,7 @@ namespace MVVM.Reactive
 
 
         public static IObservable<EventPattern<TEventArgs>>
-            GetRouterEventObservable<TEventArgs>(this MVVM.EventRouter.EventRouter.EventObject<TEventArgs> source)
+            GetRouterEventObservable<TEventArgs>(this MVVMSidekick.EventRouter.EventRouter.EventObject<TEventArgs> source)
                    where TEventArgs : EventArgs
         {
             var eventArgSeq = Observable.FromEventPattern<EventHandler<TEventArgs>, TEventArgs>(

@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MVVM\IView.cs" />
     <Compile Include="MVVM\MVVM.cs" />
     <Compile Include="MVVM\MVVMRxExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

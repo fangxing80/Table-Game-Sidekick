@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MVVM.EventRouter;
+using MVVMSidekick.EventRouter;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using MVVM.Reactive;
+using MVVMSidekick.Reactive;
 using TableGameSidekick_Metro.Storages;
 using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.Common;

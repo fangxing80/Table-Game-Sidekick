@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MVVM.ViewModels;
+using MVVMSidekick.ViewModels;
 using TableGameSidekick_Metro.DataEntity;
-using MVVM.Reactive;
+using MVVMSidekick.Reactive;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Collections.ObjectModel;
@@ -177,26 +177,25 @@ namespace TableGameSidekick_Metro.ViewModels
                              contactPicker.CommitButtonText = "Select";
                              var contacts = await contactPicker.PickMultipleContactsAsync();
 
-                             vm.NewGameInfomation.Players =vm.NewGameInfomation.Players?? new ObservableCollection<PlayerInfomation>();
+                             vm.NewGameInfomation.Players = vm.NewGameInfomation.Players ?? new ObservableCollection<PlayerInfomation>();
 
-                             if (contacts.Count > 0)
+
+
+                             foreach (var c in contacts)
                              {
-                                 
-                                 foreach (var c in contacts)
-                                 {
-                                     var rnds = await c.GetThumbnailAsync();
-                                     var stream = rnds.AsStreamForRead(); ;
-                                     var bts = new byte[rnds.Size];
-                                     await stream.ReadAsync(bts, 0, bts.Length);
-                                     vm.NewGameInfomation.Players.Add(new PlayerInfomation()
-                                         {
-                                             Name = c.Name,
-                                             IsContact = true,
-                                             Image =bts,
-                                             
-                                         });
-                                 }
+                                 var rnds = await c.GetThumbnailAsync();
+                                 var stream = rnds.AsStreamForRead(); ;
+                                 var bts = new byte[rnds.Size];
+                                 await stream.ReadAsync(bts, 0, bts.Length);
+                                 vm.NewGameInfomation.Players.Add(new PlayerInfomation()
+                                     {
+                                         Name = c.Name,
+                                         IsContact = true,
+                                         Image = bts,
+
+                                     });
                              }
+
                          }
                         );
 

@@ -100,9 +100,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\CommonCode\MVVM\IView.cs">
-      <Link>MVVM\IView.cs</Link>
-    </Compile>
     <Compile Include="..\..\CommonCode\MVVM\MVVM.cs">
       <Link>MVVM\MVVM.cs</Link>
     </Compile>

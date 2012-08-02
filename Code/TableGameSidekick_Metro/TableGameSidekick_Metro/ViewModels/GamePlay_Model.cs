@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MVVM.ViewModels;
+using MVVMSidekick.ViewModels;
 using TableGameSidekick_Metro.DataEntity;
 namespace TableGameSidekick_Metro.ViewModels
 {

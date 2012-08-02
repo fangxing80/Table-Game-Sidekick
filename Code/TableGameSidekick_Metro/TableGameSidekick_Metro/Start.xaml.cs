@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MVVM.Views;
 using TableGameSidekick_Metro.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

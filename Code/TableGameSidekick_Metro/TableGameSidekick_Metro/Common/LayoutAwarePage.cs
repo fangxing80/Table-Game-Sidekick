@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using MVVM.ViewModels;
+using MVVMSidekick.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using MVVM.ViewModels;
+using MVVMSidekick.ViewModels;
 using Windows.Storage;
 namespace TableGameSidekick_Metro.Storages
 {
