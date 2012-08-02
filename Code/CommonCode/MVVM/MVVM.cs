@@ -62,7 +62,7 @@ namespace MVVM.ViewModels
     public abstract class ViewModelBase
         : IDisposable, INotifyPropertyChanged, IDataErrorInfo
     {
-        
+
 
         public abstract IEnumerable<string> FieldNames { get; }
 
@@ -454,11 +454,6 @@ namespace MVVM.ViewModels
         protected static SortedDictionary<string, Func<TViewModel, IPropertyContainer>>
             _plainPropertyContainerGetters =
             new SortedDictionary<string, Func<TViewModel, IPropertyContainer>>(StringComparer.CurrentCultureIgnoreCase);
-        protected static String GetExpressionMemberName<TEntity, TProperty>(Expression<Func<TEntity, TProperty>> expression)
-        {
-            MemberExpression body = expression.Body as MemberExpression;
-            return (body.Member is PropertyInfo) ? body.Member.Name : string.Empty;
-        }
 
 
 
@@ -544,8 +539,8 @@ namespace MVVM.ViewModels
         }
         public ValueContainer<TProperty> GetPropertyContainer<TProperty>(Expression<Func<TViewModel, TProperty>> expression)
         {
-
-            var propName = GetExpressionMemberName(expression);
+            MemberExpression body = expression.Body as MemberExpression;
+            var propName = (body.Member is PropertyInfo) ? body.Member.Name : string.Empty;
             return GetPropertyContainer<TProperty>(propName);
 
         }
@@ -578,7 +573,7 @@ namespace MVVM.ViewModels
             }
         }
 
-        
+
     }
 
 
