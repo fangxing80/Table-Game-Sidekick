@@ -14,45 +14,71 @@ namespace TableGameSidekick_Metro.DataEntity
     {
         [DataMember]
 
-        public Byte[] Image
+
+        public byte[] Image
         {
-            get { return m_Image.Locate(this).Value; }
-            set { m_Image.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_ImageLocator(this).Value; }
+            set { m_ImageLocator(this).SetValueAndTryNotify(value); }
         }
-        #region Property Byte[] Image Setup
-        protected Property<Byte[]> m_Image = new Property<Byte[]>(m_ImageLocator);
-        static Func<ViewModelBase, ValueContainer<Byte[]>> m_ImageLocator =
-            RegisterContainerLocator<Byte[]>(
+
+
+        #region Property byte[] Image Setup
+
+        protected Property<byte[]> m_Image =
+          new Property<byte[]> { LocatorFunc = m_ImageLocator };
+        static Func<ViewModelBase, ValueContainer<byte[]>> m_ImageLocator =
+            RegisterContainerLocator<byte[]>(
                 "Image",
                 model =>
-                    model.m_Image.Container =
+                {
+                    model.m_Image =
+                        model.m_Image
+                        ??
+                        new Property<byte[]> { LocatorFunc = m_ImageLocator };
+                    return model.m_Image.Container =
                         model.m_Image.Container
                         ??
-                        new ValueContainer<Byte[]>("Image", model));
+                        new ValueContainer<byte[]>("Image", model);
+                });
+
         #endregion
 
 
+
         [DataMember]
-        public String GameDescription
+        
+        public string GameDescription
         {
-            get { return m_GameDescription.Locate(this).Value; }
-            set { m_GameDescription.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_GameDescriptionLocator(this).Value; }
+            set { m_GameDescriptionLocator(this).SetValueAndTryNotify(value); }
         }
-        #region Property String GameDescription Setup
-        protected Property<String> m_GameDescription = new Property<String>(m_GameDescriptionLocator);
-        static Func<ViewModelBase, ValueContainer<String>> m_GameDescriptionLocator =
-            RegisterContainerLocator<String>(
+
+
+        #region Property string GameDescription Setup
+
+        protected Property<string> m_GameDescription =
+          new Property<string> { LocatorFunc = m_GameDescriptionLocator };
+        static Func<ViewModelBase, ValueContainer<string>> m_GameDescriptionLocator =
+            RegisterContainerLocator<string>(
                 "GameDescription",
                 model =>
-                    model.m_GameDescription.Container =
+                {
+                    model.m_GameDescription =
+                        model.m_GameDescription
+                        ??
+                        new Property<string> { LocatorFunc = m_GameDescriptionLocator };
+                    return model.m_GameDescription.Container =
                         model.m_GameDescription.Container
                         ??
-                        new ValueContainer<String>("GameDescription", model));
+                        new ValueContainer<string>("GameDescription", model);
+                });
+
         #endregion
 
 
 
-        
+
+
 
 
 
@@ -61,21 +87,33 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
         [DataMember]
+
         public DateTime StartTime
         {
-            get { return m_StartTime.Locate(this).Value; }
-            set { m_StartTime.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_StartTimeLocator(this).Value; }
+            set { m_StartTimeLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property DateTime StartTime Setup
-        protected Property<DateTime> m_StartTime = new Property<DateTime>(m_StartTimeLocator);
+
+        protected Property<DateTime> m_StartTime =
+          new Property<DateTime> { LocatorFunc = m_StartTimeLocator };
         static Func<ViewModelBase, ValueContainer<DateTime>> m_StartTimeLocator =
             RegisterContainerLocator<DateTime>(
                 "StartTime",
                 model =>
-                    model.m_StartTime.Container =
+                {
+                    model.m_StartTime =
+                        model.m_StartTime
+                        ??
+                        new Property<DateTime> { LocatorFunc = m_StartTimeLocator };
+                    return model.m_StartTime.Container =
                         model.m_StartTime.Container
                         ??
-                        new ValueContainer<DateTime>("StartTime", model));
+                        new ValueContainer<DateTime>("StartTime", model);
+                });
+
         #endregion
 
 
@@ -86,23 +124,34 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
 
-
         [DataMember]
+
         public DateTime LastEditTime
         {
-            get { return m_LastEditTime.Locate(this).Value; }
-            set { m_LastEditTime.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_LastEditTimeLocator(this).Value; }
+            set { m_LastEditTimeLocator(this).SetValueAndTryNotify(value); }
         }
-        #region Property DateTime  LastEditTime Setup
-        protected Property<DateTime> m_LastEditTime = new Property<DateTime>(m_LastEditTimeLocator);
+
+
+        #region Property DateTime LastEditTime Setup
+
+        protected Property<DateTime> m_LastEditTime =
+          new Property<DateTime> { LocatorFunc = m_LastEditTimeLocator };
         static Func<ViewModelBase, ValueContainer<DateTime>> m_LastEditTimeLocator =
             RegisterContainerLocator<DateTime>(
                 "LastEditTime",
                 model =>
-                    model.m_LastEditTime.Container =
+                {
+                    model.m_LastEditTime =
+                        model.m_LastEditTime
+                        ??
+                        new Property<DateTime> { LocatorFunc = m_LastEditTimeLocator };
+                    return model.m_LastEditTime.Container =
                         model.m_LastEditTime.Container
                         ??
-                        new ValueContainer<DateTime>("LastEditTime", model));
+                        new ValueContainer<DateTime>("LastEditTime", model);
+                });
+
         #endregion
 
 
@@ -115,27 +164,41 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
 
+
         [DataMember]
+
         public ObservableCollection<PlayerInfomation> Players
         {
-            get { return m_Players.Locate(this).Value; }
-            set { m_Players.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_PlayersLocator(this).Value; }
+            set { m_PlayersLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property ObservableCollection<PlayerInfomation> Players Setup
-        protected Property<ObservableCollection<PlayerInfomation>> m_Players = new Property<ObservableCollection<PlayerInfomation>>(m_PlayersLocator);
+
+        protected Property<ObservableCollection<PlayerInfomation>> m_Players =
+          new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_PlayersLocator };
         static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_PlayersLocator =
             RegisterContainerLocator<ObservableCollection<PlayerInfomation>>(
                 "Players",
                 model =>
-                    model.m_Players.Container =
+                {
+                    model.m_Players =
+                        model.m_Players
+                        ??
+                        new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_PlayersLocator };
+                    return model.m_Players.Container =
                         model.m_Players.Container
                         ??
-                        new ValueContainer<ObservableCollection<PlayerInfomation>>("Players", model));
+                        new ValueContainer<ObservableCollection<PlayerInfomation>>("Players", model);
+                });
+
         #endregion
 
 
 
-        
+
+
 
 
 
@@ -143,26 +206,38 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
         [DataMember]
+        
         public Guid Id
         {
-            get { return m_Id.Locate(this).Value; }
-            set { m_Id.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_IdLocator(this).Value; }
+            set { m_IdLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property Guid Id Setup
-        protected Property<Guid> m_Id = new Property<Guid>(m_IdLocator);
+
+        protected Property<Guid> m_Id =
+          new Property<Guid> { LocatorFunc = m_IdLocator };
         static Func<ViewModelBase, ValueContainer<Guid>> m_IdLocator =
             RegisterContainerLocator<Guid>(
                 "Id",
                 model =>
-                    model.m_Id.Container =
+                {
+                    model.m_Id =
+                        model.m_Id
+                        ??
+                        new Property<Guid> { LocatorFunc = m_IdLocator };
+                    return model.m_Id.Container =
                         model.m_Id.Container
                         ??
-                        new ValueContainer<Guid>("Id", model));
+                        new ValueContainer<Guid>("Id", model);
+                });
+
         #endregion
 
 
 
-        
+
 
 
 
@@ -170,51 +245,73 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
         [DataMember]
+        
         public GameType GameType
         {
-            get { return m_GameType.Locate(this).Value; }
-            set { m_GameType.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_GameTypeLocator(this).Value; }
+            set { m_GameTypeLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property GameType GameType Setup
-        protected Property<GameType> m_GameType = new Property<GameType>(m_GameTypeLocator);
+
+        protected Property<GameType> m_GameType =
+          new Property<GameType> { LocatorFunc = m_GameTypeLocator };
         static Func<ViewModelBase, ValueContainer<GameType>> m_GameTypeLocator =
             RegisterContainerLocator<GameType>(
                 "GameType",
                 model =>
-                    model.m_GameType.Container =
+                {
+                    model.m_GameType =
+                        model.m_GameType
+                        ??
+                        new Property<GameType> { LocatorFunc = m_GameTypeLocator };
+                    return model.m_GameType.Container =
                         model.m_GameType.Container
                         ??
-                        new ValueContainer<GameType>("GameType", model));
+                        new ValueContainer<GameType>("GameType", model);
+                });
+
         #endregion
 
 
-
-        
 
 
 
 
         [DataMember]
+
         public string AdvanceGameKey
         {
-            get { return m_AdvanceGameKey.Locate(this).Value; }
-            set { m_AdvanceGameKey.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_AdvanceGameKeyLocator(this).Value; }
+            set { m_AdvanceGameKeyLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property string AdvanceGameKey Setup
-        protected Property<string> m_AdvanceGameKey = new Property<string>(m_AdvanceGameKeyLocator);
+
+        protected Property<string> m_AdvanceGameKey =
+          new Property<string> { LocatorFunc = m_AdvanceGameKeyLocator };
         static Func<ViewModelBase, ValueContainer<string>> m_AdvanceGameKeyLocator =
             RegisterContainerLocator<string>(
                 "AdvanceGameKey",
                 model =>
-                    model.m_AdvanceGameKey.Container =
+                {
+                    model.m_AdvanceGameKey =
+                        model.m_AdvanceGameKey
+                        ??
+                        new Property<string> { LocatorFunc = m_AdvanceGameKeyLocator };
+                    return model.m_AdvanceGameKey.Container =
                         model.m_AdvanceGameKey.Container
                         ??
-                        new ValueContainer<string>("AdvanceGameKey", model));
+                        new ValueContainer<string>("AdvanceGameKey", model);
+                });
+
         #endregion
 
 
 
-        
+
 
 
 

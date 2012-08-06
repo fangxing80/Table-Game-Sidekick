@@ -13,71 +13,68 @@ namespace TableGameSidekick_Metro.DataEntity
     {
 
         [DataMember]
+        
         public string Name
         {
-            get { return m_Name.Locate(this).Value; }
-            set { m_Name.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_NameLocator(this).Value; }
+            set { m_NameLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property string Name Setup
-        protected Property<string> m_Name = new Property<string>(m_NameLocator);
+
+        protected Property<string> m_Name =
+          new Property<string> { LocatorFunc = m_NameLocator };
         static Func<ViewModelBase, ValueContainer<string>> m_NameLocator =
             RegisterContainerLocator<string>(
                 "Name",
                 model =>
-                    model.m_Name.Container =
+                {
+                    model.m_Name =
+                        model.m_Name
+                        ??
+                        new Property<string> { LocatorFunc = m_NameLocator };
+                    return model.m_Name.Container =
                         model.m_Name.Container
                         ??
-                        new ValueContainer<string>("Name", model));
+                        new ValueContainer<string>("Name", model);
+                });
+
         #endregion
 
 
 
-        [DataMember]
-        public byte[] Image
+        [DataMember]        
+        public Byte[] Image
         {
-            get { return m_Image.Locate(this).Value; }
-            set { m_Image.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_ImageLocator(this).Value; }
+            set { m_ImageLocator(this).SetValueAndTryNotify(value); }
         }
-        #region Property byte[] Image Setup
-        protected Property<byte[]> m_Image = new Property<byte[]>(m_ImageLocator);
-        static Func<ViewModelBase, ValueContainer<byte[]>> m_ImageLocator =
-            RegisterContainerLocator<byte[]>(
+
+
+        #region Property Byte[] Image Setup
+
+        protected Property<Byte[]> m_Image =
+          new Property<Byte[]> { LocatorFunc = m_ImageLocator };
+        static Func<ViewModelBase, ValueContainer<Byte[]>> m_ImageLocator =
+            RegisterContainerLocator<Byte[]>(
                 "Image",
                 model =>
-                    model.m_Image.Container =
+                {
+                    model.m_Image =
+                        model.m_Image
+                        ??
+                        new Property<Byte[]> { LocatorFunc = m_ImageLocator };
+                    return model.m_Image.Container =
                         model.m_Image.Container
                         ??
-                        new ValueContainer<byte[]>("Image", model));
+                        new ValueContainer<Byte[]>("Image", model);
+                });
+
         #endregion
 
 
 
-        
-
-
-
-        
-
-
-        [DataMember]
-        public bool IsContact
-        {
-            get { return m_IsContact.Locate(this).Value; }
-            set { m_IsContact.Locate(this).SetValueAndTryNotify(value); }
-        }
-        #region Property bool IsContact Setup
-        protected Property<bool> m_IsContact = new Property<bool>(m_IsContactLocator);
-        static Func<ViewModelBase, ValueContainer<bool>> m_IsContactLocator =
-            RegisterContainerLocator<bool>(
-                "IsContact",
-                model =>
-                    model.m_IsContact.Container =
-                        model.m_IsContact.Container
-                        ??
-                        new ValueContainer<bool>("IsContact", model));
-        #endregion
-
-
 
         
 
@@ -88,23 +85,13 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
 
-        [DataMember]
-        public string ContactKeyOrResourceKey
-        {
-            get { return m_ContactKeyOrResourceKey.Locate(this).Value; }
-            set { m_ContactKeyOrResourceKey.Locate(this).SetValueAndTryNotify(value); }
-        }
-        #region Property string ContactKeyOrResourceKey Setup
-        protected Property<string> m_ContactKeyOrResourceKey = new Property<string>(m_ContactKeyOrResourceKeyLocator);
-        static Func<ViewModelBase, ValueContainer<string>> m_ContactKeyOrResourceKeyLocator =
-            RegisterContainerLocator<string>(
-                "ContactKeyOrResourceKey",
-                model =>
-                    model.m_ContactKeyOrResourceKey.Container =
-                        model.m_ContactKeyOrResourceKey.Container
-                        ??
-                        new ValueContainer<string>("ContactKeyOrResourceKey", model));
-        #endregion
+        
+
+
+
+        
+
+
 
 
 

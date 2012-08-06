@@ -23,8 +23,25 @@ using Windows.Storage;
 
 namespace TableGameSidekick_Metro
 {
-   sealed partial class App 
+    sealed partial class App
     {
+        public static string[] PresavedPics = new string[]
+       {
+            "ms-appx:///Assets/Icons/Armour.png",
+            "ms-appx:///Assets/Icons/BusinessMan.png",
+            "ms-appx:///Assets/Icons/Car.png",
+            "ms-appx:///Assets/Icons/Countingmachine.png",
+            "ms-appx:///Assets/Icons/Globe.png",
+            "ms-appx:///Assets/Icons/Gold.png",
+            "ms-appx:///Assets/Icons/Key.png",
+            "ms-appx:///Assets/Icons/MedicalBag.png",
+            "ms-appx:///Assets/Icons/Negative.png",
+            "ms-appx:///Assets/Icons/Positive.png",
+            "ms-appx:///Assets/Icons/Pound.png",
+            "ms-appx:///Assets/Icons/Recycle.png",
+            "ms-appx:///Assets/Icons/StockIndexUp.png",
+            "ms-appx:///Assets/Icons/Wheelchair.png",
+       };
         public static class DefaultViewModelKeys
         {
             public static readonly string DefaultTypedViewModelName = "Model";
@@ -118,22 +135,20 @@ namespace TableGameSidekick_Metro
             public Storages()
             {
 
-                Test();
+              
             }
 
 
-            async void Test()
-            {
-
-            }
             public static Storages Instance = new Storages();
 
             public CollectionStorage<GameInfomation> GameInfomationsStorage = new CollectionStorage<GameInfomation>("GameInfomations.json");
             public Dictionary<Guid, IStorage<GameData>> GameDatasStorages = new Dictionary<Guid, IStorage<GameData>>();
             public CollectionStorage<PlayerInfomation> PlayerInfomationStorage = new CollectionStorage<PlayerInfomation>("PlayerInfomations.json");
             public List<StorageFile> PlayerImages;
-              
+
 
         }
+
+
     }
 }

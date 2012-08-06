@@ -156,18 +156,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Icons\Armour.png" />
-    <Content Include="Assets\Icons\Business Man.png" />
+    <Content Include="Assets\Icons\BusinessMan.png" />
     <Content Include="Assets\Icons\Car.png" />
-    <Content Include="Assets\Icons\Counting machine.png" />
+    <Content Include="Assets\Icons\Countingmachine.png" />
     <Content Include="Assets\Icons\Globe.png" />
     <Content Include="Assets\Icons\Gold.png" />
     <Content Include="Assets\Icons\Key.png" />
-    <Content Include="Assets\Icons\Medical Bag.png" />
+    <Content Include="Assets\Icons\MedicalBag.png" />
     <Content Include="Assets\Icons\Negative.png" />
     <Content Include="Assets\Icons\Positive.png" />
     <Content Include="Assets\Icons\Pound.png" />
     <Content Include="Assets\Icons\Recycle.png" />
-    <Content Include="Assets\Icons\Stock Index Up.png" />
+    <Content Include="Assets\Icons\StockIndexUp.png" />
     <Content Include="Assets\Icons\Wheelchair.png" />
     <Content Include="Assets\Logo.png" />
     <Content Include="Assets\SmallLogo.png" />

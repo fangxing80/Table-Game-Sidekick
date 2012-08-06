@@ -24,27 +24,31 @@
           <Default>MyProperty</Default>
         </Literal>
       </Declarations>
-      <Code Language="csharp">
-        <![CDATA[        public $type$ $property$
+      <Code Language="csharp"><![CDATA[        public $type$ $property$
         {
-            get { return m_$property$.Locate(this).Value; }
-            set { m_$property$.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_$property$Locator(this).Value; }
+            set { m_$property$Locator(this).SetValueAndTryNotify(value); }
         }        
+        
         #region Property $type$ $property$ Setup        
-        protected Property<$type$> m_$property$ = new Property<$type$>( m_$property$Locator);
+        protected Property<$type$> m_$property$ =
+          new Property<$type$>{ LocatorFunc = m_$property$Locator};
         static Func<ViewModelBase,ValueContainer<$type$>> m_$property$Locator=
             RegisterContainerLocator<$type$>(
                 "$property$",
                 model =>
-                    model.m_$property$.Container = 
+                {
+                    model.m_$property$=
+                        model.m_$property$ 
+                        ?? 
+                        new Property<$type$>{LocatorFunc = m_$property$Locator}; 
+                    return model.m_$property$.Container = 
                         model.m_$property$.Container
                         ??
-                        new ValueContainer<$type$>("$property$",model));          
+                        new ValueContainer<$type$>("$property$",model);
+                });          
         #endregion
-        
-              
-        
-$end$]]>
+]]>
       </Code>
     </Snippet>
   </CodeSnippet>

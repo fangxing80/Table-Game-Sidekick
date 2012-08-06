@@ -20,11 +20,230 @@ namespace TableGameSidekick_Metro.ViewModels
     public class SelectPlayers_Model : ViewModelBase<SelectPlayers_Model>
     {
 
-        public SelectPlayers_Model(ContactPickerUI contactPickerUI, IStorage<IEnumerable<PlayerInfomation>> players, IEnumerable<StorageFile> imageFiles)
+        public SelectPlayers_Model()
+        {
+            m_PlayersStorage = new Storage<IEnumerable<PlayerInfomation>>();
+            m_PlayersStorage.Value = new PlayerInfomation[]
+            {
+                //new  PlayerInfomation { GetFieldNames() }
+            
+            };
+            this.PresavedImagePaths = new ObservableCollection<string>(App.PresavedPics);
+        }
+
+
+        public SelectPlayers_Model(ContactPickerUI contactPickerUI, IStorage<IEnumerable<PlayerInfomation>> playersStorage, IEnumerable<string> imageFiles)
         {
             m_ContactPickerUI = contactPickerUI;
+            m_PlayersStorage = playersStorage;
+            this.PresavedImagePaths = new ObservableCollection<string>(imageFiles);
+            ConfigModel();
+
         }
+
         ContactPickerUI m_ContactPickerUI;
+        IStorage<IEnumerable<PlayerInfomation>> m_PlayersStorage;
+
+
+
+        async void ConfigModel()
+        {
+
+            m_NewPlayerPicResourcePath.Locate(this).GetValueChangeObservable()
+                //.Throttle(TimeSpan.FromSeconds(1))
+             .Subscribe
+             (
+                 async v =>
+                 {
+                     await RefreshNewUserPicFromResource(v.EventArgs, this);
+
+                 }
+
+             )
+             .RegisterDispose(this);
+
+
+            await m_PlayersStorage.Refresh();
+            this.SavedPlayers.Clear();
+
+            foreach (var item in m_PlayersStorage.Value)
+            {
+                SavedPlayers.Add(item);
+                await Task.Delay(100);
+            }
+
+
+
+
+
+        }
+
+        private static async Task RefreshNewUserPicFromResource(string source, SelectPlayers_Model model)
+        {
+            if (source == null)
+            {
+                return;
+            }
+            var fl = await StorageFile.GetFileFromApplicationUriAsync(new Uri(source));
+            var bi = await fl.GetBasicPropertiesAsync();
+            using (var stream = await fl.OpenSequentialReadAsync())
+            {
+                byte[] bts = new byte[bi.Size];
+                await stream.AsStreamForRead().ReadAsync(bts, 0, bts.Length);
+                model.NewPlayer = model.NewPlayer ?? new PlayerInfomation();
+                model.NewPlayer.Image = bts;
+            }
+            //return v;
+        }
+
+
+        CommandModel<ReactiveCommand, String> m_CreateNewUserCommand
+            = new ReactiveCommand(true).CreateCommandModel("AddNew")
+            .ConfigCommandCore(
+                core =>
+                {
+                    core.Subscribe
+                        (
+                          (async (e) =>
+                          {
+                              var vm = (SelectPlayers_Model)core.ViewModel;
+                              await RefreshNewUserPicFromResource(
+                                    vm.NewPlayerPicResourcePath,
+                                    vm);
+
+                              var newu = vm.NewPlayer;
+                              vm.NewPlayer = new PlayerInfomation();
+                              vm.SavedPlayers.Add(newu);
+                              vm.m_PlayersStorage.Value = vm.SavedPlayers.ToArray();
+                              await vm.m_PlayersStorage.Save();
+
+                          }
+                          )
+                        );
+
+                }
+
+            );
+        public CommandModel<ReactiveCommand, String> CreateNewUserCommand
+        {
+            get { return m_CreateNewUserCommand.WithViewModel(this); }
+            protected set { m_CreateNewUserCommand = value; }
+        }
+
+
+        public ObservableCollection<PlayerInfomation> SavedPlayers
+        {
+            get { return m_SavedPlayersLocator(this).Value; }
+            set { m_SavedPlayersLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property ObservableCollection<PlayerInfomation> SavedPlayers Setup
+        protected Property<ObservableCollection<PlayerInfomation>> m_SavedPlayers = new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_SavedPlayersLocator };
+        static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_SavedPlayersLocator =
+            RegisterContainerLocator<ObservableCollection<PlayerInfomation>>(
+                "SavedPlayers",
+                model =>
+                {
+                    model.m_SavedPlayers = model.m_SavedPlayers ?? new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_SavedPlayersLocator };
+                    return model.m_SavedPlayers.Container =
+                        model.m_SavedPlayers.Container
+                        ??
+                        new ValueContainer<ObservableCollection<PlayerInfomation>>("SavedPlayers",new  ObservableCollection<PlayerInfomation>(), model);
+                }
+            );
+        #endregion
+
+
+
+
+
+
+        public ObservableCollection<string> PresavedImagePaths
+        {
+            get { return m_PresavedImagePathsLocator(this).Value; }
+            set { m_PresavedImagePathsLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property ObservableCollection<string> PresavedImagePaths Setup
+        protected Property<ObservableCollection<string>> m_PresavedImagePaths = new Property<ObservableCollection<string>> { LocatorFunc = m_PresavedImagePathsLocator };
+        static Func<ViewModelBase, ValueContainer<ObservableCollection<string>>> m_PresavedImagePathsLocator =
+            RegisterContainerLocator<ObservableCollection<string>>(
+                "PresavedImagePaths",
+                model =>
+                {
+                    model.m_PresavedImagePaths = model.m_PresavedImagePaths ?? new Property<ObservableCollection<string>> { LocatorFunc = m_PresavedImagePathsLocator };
+                    return model.m_PresavedImagePaths.Container =
+                        model.m_PresavedImagePaths.Container
+                        ??
+                        new ValueContainer<ObservableCollection<string>>("PresavedImagePaths", model);
+                }
+            );
+        #endregion
+
+
+
+
+
+
+
+        public PlayerInfomation NewPlayer
+        {
+            get { return m_NewPlayerLocator(this).Value; }
+            set { m_NewPlayerLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property PlayerInfomation NewPlayer Setup
+        protected Property<PlayerInfomation> m_NewPlayer = new Property<PlayerInfomation> { LocatorFunc = m_NewPlayerLocator };
+        static Func<ViewModelBase, ValueContainer<PlayerInfomation>> m_NewPlayerLocator =
+            RegisterContainerLocator<PlayerInfomation>(
+                "NewPlayer",
+                model =>
+                {
+                    model.m_NewPlayer = model.m_NewPlayer ?? new Property<PlayerInfomation> { LocatorFunc = m_NewPlayerLocator };
+                    return model.m_NewPlayer.Container =
+                        model.m_NewPlayer.Container
+                        ??
+                        new ValueContainer<PlayerInfomation>("NewPlayer", new PlayerInfomation(), model);
+                }
+            );
+        #endregion
+
+
+
+
+
+
+        public string NewPlayerPicResourcePath
+        {
+            get { return m_NewPlayerPicResourcePathLocator(this).Value; }
+            set { m_NewPlayerPicResourcePathLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property string NewPlayerPicResourcePath Setup
+        protected Property<string> m_NewPlayerPicResourcePath = new Property<string> { LocatorFunc = m_NewPlayerPicResourcePathLocator };
+        static Func<ViewModelBase, ValueContainer<string>> m_NewPlayerPicResourcePathLocator =
+            RegisterContainerLocator<string>(
+                "NewPlayerPicResourcePath",
+                model =>
+                {
+                    model.m_NewPlayerPicResourcePath = model.m_NewPlayerPicResourcePath ?? new Property<string> { LocatorFunc = m_NewPlayerPicResourcePathLocator };
+                    return model.m_NewPlayerPicResourcePath.Container =
+                        model.m_NewPlayerPicResourcePath.Container
+                        ??
+                        new ValueContainer<string>("NewPlayerPicResourcePath", model);
+                }
+            );
+        #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

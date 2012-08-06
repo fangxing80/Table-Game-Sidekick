@@ -11,10 +11,10 @@ namespace TableGameSidekick_Metro.Storages
 {
     public class Storage<T> : ViewModelBase<Storage<T>>, TableGameSidekick_Metro.Storages.IStorage<T>
     {
-        public Storage(string fileName, StorageFolder folder = null)
+        public Storage(string fileName = null, StorageFolder folder = null)
         {
             Folder = folder ?? Windows.Storage.ApplicationData.Current.LocalFolder;
-            m_FileName = fileName;
+            m_FileName = fileName ?? typeof(T).FullName;
             m_Ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(T));
 
         }
@@ -24,23 +24,34 @@ namespace TableGameSidekick_Metro.Storages
 
 
 
-
         public StorageFolder Folder
         {
-            get { return m_Folder.Locate(this).Value; }
-            set { m_Folder.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_FolderLocator(this).Value; }
+            set { m_FolderLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property StorageFolder Folder Setup
-        protected Property<StorageFolder> m_Folder = new Property<StorageFolder>(m_FolderLocator);
+
+        protected Property<StorageFolder> m_Folder =
+          new Property<StorageFolder> { LocatorFunc = m_FolderLocator };
         static Func<ViewModelBase, ValueContainer<StorageFolder>> m_FolderLocator =
             RegisterContainerLocator<StorageFolder>(
                 "Folder",
                 model =>
-                    model.m_Folder.Container =
+                {
+                    model.m_Folder =
+                        model.m_Folder
+                        ??
+                        new Property<StorageFolder> { LocatorFunc = m_FolderLocator };
+                    return model.m_Folder.Container =
                         model.m_Folder.Container
                         ??
-                        new ValueContainer<StorageFolder>("Folder", model));
+                        new ValueContainer<StorageFolder>("Folder", model);
+                });
+
         #endregion
+
 
 
 
@@ -147,22 +158,35 @@ namespace TableGameSidekick_Metro.Storages
 
 
 
+
         public T Value
         {
-            get { return m_Value.Locate(this).Value; }
-            set { m_Value.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_ValueLocator(this).Value; }
+            set { m_ValueLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property T Value Setup
-        protected Property<T> m_Value = new Property<T>(m_ValueLocator);
+
+        protected Property<T> m_Value =
+          new Property<T> { LocatorFunc = m_ValueLocator };
         static Func<ViewModelBase, ValueContainer<T>> m_ValueLocator =
             RegisterContainerLocator<T>(
                 "Value",
                 model =>
-                    model.m_Value.Container =
+                {
+                    model.m_Value =
+                        model.m_Value
+                        ??
+                        new Property<T> { LocatorFunc = m_ValueLocator };
+                    return model.m_Value.Container =
                         model.m_Value.Container
                         ??
-                        new ValueContainer<T>("Value", model));
+                        new ValueContainer<T>("Value", model);
+                });
+
         #endregion
+
 
 
 
@@ -200,7 +224,7 @@ namespace TableGameSidekick_Metro.Storages
         {
             get
             {
-                if (base.Value ==null)
+                if (base.Value == null)
                 {
                     base.Value = new CollectionStorageTray<T>();
                 }
@@ -208,7 +232,7 @@ namespace TableGameSidekick_Metro.Storages
             }
             set
             {
-                if (base.Value==null)
+                if (base.Value == null)
                 {
                     base.Value = new CollectionStorageTray<T>();
                 }
@@ -233,7 +257,7 @@ namespace TableGameSidekick_Metro.Storages
 
         public IList<T> Items
         {
-            get { return m_Items= m_Items?? new List<T>(); }
+            get { return m_Items = m_Items ?? new List<T>(); }
             set { m_Items = value; }
         }
     }

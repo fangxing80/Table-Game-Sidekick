@@ -13,26 +13,39 @@ namespace TableGameSidekick_Metro.DataEntity
     {
 
         [DataMember]
+
         public Guid Id
         {
-            get { return m_Id.Locate(this).Value; }
-            set { m_Id.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_IdLocator(this).Value; }
+            set { m_IdLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property Guid Id Setup
-        protected Property<Guid> m_Id = new Property<Guid>(m_IdLocator);
+
+        protected Property<Guid> m_Id =
+          new Property<Guid> { LocatorFunc = m_IdLocator };
         static Func<ViewModelBase, ValueContainer<Guid>> m_IdLocator =
             RegisterContainerLocator<Guid>(
                 "Id",
                 model =>
-                    model.m_Id.Container =
+                {
+                    model.m_Id =
+                        model.m_Id
+                        ??
+                        new Property<Guid> { LocatorFunc = m_IdLocator };
+                    return model.m_Id.Container =
                         model.m_Id.Container
                         ??
-                        new ValueContainer<Guid>("Id", model));
+                        new ValueContainer<Guid>("Id", model);
+                });
+
         #endregion
 
 
 
-        
+
+
 
 
 
@@ -40,38 +53,50 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
         [DataMember]
-              public GameInfomation GameInfomation
+        
+        public GameInfomation GameInfomation
         {
-            get { return m_GameInfomation.Locate(this).Value; }
-            set { m_GameInfomation.Locate(this).SetValueAndTryNotify(value); }
-        }        
-        #region Property GameInfomation GameInfomation Setup        
-        protected Property<GameInfomation> m_GameInfomation = new Property<GameInfomation>( m_GameInfomationLocator);
-        static Func<ViewModelBase,ValueContainer<GameInfomation>> m_GameInfomationLocator=
+            get { return m_MyPropertyLocator(this).Value; }
+            set { m_MyPropertyLocator(this).SetValueAndTryNotify(value); }
+        }
+
+
+        #region Property GameInfomation MyProperty Setup
+
+        protected Property<GameInfomation> m_MyProperty =
+          new Property<GameInfomation> { LocatorFunc = m_MyPropertyLocator };
+        static Func<ViewModelBase, ValueContainer<GameInfomation>> m_MyPropertyLocator =
             RegisterContainerLocator<GameInfomation>(
-                "GameInfomation",
+                "MyProperty",
                 model =>
-                    model.m_GameInfomation.Container = 
-                        model.m_GameInfomation.Container
+                {
+                    model.m_MyProperty =
+                        model.m_MyProperty
                         ??
-                        new ValueContainer<GameInfomation>("GameInfomation",model));          
+                        new Property<GameInfomation> { LocatorFunc = m_MyPropertyLocator };
+                    return model.m_MyProperty.Container =
+                        model.m_MyProperty.Container
+                        ??
+                        new ValueContainer<GameInfomation>("MyProperty", model);
+                });
+
         #endregion
-        
-              
-        
-
-        
-              
-        
 
 
 
 
-        
 
 
 
 
-        
+
+
+
+
+
+
+
+
+
     }
 }

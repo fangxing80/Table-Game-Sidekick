@@ -55,21 +55,33 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
+        
         public ObservableCollection<GameInfomation> Games
         {
-            get { return m_Games.Locate(this).Value; }
-            set { m_Games.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_GamesLocator(this).Value; }
+            set { m_GamesLocator(this).SetValueAndTryNotify(value); }
         }
-        #region Property ObservableCollection<GameInfomation>  Games Setup
-        protected Property<ObservableCollection<GameInfomation>> m_Games = new Property<ObservableCollection<GameInfomation>>(m_GamesLocator);
+
+
+        #region Property ObservableCollection<GameInfomation> Games Setup
+
+        protected Property<ObservableCollection<GameInfomation>> m_Games =
+          new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GamesLocator };
         static Func<ViewModelBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GamesLocator =
             RegisterContainerLocator<ObservableCollection<GameInfomation>>(
                 "Games",
                 model =>
-                    model.m_Games.Container =
+                {
+                    model.m_Games =
+                        model.m_Games
+                        ??
+                        new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GamesLocator };
+                    return model.m_Games.Container =
                         model.m_Games.Container
                         ??
-                        new ValueContainer<ObservableCollection<GameInfomation>>("Games", model));
+                        new ValueContainer<ObservableCollection<GameInfomation>>("Games", model);
+                });
+
         #endregion
 
 
@@ -80,23 +92,34 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
+        
         public GameInfomation SelectedGame
         {
-            get { return m_SelectedGame.Locate(this).Value; }
-            set { m_SelectedGame.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_SelectedGameLocator(this).Value; }
+            set { m_SelectedGameLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property GameInfomation SelectedGame Setup
-        protected Property<GameInfomation> m_SelectedGame = new Property<GameInfomation>(m_SelectedGameLocator);
+
+        protected Property<GameInfomation> m_SelectedGame =
+          new Property<GameInfomation> { LocatorFunc = m_SelectedGameLocator };
         static Func<ViewModelBase, ValueContainer<GameInfomation>> m_SelectedGameLocator =
             RegisterContainerLocator<GameInfomation>(
                 "SelectedGame",
                 model =>
-                    model.m_SelectedGame.Container =
+                {
+                    model.m_SelectedGame =
+                        model.m_SelectedGame
+                        ??
+                        new Property<GameInfomation> { LocatorFunc = m_SelectedGameLocator };
+                    return model.m_SelectedGame.Container =
                         model.m_SelectedGame.Container
                         ??
-                        new ValueContainer<GameInfomation>("SelectedGame", model));
-        #endregion
+                        new ValueContainer<GameInfomation>("SelectedGame", model);
+                });
 
+        #endregion
 
 
 

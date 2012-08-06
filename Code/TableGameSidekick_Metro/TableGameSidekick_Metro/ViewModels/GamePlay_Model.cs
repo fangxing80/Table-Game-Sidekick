@@ -16,22 +16,33 @@ namespace TableGameSidekick_Metro.ViewModels
 
         }
 
-
+        
         public GameInfomation CurrentGameInfomation
         {
-            get { return m_CurrentGameInfomation.Locate(this).Value; }
-            set { m_CurrentGameInfomation.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_CurrentGameInfomationLocator(this).Value; }
+            set { m_CurrentGameInfomationLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property GameInfomation CurrentGameInfomation Setup
-        protected Property<GameInfomation> m_CurrentGameInfomation = new Property<GameInfomation>(m_CurrentGameInfomationLocator);
+
+        protected Property<GameInfomation> m_CurrentGameInfomation =
+          new Property<GameInfomation> { LocatorFunc = m_CurrentGameInfomationLocator };
         static Func<ViewModelBase, ValueContainer<GameInfomation>> m_CurrentGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
                 "CurrentGameInfomation",
                 model =>
-                    model.m_CurrentGameInfomation.Container =
+                {
+                    model.m_CurrentGameInfomation =
+                        model.m_CurrentGameInfomation
+                        ??
+                        new Property<GameInfomation> { LocatorFunc = m_CurrentGameInfomationLocator };
+                    return model.m_CurrentGameInfomation.Container =
                         model.m_CurrentGameInfomation.Container
                         ??
-                        new ValueContainer<GameInfomation>("CurrentGameInfomation", model));
+                        new ValueContainer<GameInfomation>("CurrentGameInfomation", model);
+                });
+
         #endregion
 
 

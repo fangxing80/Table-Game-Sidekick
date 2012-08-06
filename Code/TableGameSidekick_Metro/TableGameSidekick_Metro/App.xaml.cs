@@ -117,7 +117,8 @@ namespace TableGameSidekick_Metro
             {
                 var page = new SelectPlayers();
                 Window.Current.Content = page;
-                //page.OnNavigatedTo(null);
+                var vm = new SelectPlayers_Model(((ContactPickerActivatedEventArgs)args).ContactPickerUI, Storages.Instance.PlayerInfomationStorage, PresavedPics);
+                page.DefaultViewModel = vm;
                 Window.Current.Activate();
             }
         }

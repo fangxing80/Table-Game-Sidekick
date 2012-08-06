@@ -9,8 +9,12 @@
     xmlns:common="using:TableGameSidekick_Metro.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-
+    mc:Ignorable="d"
+    xmlns:vm="using:TableGameSidekick_Metro.ViewModels"
+    >
+    <common:LayoutAwarePage.DefaultViewModel>
+        <vm:SelectPlayers_Model></vm:SelectPlayers_Model>
+    </common:LayoutAwarePage.DefaultViewModel>
     <Page.Resources>
 
         <!--
@@ -25,6 +29,18 @@
 
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
         <x:String x:Key="AppName">选择创建玩家</x:String>
+        <DataTemplate x:Key="presavedPics">
+            <Grid Margin="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Image Source="{Binding}" Width="96" Height="96"/>
+
+
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <!--
@@ -44,7 +60,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
+
             <TextBlock x:Name="pageTitle" Text="{StaticResource AppName}" Grid.Column="1" Style="{StaticResource PageHeaderTextStyle}"/>
         </Grid>
 
@@ -53,15 +69,14 @@
             x:Name="itemGridView"
             AutomationProperties.AutomationId="ItemGridView"
             AutomationProperties.Name="Grouped Items"
-            Grid.Row="1"
-            Margin="0,-3,0,0"
+            Margin="0,137,815,0"
             Padding="116,0,40,46"
-            ItemsSource="{Binding Source={StaticResource groupedItemsViewSource}}"
-            ItemTemplate="{StaticResource Standard250x250ItemTemplate}">
+            ItemsSource="{Binding DefaultViewModel.SavedPlayers, ElementName=pageRoot}"
+            ItemTemplate="{StaticResource Standard250x250ItemTemplate}" Grid.RowSpan="2">
 
             <GridView.ItemsPanel>
-                <ItemsPanelTemplate>                        
-                    <VirtualizingStackPanel Orientation="Horizontal"/>
+                <ItemsPanelTemplate>
+                    <WrapGrid />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.GroupStyle>
@@ -96,7 +111,7 @@
             Padding="10,0,0,60"
             ItemsSource="{Binding Source={StaticResource groupedItemsViewSource}}"
             ItemTemplate="{StaticResource Standard80ItemTemplate}">
-<Image Source="Assets/Icons/Car.png"></Image>
+            <Image Source="Assets/Icons/Car.png"></Image>
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
@@ -112,6 +127,9 @@
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>
+        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="585" Margin="615,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="188" ItemsSource="{Binding DefaultViewModel.PresavedImagePaths, ElementName=pageRoot}" ItemTemplate="{StaticResource presavedPics}" SelectedItem="{Binding DefaultViewModel.NewPlayerPicResourcePath, ElementName=pageRoot, Mode=TwoWay}"/>
+        <Image HorizontalAlignment="Left" Height="256" Margin="869,74,0,0" Grid.Row="1" VerticalAlignment="Top" Width="256" Source="{Binding SelectedItem, ElementName=listBox}"/>
+        <Button Content="{Binding DefaultViewModel.CreateNewUserCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="855,301,0,0" Grid.Row="1" VerticalAlignment="Top" Height="65" Width="148" Command="{Binding DefaultViewModel.CreateNewUserCommand, ElementName=pageRoot, Mode=OneWay}"/>
 
         <VisualStateManager.VisualStateGroups>
 

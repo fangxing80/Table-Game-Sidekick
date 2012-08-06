@@ -76,20 +76,30 @@ namespace TableGameSidekick_Metro.ViewModels
         /// </summary>
         public ObservableCollection<GameInfomation> GameInfomationPrototypes
         {
-            get { return m_GameInfomationPrototypes.Locate(this).Value; }
-            set { m_GameInfomationPrototypes.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_GameInfomationPrototypesLocator(this).Value; }
+            set { m_GameInfomationPrototypesLocator(this).SetValueAndTryNotify(value); }
         }
-        #region Property ObservableCollection<GameInfomation> GameInfomationPrototype Setup
-        protected Property<ObservableCollection<GameInfomation>> m_GameInfomationPrototypes = new Property<ObservableCollection<GameInfomation>>(m_GameInfomationPrototypeLocator);
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GameInfomationPrototypeLocator =
+        #region Property ObservableCollection<GameInfomation> GameInfomationPrototypes Setup
+        protected Property<ObservableCollection<GameInfomation>> m_GameInfomationPrototypes =
+            new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GameInfomationPrototypesLocator };
+        static Func<ViewModelBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GameInfomationPrototypesLocator =
             RegisterContainerLocator<ObservableCollection<GameInfomation>>(
-                "GameInfomationPrototype",
+                "GameInfomationPrototypes",
                 model =>
-                    model.m_GameInfomationPrototypes.Container =
+                {
+                    model.m_GameInfomationPrototypes =
+                        model.m_GameInfomationPrototypes
+                        ??
+                        new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GameInfomationPrototypesLocator };
+                    return model.m_GameInfomationPrototypes.Container =
                         model.m_GameInfomationPrototypes.Container
                         ??
-                        new ValueContainer<ObservableCollection<GameInfomation>>("GameInfomationPrototype", new ObservableCollection<GameInfomation>(), model));
+                        new ValueContainer<ObservableCollection<GameInfomation>>("GameInfomationPrototypes", model);
+                }
+            );
         #endregion
+
+
 
 
 
@@ -102,15 +112,22 @@ namespace TableGameSidekick_Metro.ViewModels
             set { m_SelectedPrototypeGameInfomation.Locate(this).SetValueAndTryNotify(value); }
         }
         #region Property GameInfomation SelectedPrototypeGameInfomation Setup
-        protected Property<GameInfomation> m_SelectedPrototypeGameInfomation = new Property<GameInfomation>(m_SelectedPrototypeGameInfomationLocator);
+        protected Property<GameInfomation> m_SelectedPrototypeGameInfomation = new Property<GameInfomation> { LocatorFunc = m_SelectedPrototypeGameInfomationLocator };
         static Func<ViewModelBase, ValueContainer<GameInfomation>> m_SelectedPrototypeGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
                 "SelectedPrototypeGameInfomation",
                 model =>
-                    model.m_SelectedPrototypeGameInfomation.Container =
-                        model.m_SelectedPrototypeGameInfomation.Container
+                {
+                    model.m_SelectedPrototypeGameInfomation =
+                        model.m_SelectedPrototypeGameInfomation 
                         ??
-                        new ValueContainer<GameInfomation>("SelectedPrototypeGameInfomation", new GameInfomation() { Id = Guid.NewGuid() }, model));
+                        new Property<GameInfomation> { LocatorFunc = m_SelectedPrototypeGameInfomationLocator };
+                    return model.m_SelectedPrototypeGameInfomation.Container =
+                         model.m_SelectedPrototypeGameInfomation.Container
+                         ??
+                         new ValueContainer<GameInfomation>("SelectedPrototypeGameInfomation", new GameInfomation() { Id = Guid.NewGuid() }, model);
+
+                });
         #endregion
 
 
@@ -122,23 +139,37 @@ namespace TableGameSidekick_Metro.ViewModels
         /// <summary>
         /// 最终产生GameInfomation
         /// </summary>
-
+        
         public GameInfomation NewGameInfomation
         {
-            get { return m_NewGameInfomation.Locate(this).Value; }
-            set { m_NewGameInfomation.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_NewGameInfomationLocator(this).Value; }
+            set { m_NewGameInfomationLocator(this).SetValueAndTryNotify(value); }
         }
+
+
         #region Property GameInfomation NewGameInfomation Setup
-        protected Property<GameInfomation> m_NewGameInfomation = new Property<GameInfomation>(m_NewGameInfomationLocator);
+
+        protected Property<GameInfomation> m_NewGameInfomation =
+          new Property<GameInfomation> { LocatorFunc = m_NewGameInfomationLocator };
         static Func<ViewModelBase, ValueContainer<GameInfomation>> m_NewGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
                 "NewGameInfomation",
                 model =>
-                    model.m_NewGameInfomation.Container =
+                {
+                    model.m_NewGameInfomation =
+                        model.m_NewGameInfomation
+                        ??
+                        new Property<GameInfomation> { LocatorFunc = m_NewGameInfomationLocator };
+                    return model.m_NewGameInfomation.Container =
                         model.m_NewGameInfomation.Container
                         ??
-                        new ValueContainer<GameInfomation>("NewGameInfomation", new GameInfomation(), model));
+                        new ValueContainer<GameInfomation>("NewGameInfomation",new  GameInfomation (), model);
+                });
+
         #endregion
+
+
+
 
 
 
@@ -190,9 +221,7 @@ namespace TableGameSidekick_Metro.ViewModels
                                  vm.NewGameInfomation.Players.Add(new PlayerInfomation()
                                      {
                                          Name = c.Name,
-                                         IsContact = true,
                                          Image = bts,
-
                                      });
                              }
 

@@ -183,9 +183,9 @@ namespace MVVMSidekick
         }
         public class Property<TProperty>
         {
-            public Property(Func<ViewModelBase, ValueContainer<TProperty>> locatorFunc)
+            public Property()
             {
-                m_LocatorFunc = locatorFunc;
+
             }
 
             public ValueContainer<TProperty> Locate(ViewModelBase viewModel)
@@ -196,6 +196,12 @@ namespace MVVMSidekick
 
 
             Func<ViewModelBase, ValueContainer<TProperty>> m_LocatorFunc;
+
+            public Func<ViewModelBase, ValueContainer<TProperty>> LocatorFunc
+            {
+                private get { return m_LocatorFunc; }
+                set { m_LocatorFunc = value; }
+            }
 
 
             public ValueContainer<TProperty> Container
@@ -459,21 +465,33 @@ namespace MVVMSidekick
 
 
 
+
             public override string Error
             {
-                get { return m_Error.Locate(this).Value; }
-                protected set { m_Error.Locate(this).SetValueAndTryNotify(value); }
+                get { return m_ErrorLocator(this).Value; }
+                protected set { m_ErrorLocator(this).SetValueAndTryNotify(value); }
             }
+
+
             #region Property string Error Setup
-            protected Property<string> m_Error = new Property<string>(m_ErrorLocator);
+
+            protected Property<string> m_Error =
+              new Property<string> { LocatorFunc = m_ErrorLocator };
             static Func<ViewModelBase, ValueContainer<string>> m_ErrorLocator =
                 RegisterContainerLocator<string>(
                     "Error",
                     model =>
-                        model.m_Error.Container =
+                    {
+                        model.m_Error =
+                            model.m_Error
+                            ??
+                            new Property<string> { LocatorFunc = m_ErrorLocator };
+                        return model.m_Error.Container =
                             model.m_Error.Container
                             ??
-                            new ValueContainer<string>("Error", model));
+                            new ValueContainer<string>("Error", model);
+                    });
+
             #endregion
 
 
@@ -687,43 +705,66 @@ namespace MVVMSidekick
             }
 
 
+            
             public bool LastCanExecuteValue
             {
-                get { return m_LastCanExecuteValue.Locate(this).Value; }
-                set { m_LastCanExecuteValue.Locate(this).SetValueAndTryNotify(value); }
+                get { return m_LastCanExecuteValueLocator(this).Value; }
+                set { m_LastCanExecuteValueLocator(this).SetValueAndTryNotify(value); }
             }
+
+
             #region Property bool LastCanExecuteValue Setup
-            protected Property<bool> m_LastCanExecuteValue = new Property<bool>(m_LastCanExecuteValueLocator);
+
+            protected Property<bool> m_LastCanExecuteValue =
+              new Property<bool> { LocatorFunc = m_LastCanExecuteValueLocator };
             static Func<ViewModelBase, ValueContainer<bool>> m_LastCanExecuteValueLocator =
                 RegisterContainerLocator<bool>(
                     "LastCanExecuteValue",
                     model =>
-                        model.m_LastCanExecuteValue.Container =
+                    {
+                        model.m_LastCanExecuteValue =
+                            model.m_LastCanExecuteValue
+                            ??
+                            new Property<bool> { LocatorFunc = m_LastCanExecuteValueLocator };
+                        return model.m_LastCanExecuteValue.Container =
                             model.m_LastCanExecuteValue.Container
                             ??
-                            new ValueContainer<bool>("LastCanExecuteValue", model));
+                            new ValueContainer<bool>("LastCanExecuteValue", model);
+                    });
+
             #endregion
 
 
 
-
-
+            
             public TResource Resource
             {
-                get { return m_Resource.Locate(this).Value; }
-                set { m_Resource.Locate(this).SetValueAndTryNotify(value); }
+                get { return m_ResourceLocator(this).Value; }
+                set { m_ResourceLocator(this).SetValueAndTryNotify(value); }
             }
+
+
             #region Property TResource Resource Setup
-            protected Property<TResource> m_Resource = new Property<TResource>(m_ResourceLocator);
+
+            protected Property<TResource> m_Resource =
+              new Property<TResource> { LocatorFunc = m_ResourceLocator };
             static Func<ViewModelBase, ValueContainer<TResource>> m_ResourceLocator =
                 RegisterContainerLocator<TResource>(
                     "Resource",
                     model =>
-                        model.m_Resource.Container =
+                    {
+                        model.m_Resource =
+                            model.m_Resource
+                            ??
+                            new Property<TResource> { LocatorFunc = m_ResourceLocator };
+                        return model.m_Resource.Container =
                             model.m_Resource.Container
                             ??
-                            new ValueContainer<TResource>("Resource", model));
+                            new ValueContainer<TResource>("Resource", model);
+                    });
+
             #endregion
+
 
 
 
