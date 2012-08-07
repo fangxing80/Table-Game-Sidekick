@@ -51,8 +51,40 @@ namespace TableGameSidekick_Metro.ViewModels
 
                     }
 
-                );
+                )
+                .RegisterDispose(this);
 
+
+            PickContactsCommand.CommandCore
+                .Subscribe
+                (
+                    async e =>
+                    {
+                        var vm = ((NewGame_Model)e.EventArgs.ViewModel);
+                        var contactPicker = new Windows.ApplicationModel.Contacts.ContactPicker();
+                        contactPicker.CommitButtonText = "Select";
+                        var contacts = await contactPicker.PickMultipleContactsAsync();
+
+                        vm.NewGameInfomation.Players = vm.NewGameInfomation.Players ?? new ObservableCollection<PlayerInfomation>();
+
+
+
+                        foreach (var c in contacts)
+                        {
+                            var rnds = await c.GetThumbnailAsync();
+                            var stream = rnds.AsStreamForRead(); ;
+                            var bts = new byte[rnds.Size];
+                            await stream.ReadAsync(bts, 0, bts.Length);
+                            vm.NewGameInfomation.Players.Add(new PlayerInfomation()
+                                {
+                                    Name = c.Name,
+                                    Image = new ImageData { ByteArray = bts },
+                                });
+                        }
+
+                    }
+                )
+                .RegisterDispose (this);
 
 
         }
@@ -119,7 +151,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 model =>
                 {
                     model.m_SelectedPrototypeGameInfomation =
-                        model.m_SelectedPrototypeGameInfomation 
+                        model.m_SelectedPrototypeGameInfomation
                         ??
                         new Property<GameInfomation> { LocatorFunc = m_SelectedPrototypeGameInfomationLocator };
                     return model.m_SelectedPrototypeGameInfomation.Container =
@@ -139,7 +171,7 @@ namespace TableGameSidekick_Metro.ViewModels
         /// <summary>
         /// 最终产生GameInfomation
         /// </summary>
-        
+
         public GameInfomation NewGameInfomation
         {
             get { return m_NewGameInfomationLocator(this).Value; }
@@ -163,7 +195,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     return model.m_NewGameInfomation.Container =
                         model.m_NewGameInfomation.Container
                         ??
-                        new ValueContainer<GameInfomation>("NewGameInfomation",new  GameInfomation (), model);
+                        new ValueContainer<GameInfomation>("NewGameInfomation", new GameInfomation(), model);
                 });
 
         #endregion
@@ -178,15 +210,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
         CommandModel<ReactiveCommand, string> m_StartGameCommand
-            = new ReactiveCommand().CreateCommandModel("StartGameCommand")
-            .ConfigCommandCore(
-                core =>
-                {
-
-
-                }
-
-            );
+            = new ReactiveCommand().CreateCommandModel("StartGameCommand");
         public CommandModel<ReactiveCommand, string> StartGameCommand
         {
             get { return m_StartGameCommand.WithViewModel(this); }
@@ -195,42 +219,8 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
         CommandModel<ReactiveCommand, String> m_PickContactsCommand
-            = new ReactiveCommand(true).CreateCommandModel("AddPlayersCommand")
-            .ConfigCommandCore(
-                core =>
-                {
-                    core.Subscribe
-                        (
-                         async e =>
-                         {
-                             var vm = ((NewGame_Model)e.EventArgs.ViewModel);
-                             var contactPicker = new Windows.ApplicationModel.Contacts.ContactPicker();
-                             contactPicker.CommitButtonText = "Select";
-                             var contacts = await contactPicker.PickMultipleContactsAsync();
-
-                             vm.NewGameInfomation.Players = vm.NewGameInfomation.Players ?? new ObservableCollection<PlayerInfomation>();
-
-
-
-                             foreach (var c in contacts)
-                             {
-                                 var rnds = await c.GetThumbnailAsync();
-                                 var stream = rnds.AsStreamForRead(); ;
-                                 var bts = new byte[rnds.Size];
-                                 await stream.ReadAsync(bts, 0, bts.Length);
-                                 vm.NewGameInfomation.Players.Add(new PlayerInfomation()
-                                     {
-                                         Name = c.Name,
-                                         Image = bts,
-                                     });
-                             }
-
-                         }
-                        );
-
-
-                }
-            );
+            = new ReactiveCommand(true).CreateCommandModel("AddPlayersCommand");
+      
         public CommandModel<ReactiveCommand, String> PickContactsCommand
         {
             get { return m_PickContactsCommand.WithViewModel(this); }

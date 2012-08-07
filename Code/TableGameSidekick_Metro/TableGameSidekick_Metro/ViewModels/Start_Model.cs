@@ -55,7 +55,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
-        
+
         public ObservableCollection<GameInfomation> Games
         {
             get { return m_GamesLocator(this).Value; }
@@ -92,7 +92,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
-        
+
         public GameInfomation SelectedGame
         {
             get { return m_SelectedGameLocator(this).Value; }
@@ -165,57 +165,46 @@ namespace TableGameSidekick_Metro.ViewModels
         void ConfigCommands()
         {
             m_NewGameCommand
-                .ConfigCommandCore(
-                    core =>
-                    {
-                        core
-                            .Subscribe
-                            (
-                                _ =>
-                                    App.MainEventRouter.RaiseEvent(
-                                    this,
-                                    new NavigateCommandEventArgs()
-                                    {
-                                        SourceViewId = App.Views.Start,
-                                        TargetViewId = App.Views.NewGame
-                                    })
-                            )
-                            .RegisterDispose(this);
-                    }
-                );
-
-            m_ContinueCommand
-                .ConfigCommandCore(
-                    core =>
-                    {
-                        this.GetPropertyContainer(x => x.SelectedGame)
-                            .GetValueChangeObservable()
-                            .Select(e =>
-                                e.EventArgs != null)
-                            .Subscribe(core.CanExecuteObserver)
-                            .RegisterDispose(this);
+                .CommandCore
+                .Subscribe
+                (
+                    _ =>
+                        App.MainEventRouter.RaiseEvent(
+                        this,
+                        new NavigateCommandEventArgs()
+                        {
+                            SourceViewId = App.Views.Start,
+                            TargetViewId = App.Views.NewGame
+                        })
+                )
+                .RegisterDispose(this);
 
 
-                        core
-                            .Subscribe
-                            (
-                                _ =>
-                                    App.MainEventRouter.RaiseEvent(
-                                    this,
-                                    new NavigateCommandEventArgs()
-                                    {
-                                        SourceViewId = App.Views.Start,
-                                        TargetViewId = App.Views.GamePlay,
-                                        ParameterDictionary = new Dictionary<string, Object>() 
-                                        {
-                                            {App.Views.MainPage_NavigateParameters.bool_IsNewGame ,false},
-                                            {App.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame,this.SelectedGame}
-                                        }
-                                    })
-                            )
-                            .RegisterDispose(this);
+            this.GetPropertyContainer(x => x.SelectedGame)
+                .GetValueChangeObservable()
+                .Select(e => e.EventArgs != null)
+                .Subscribe(m_ContinueCommand.CommandCore.CanExecuteObserver)
+                .RegisterDispose(this);
 
-                    });
+
+            m_ContinueCommand.CommandCore
+                .Subscribe
+                (
+                    _ =>
+                        App.MainEventRouter.RaiseEvent(
+                        this,
+                        new NavigateCommandEventArgs()
+                        {
+                            SourceViewId = App.Views.Start,
+                            TargetViewId = App.Views.GamePlay,
+                            ParameterDictionary = new Dictionary<string, Object>() 
+                            {
+                                {App.Views.MainPage_NavigateParameters.bool_IsNewGame ,false},
+                                {App.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame,this.SelectedGame}
+                            }
+                        })
+                )
+                .RegisterDispose(this);
 
 
         }

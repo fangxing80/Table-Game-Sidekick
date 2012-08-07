@@ -422,6 +422,8 @@ namespace MVVMSidekick
         [DataContract]
         public abstract class ViewModelBase<TViewModel> : ViewModelBase where TViewModel : ViewModelBase<TViewModel>
         {
+
+
             protected static Task _EmptyStartedTask = Task.Factory.StartNew(() => { });
             public override object this[string colName]
             {
@@ -463,7 +465,11 @@ namespace MVVMSidekick
                 new SortedDictionary<string, Func<TViewModel, IPropertyContainer>>(StringComparer.CurrentCultureIgnoreCase);
 
 
+            protected static TViewModel CastVM(ViewModelBase vm)
+            {
+                return (TViewModel)vm;
 
+            }
 
 
             public override string Error
@@ -639,21 +645,15 @@ namespace MVVMSidekick
                 return new CommandModel<TCommand, object>(command, null);
             }
 
-            public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, Object viewModel)
+            public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, ViewModelBase viewModel)
                 where TCommand : ICommand
             {
-                cmdModel.ConfigCommandCore
-                    (
-                        cmd =>
-                        {
-                            var cmd2 = cmd as ICommandWithViewModel;
-                            if (cmd2 != null)
-                            {
-                                cmd2.ViewModel = viewModel;
-                            }
-
-                        }
-                    );
+                //cmdModel.
+                var cmd2 = cmdModel as ICommandWithViewModel;
+                if (cmd2 != null)
+                {
+                    cmd2.ViewModel = viewModel;
+                }
                 return cmdModel;
             }
         }
@@ -691,21 +691,21 @@ namespace MVVMSidekick
 
 
 
-            protected TCommand CommandCore
+            public TCommand CommandCore
             {
                 get;
-                set;
+                private set;
 
             }
 
-            public CommandModel<TCommand, TResource> ConfigCommandCore(Action<TCommand> commandConfigAction)
-            {
-                commandConfigAction(CommandCore);
-                return this;
-            }
+            //public CommandModel<TCommand, TResource> ConfigCommandCore(Action<TCommand> commandConfigAction)
+            //{
+            //    commandConfigAction(CommandCore);
+            //    return this;
+            //}
 
 
-            
+
             public bool LastCanExecuteValue
             {
                 get { return m_LastCanExecuteValueLocator(this).Value; }
@@ -736,7 +736,7 @@ namespace MVVMSidekick
 
 
 
-            
+
             public TResource Resource
             {
                 get { return m_ResourceLocator(this).Value; }
@@ -857,7 +857,7 @@ namespace MVVMSidekick
 #if NETFX_CORE
                     var baseT = argsType.GetTypeInfo().BaseType;
 #else
-                var baseT = argsType.BaseType;
+                    var baseT = argsType.BaseType;
 #endif
                     if (baseT != typeof(object))
                     {
@@ -965,7 +965,7 @@ namespace MVVMSidekick
 
         public static class EventCommandHelper
         {
-            public static TCommand WithViewModel<TCommand>(this TCommand cmd, Object viewModel)
+            public static TCommand WithViewModel<TCommand>(this TCommand cmd, ViewModelBase viewModel)
                 where TCommand : EventCommandBase
             {
                 cmd.ViewModel = viewModel;
@@ -975,11 +975,11 @@ namespace MVVMSidekick
         }
         public interface ICommandWithViewModel : ICommand
         {
-            Object ViewModel { get; set; }
+            ViewModelBase ViewModel { get; set; }
         }
         public abstract class EventCommandBase : ICommandWithViewModel
         {
-            public Object ViewModel { get; set; }
+            public ViewModelBase ViewModel { get; set; }
 
             public event EventHandler<EventCommandEventArgs> CommandExecute;
             protected void OnCommandExecute(EventCommandEventArgs args)

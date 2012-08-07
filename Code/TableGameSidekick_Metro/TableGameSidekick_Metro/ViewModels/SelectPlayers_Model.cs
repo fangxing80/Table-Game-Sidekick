@@ -72,8 +72,48 @@ namespace TableGameSidekick_Metro.ViewModels
                 await Task.Delay(100);
             }
 
+            this.CreateNewUserCommand
+                .CommandCore
+                .Subscribe
+                (
+                     (async (e) =>
+                     {
+                         var vm = this;
+                         await RefreshNewUserPicFromResource(
+                               vm.NewPlayerPicResourcePath,
+                               vm);
+
+                         var newu = vm.NewPlayer;
+                         vm.NewPlayer = new PlayerInfomation();
+                         vm.SavedPlayers.Add(newu);
+                         vm.m_PlayersStorage.Value = vm.SavedPlayers.ToArray();
+                         await vm.m_PlayersStorage.Save();
+
+                     }
+                     )
+                )
+                .RegisterDispose(this);
 
 
+            m_SelectedSavedPlayerIndexLocator(this)
+                .GetValueChangeObservable()
+                .Select(
+                    x => x.EventArgs != -1
+                )
+                .Subscribe(this.DeleteSelectedSavedPlayerCommand
+                                .CommandCore.CanExecuteObserver)
+                .RegisterDispose(this);
+            DeleteSelectedSavedPlayerCommand.CommandCore
+                .Subscribe
+                (
+                   async x =>
+                   {
+                       SavedPlayers.RemoveAt(SelectedSavedPlayerIndex);
+                       m_PlayersStorage.Value = SavedPlayers.ToArray();
+                       await m_PlayersStorage.Save();
+                   }
+                )
+                .RegisterDispose(this);
 
 
         }
@@ -91,44 +131,12 @@ namespace TableGameSidekick_Metro.ViewModels
                 byte[] bts = new byte[bi.Size];
                 await stream.AsStreamForRead().ReadAsync(bts, 0, bts.Length);
                 model.NewPlayer = model.NewPlayer ?? new PlayerInfomation();
-                model.NewPlayer.Image = bts;
+                model.NewPlayer.Image = new ImageData() { ByteArray = bts };
             }
             //return v;
         }
 
 
-        CommandModel<ReactiveCommand, String> m_CreateNewUserCommand
-            = new ReactiveCommand(true).CreateCommandModel("AddNew")
-            .ConfigCommandCore(
-                core =>
-                {
-                    core.Subscribe
-                        (
-                          (async (e) =>
-                          {
-                              var vm = (SelectPlayers_Model)core.ViewModel;
-                              await RefreshNewUserPicFromResource(
-                                    vm.NewPlayerPicResourcePath,
-                                    vm);
-
-                              var newu = vm.NewPlayer;
-                              vm.NewPlayer = new PlayerInfomation();
-                              vm.SavedPlayers.Add(newu);
-                              vm.m_PlayersStorage.Value = vm.SavedPlayers.ToArray();
-                              await vm.m_PlayersStorage.Save();
-
-                          }
-                          )
-                        );
-
-                }
-
-            );
-        public CommandModel<ReactiveCommand, String> CreateNewUserCommand
-        {
-            get { return m_CreateNewUserCommand.WithViewModel(this); }
-            protected set { m_CreateNewUserCommand = value; }
-        }
 
 
         public ObservableCollection<PlayerInfomation> SavedPlayers
@@ -147,12 +155,39 @@ namespace TableGameSidekick_Metro.ViewModels
                     return model.m_SavedPlayers.Container =
                         model.m_SavedPlayers.Container
                         ??
-                        new ValueContainer<ObservableCollection<PlayerInfomation>>("SavedPlayers",new  ObservableCollection<PlayerInfomation>(), model);
+                        new ValueContainer<ObservableCollection<PlayerInfomation>>("SavedPlayers", new ObservableCollection<PlayerInfomation>(), model);
                 }
             );
         #endregion
 
 
+
+        public int SelectedSavedPlayerIndex
+        {
+            get {
+                return m_SelectedSavedPlayerIndexLocator(this).Value; }
+            set {
+                m_SelectedSavedPlayerIndexLocator(this).SetValueAndTryNotify(value); }
+        }
+
+        #region Property int SelectedSavedPlayerIndex Setup
+        protected Property<int> m_SelectedSavedPlayerIndex =
+          new Property<int> { LocatorFunc = m_SelectedSavedPlayerIndexLocator };
+        static Func<ViewModelBase, ValueContainer<int>> m_SelectedSavedPlayerIndexLocator =
+            RegisterContainerLocator<int>(
+                "SelectedSavedPlayerIndex",
+                model =>
+                {
+                    model.m_SelectedSavedPlayerIndex =
+                        model.m_SelectedSavedPlayerIndex
+                        ??
+                        new Property<int> { LocatorFunc = m_SelectedSavedPlayerIndexLocator };
+                    return model.m_SelectedSavedPlayerIndex.Container =
+                        model.m_SelectedSavedPlayerIndex.Container
+                        ??
+                        new ValueContainer<int>("SelectedSavedPlayerIndex",-1, model);
+                });
+        #endregion
 
 
 
@@ -242,6 +277,35 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
+        public CommandModel<ReactiveCommand, String> CreateNewUserCommand
+        {
+            get { return m_CreateNewUserCommand.WithViewModel(this); }
+            protected set { m_CreateNewUserCommand = value; }
+        }
+
+        CommandModel<ReactiveCommand, String> m_CreateNewUserCommand
+       = new ReactiveCommand(true).CreateCommandModel("AddNew");
+
+
+
+
+
+
+
+
+
+
+        public CommandModel<ReactiveCommand, String> DeleteSelectedSavedPlayerCommand
+        {
+            get { return m_DeleteSelectedSavedPlayerCommand.WithViewModel(this); }
+            protected set { m_DeleteSelectedSavedPlayerCommand = value; }
+        }
+
+        #region DeleteSelectedSavedPlayerCommand Configuration
+        CommandModel<ReactiveCommand, String> m_DeleteSelectedSavedPlayerCommand
+            = new ReactiveCommand(canExecute: false).CreateCommandModel("DeleteSelectedPlayer");
+
+        #endregion
 
 
 

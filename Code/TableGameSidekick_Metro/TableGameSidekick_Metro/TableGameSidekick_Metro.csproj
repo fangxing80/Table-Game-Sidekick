@@ -120,6 +120,7 @@
     <Compile Include="DataEntity\GameData.cs" />
     <Compile Include="DataEntity\GameInfomation.cs" />
     <Compile Include="DataEntity\GameType.cs" />
+    <Compile Include="DataEntity\ImageData.cs" />
     <Compile Include="DataEntity\PlayerInfomation.cs" />
     <Compile Include="GamePlay.xaml.cs">
       <DependentUpon>GamePlay.xaml</DependentUpon>

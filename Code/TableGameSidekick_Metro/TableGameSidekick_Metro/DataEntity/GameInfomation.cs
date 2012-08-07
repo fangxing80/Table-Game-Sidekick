@@ -13,35 +13,31 @@ namespace TableGameSidekick_Metro.DataEntity
     public class GameInfomation : ViewModelBase<GameInfomation>
     {
         [DataMember]
-
-
-        public byte[] Image
+        public ImageData Image
         {
             get { return m_ImageLocator(this).Value; }
             set { m_ImageLocator(this).SetValueAndTryNotify(value); }
         }
 
-
-        #region Property byte[] Image Setup
-
-        protected Property<byte[]> m_Image =
-          new Property<byte[]> { LocatorFunc = m_ImageLocator };
-        static Func<ViewModelBase, ValueContainer<byte[]>> m_ImageLocator =
-            RegisterContainerLocator<byte[]>(
+        #region Property ImageData Image Setup
+        protected Property<ImageData> m_Image =
+          new Property<ImageData> { LocatorFunc = m_ImageLocator };
+        static Func<ViewModelBase, ValueContainer<ImageData>> m_ImageLocator =
+            RegisterContainerLocator<ImageData>(
                 "Image",
                 model =>
                 {
                     model.m_Image =
                         model.m_Image
                         ??
-                        new Property<byte[]> { LocatorFunc = m_ImageLocator };
+                        new Property<ImageData> { LocatorFunc = m_ImageLocator };
                     return model.m_Image.Container =
                         model.m_Image.Container
                         ??
-                        new ValueContainer<byte[]>("Image", model);
+                        new ValueContainer<ImageData>("Image", model);
                 });
-
         #endregion
+
 
 
 
