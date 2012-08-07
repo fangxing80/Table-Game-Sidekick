@@ -20,23 +20,11 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public ImageData()
         {
-            m_ByteArrayLocator(this)
-                .GetValueChangeObservable()
-                .Subscribe(
-                async ev =>
-                {
 
-                    var bs = ev.EventArgs;
-
-                    await SetBitmap(bs);
-
-                }
-
-                ).RegisterDispose(this);
 
         }
 
-        private async Task SetBitmap(byte[] bs)
+        private async void SetBitmap(byte[] bs)
         {
             var im = new InMemoryRandomAccessStream();
             var dr = new DataWriter(im);
@@ -52,7 +40,12 @@ namespace TableGameSidekick_Metro.DataEntity
         public Byte[] ByteArray
         {
             get { return m_ByteArrayLocator(this).Value; }
-            set { m_ByteArrayLocator(this).SetValueAndTryNotify(value); }
+            set
+            {
+                m_ByteArrayLocator(this).SetValueAndTryNotify(value);
+                SetBitmap(value);
+
+            }
         }
 
         #region Property Byte[] ByteArray Setup

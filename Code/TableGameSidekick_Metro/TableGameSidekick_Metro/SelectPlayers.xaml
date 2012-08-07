@@ -119,7 +119,7 @@
         <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="585" Margin="13,10,0,0" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Width="188" ItemsSource="{Binding DefaultViewModel.PresavedImagePaths, ElementName=pageRoot}" ItemTemplate="{StaticResource presavedPics}" SelectedItem="{Binding DefaultViewModel.NewPlayerPicResourcePath, ElementName=pageRoot, Mode=TwoWay}"/>
         <Image HorizontalAlignment="Left" Height="256" Margin="233,24,0,0" Grid.Row="1" VerticalAlignment="Top" Width="256" Source="{Binding SelectedItem, ElementName=listBox}" Grid.Column="1"/>
         <Button Content="{Binding DefaultViewModel.CreateNewUserCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="341,330,0,0" Grid.Row="1" VerticalAlignment="Top" Height="65" Grid.Column="1" Width="148" Command="{Binding DefaultViewModel.CreateNewUserCommand, ElementName=pageRoot, Mode=OneWay}"/>
-        <Button Content="{Binding DefaultViewModel.DeleteSelectedSavedPlayerCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="341,400,0,0" Grid.Row="1" VerticalAlignment="Top" Height="65" Grid.Column="1" Width="148" Command="{Binding DefaultViewModel.DeleteSelectedSavedPlayerCommand, ElementName=pageRoot, Mode=OneWay}"/>
+        <Button Content="{Binding DefaultViewModel.DeleteSelectedSavedPlayerCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="341,400,0,0" Grid.Row="1" VerticalAlignment="Top" Height="65" Grid.Column="1" Width="213" Command="{Binding DefaultViewModel.DeleteSelectedSavedPlayerCommand, ElementName=pageRoot, Mode=OneWay}"/>
 
         <VisualStateManager.VisualStateGroups>
 
