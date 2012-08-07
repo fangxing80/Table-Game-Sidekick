@@ -13,6 +13,8 @@ namespace TableGameSidekick_Metro.Storages
     {
         public Storage(string fileName = null, StorageFolder folder = null)
         {
+            m_BusyWait = new System.Threading.AutoResetEvent(true)
+                .RegisterDispose(this);
             Folder = folder ?? Windows.Storage.ApplicationData.Current.LocalFolder;
             m_FileName = fileName ?? typeof(T).FullName;
             m_Ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(T));
@@ -67,7 +69,7 @@ namespace TableGameSidekick_Metro.Storages
 
 
 
-        protected System.Threading.AutoResetEvent m_BusyWait = new System.Threading.AutoResetEvent(true);
+        protected System.Threading.AutoResetEvent m_BusyWait ;
 
         protected IDisposable CreateBusyLock()
         {

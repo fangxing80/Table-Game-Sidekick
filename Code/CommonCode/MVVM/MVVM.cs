@@ -176,9 +176,10 @@ namespace MVVMSidekick
         }
         public static class DisposableExtensions
         {
-            public static void RegisterDispose(this IDisposable item, ViewModelBase vm)
+            public static T RegisterDispose<T>(this T item, ViewModelBase vm) where T:IDisposable
             {
                 vm.AddDisposable(item);
+                return item;
             }
         }
         public class Property<TProperty>
