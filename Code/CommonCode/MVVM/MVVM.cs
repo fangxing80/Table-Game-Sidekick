@@ -64,7 +64,7 @@ namespace MVVMSidekick
             : IDisposable, INotifyPropertyChanged, IDataErrorInfo
         {
 
-
+            
             public abstract IEnumerable<string> FieldNames { get; }
 
             public abstract object this[string colName] { get; set; }
@@ -650,7 +650,7 @@ namespace MVVMSidekick
                 where TCommand : ICommand
             {
                 //cmdModel.
-                var cmd2 = cmdModel as ICommandWithViewModel;
+                var cmd2 = cmdModel.CommandCore as ICommandWithViewModel;
                 if (cmd2 != null)
                 {
                     cmd2.ViewModel = viewModel;

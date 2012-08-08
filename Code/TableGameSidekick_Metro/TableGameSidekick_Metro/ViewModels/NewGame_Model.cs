@@ -64,7 +64,6 @@ namespace TableGameSidekick_Metro.ViewModels
                         var contactPicker = new Windows.ApplicationModel.Contacts.ContactPicker();
                         contactPicker.CommitButtonText = "Select";
                         var contacts = await contactPicker.PickMultipleContactsAsync();
-
                         vm.NewGameInfomation.Players = vm.NewGameInfomation.Players ?? new ObservableCollection<PlayerInfomation>();
 
 

@@ -16,7 +16,7 @@ namespace TableGameSidekick_Metro.DataEntity
         
         public string Name
         {
-            get { return m_NameLocator(this).Value; }
+            get { return m_NameLocator(this).Value??""; }
             set { m_NameLocator(this).SetValueAndTryNotify(value); }
         }
 
@@ -37,7 +37,7 @@ namespace TableGameSidekick_Metro.DataEntity
                     return model.m_Name.Container =
                         model.m_Name.Container
                         ??
-                        new ValueContainer<string>("Name", model);
+                        new ValueContainer<string>("Name","", model);
                 });
 
         #endregion
@@ -72,7 +72,7 @@ namespace TableGameSidekick_Metro.DataEntity
         #endregion
 
 
-
+        
 
         
 

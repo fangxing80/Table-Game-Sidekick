@@ -24,17 +24,31 @@ namespace TableGameSidekick_Metro.DataEntity
 
         }
 
-        private async void SetBitmap(byte[] bs)
+        private async void SetBitmap(byte[] bytes)
+        {
+            using (var im = await CreateStreamAsync(bytes))
+            {
+                var bm = new BitmapImage();
+                bm.SetSource(im);
+                this.BitmapImage = bm;
+            };
+        }
+
+        private static async Task<InMemoryRandomAccessStream> CreateStreamAsync(byte[] bs)
         {
             var im = new InMemoryRandomAccessStream();
             var dr = new DataWriter(im);
             dr.WriteBytes(bs);
             await dr.StoreAsync();
             im.Seek(0);
-            var bm = new BitmapImage();
-            bm.SetSource(im);
-            this.BitmapImage = bm;
+            return im;
         }
+        public async Task<InMemoryRandomAccessStream> GetStreamAsync()
+        {
+            return await CreateStreamAsync(ByteArray);
+        
+        }
+
 
 
         public Byte[] ByteArray

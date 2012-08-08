@@ -42,7 +42,7 @@ namespace TableGameSidekick_Metro.Common
         /// </summary>
         public static readonly DependencyProperty DefaultViewModelProperty =
             DependencyProperty.Register("DefaultViewModel", typeof(ViewModelBase),
-            typeof(LayoutAwarePage),new PropertyMetadata (new DefaultViewModel()));
+            typeof(LayoutAwarePage), new PropertyMetadata(new DefaultViewModel()));
 
         private List<Control> _layoutAwareControls;
 
@@ -96,7 +96,25 @@ namespace TableGameSidekick_Metro.Common
 
             set
             {
-                this.SetValue(DefaultViewModelProperty, value) ;
+                DisposeViewModel();
+                this.SetValue(DefaultViewModelProperty, value);
+            }
+        }
+
+        protected void DisposeViewModel()
+        {
+            var oldv = this.GetValue(DefaultViewModelProperty) as ViewModelBase;
+            if (oldv != null)
+            {
+                try
+                {
+                    oldv.Dispose();
+                }
+                catch (Exception)
+                {
+
+
+                }
             }
         }
 
@@ -352,17 +370,17 @@ namespace TableGameSidekick_Metro.Common
                     nextPageIndex++;
                     nextPageKey = "Page-" + nextPageIndex;
                 }
-                
+
                 if (dic != null)
                 {
                     object init = null;
                     if (dic.TryGetValue(TableGameSidekick_Metro.App.NavigateParameterKeys.ViewInitActionName, out init))
-                    { 
-                        dic.Remove (TableGameSidekick_Metro.App.NavigateParameterKeys.ViewInitActionName);
+                    {
+                        dic.Remove(TableGameSidekick_Metro.App.NavigateParameterKeys.ViewInitActionName);
                     }
 
                     var initAction = init as Action<LayoutAwarePage>;
-                    if (initAction!=null)
+                    if (initAction != null)
                     {
                         initAction(this);
                     }
@@ -388,7 +406,7 @@ namespace TableGameSidekick_Metro.Common
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
-            var pageState = new Dictionary<string, object> {{"" , DefaultViewModel  } };
+            var pageState = new Dictionary<string, object> { { "", DefaultViewModel } };
             this.SaveState(pageState);
             frameState[_pageKey] = pageState;
         }
@@ -404,7 +422,7 @@ namespace TableGameSidekick_Metro.Common
         /// session.  This will be null the first time a page is visited.</param>
         protected virtual void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
-          
+
 
         }
 
@@ -561,6 +579,14 @@ namespace TableGameSidekick_Metro.Common
                     array[arrayIndex++] = pair;
                 }
             }
+        }
+
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            DisposeViewModel();
+            base.OnNavigatingFrom(e);
+            
         }
     }
 }

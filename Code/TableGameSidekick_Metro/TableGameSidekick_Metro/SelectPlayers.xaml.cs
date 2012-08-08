@@ -39,5 +39,22 @@ namespace TableGameSidekick_Metro
         {
             // TODO: Assign a collection of bindable groups to this.DefaultViewModel["Groups"]
         }
+
+        private void listBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            toggleButton.IsChecked = false;
+        }
+
+        private void itemGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var vm = DefaultViewModel;
+            if (vm!=null)
+            {
+                vm["SelectedItems"] = (sender as GridView).SelectedItems.ToArray ();
+            }
+        }
+
+
+        
     }
 }

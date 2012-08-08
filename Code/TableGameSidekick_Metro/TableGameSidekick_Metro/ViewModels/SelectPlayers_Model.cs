@@ -14,6 +14,7 @@ using Windows.ApplicationModel.Contacts.Provider;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using TableGameSidekick_Metro.Storages;
+using Windows.ApplicationModel.Contacts;
 
 namespace TableGameSidekick_Metro.ViewModels
 {
@@ -39,6 +40,117 @@ namespace TableGameSidekick_Metro.ViewModels
             this.PresavedImagePaths = new ObservableCollection<string>(imageFiles);
             ConfigModel();
 
+
+            ConfigCommands();
+
+        }
+
+        private void ConfigCommands()
+        {
+            this.CreateNewUserCommand
+                .CommandCore
+                .Subscribe
+                (
+                     (async (e) =>
+                     {
+                         var vm = this;
+                         await RefreshNewUserPicFromResource(
+                               vm.NewPlayerPicResourcePath,
+                               vm);
+
+                         var newu = vm.NewPlayer;
+                         vm.NewPlayer = new PlayerInfomation();
+                         vm.SavedPlayers.Add(newu);
+                         vm.m_PlayersStorage.Value = vm.SavedPlayers.ToArray();
+                         await vm.m_PlayersStorage.Save();
+
+                     }
+                     )
+                )
+                .RegisterDispose(this);
+
+
+            m_SelectedItemsLocator(this)
+                .GetValueChangeObservable()
+                .Select(
+                    x => x.EventArgs.Count() > 0
+                )
+                .Subscribe(this.DeleteSelectedSavedPlayerCommand
+                                .CommandCore.CanExecuteObserver)
+                .RegisterDispose(this);
+            DeleteSelectedSavedPlayerCommand.CommandCore
+                .Subscribe
+                (
+                   async x =>
+                   {
+                       foreach (PlayerInfomation item in SelectedItems.ToArray())
+                       {
+                           SavedPlayers.Remove(item);
+                       }
+                       m_PlayersStorage.Value = SavedPlayers.ToArray();
+                       await m_PlayersStorage.Save();
+                   }
+                )
+                .RegisterDispose(this);
+
+            m_SelectedItemsLocator(this)
+                .GetValueChangeEventArgObservable()
+                .Subscribe
+                (
+                   async e =>
+                   {
+                       var oldv = e.EventArgs.OldValue;
+                       if (oldv != null)
+                       {
+                           foreach (PlayerInfomation item in oldv)
+                           {
+                               if (m_ContactPickerUI.ContainsContact(item.Name))
+                               {
+                                   m_ContactPickerUI.RemoveContact(item.Name);
+                               }
+                           }
+                       }
+
+
+                       var newv = e.EventArgs.NewValue;
+                       if (newv != null)
+                       {
+                           foreach (PlayerInfomation item in newv)
+                           {
+                               if (!m_ContactPickerUI.ContainsContact(item.Name))
+                               {
+                                   this.m_ContactPickerUI.AddContact(
+                                       item.Name,
+                                       new Contact()
+                                       {
+                                           Name = item.Name,
+                                           Thumbnail = item.Image ==
+                                                null ?
+                                                    null : RandomAccessStreamReference.CreateFromStream(await item.Image.GetStreamAsync())
+                                       }
+                                   );
+                               }
+
+                           }
+                       }
+
+                   }
+                );
+
+
+            DeleteItemCommand.CommandCore
+                .Subscribe
+                (
+                    p =>
+                    {
+                        var pi = p.EventArgs.Parameter as PlayerInfomation;
+                        if (pi != null)
+                        {
+                            SavedPlayers.Remove(pi);
+                        }
+                    }
+
+                );
         }
 
         ContactPickerUI m_ContactPickerUI;
@@ -72,48 +184,6 @@ namespace TableGameSidekick_Metro.ViewModels
                 await Task.Delay(100);
             }
 
-            this.CreateNewUserCommand
-                .CommandCore
-                .Subscribe
-                (
-                     (async (e) =>
-                     {
-                         var vm = this;
-                         await RefreshNewUserPicFromResource(
-                               vm.NewPlayerPicResourcePath,
-                               vm);
-
-                         var newu = vm.NewPlayer;
-                         vm.NewPlayer = new PlayerInfomation();
-                         vm.SavedPlayers.Add(newu);
-                         vm.m_PlayersStorage.Value = vm.SavedPlayers.ToArray();
-                         await vm.m_PlayersStorage.Save();
-
-                     }
-                     )
-                )
-                .RegisterDispose(this);
-
-
-            m_SelectedSavedPlayerIndexLocator(this)
-                .GetValueChangeObservable()
-                .Select(
-                    x => x.EventArgs != -1
-                )
-                .Subscribe(this.DeleteSelectedSavedPlayerCommand
-                                .CommandCore.CanExecuteObserver)
-                .RegisterDispose(this);
-            DeleteSelectedSavedPlayerCommand.CommandCore
-                .Subscribe
-                (
-                   async x =>
-                   {
-                       SavedPlayers.RemoveAt(SelectedSavedPlayerIndex);
-                       m_PlayersStorage.Value = SavedPlayers.ToArray();
-                       await m_PlayersStorage.Save();
-                   }
-                )
-                .RegisterDispose(this);
 
 
         }
@@ -162,32 +232,38 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
-        public int SelectedSavedPlayerIndex
+
+
+
+        public IEnumerable<object> SelectedItems
         {
-            get {
-                return m_SelectedSavedPlayerIndexLocator(this).Value; }
-            set {
-                m_SelectedSavedPlayerIndexLocator(this).SetValueAndTryNotify(value); }
+            get { return m_SelectedItemsLocator(this).Value; }
+            set
+            {
+                m_SelectedItemsLocator(this).SetValueAndTryNotify(value);
+            }
         }
 
-        #region Property int SelectedSavedPlayerIndex Setup
-        protected Property<int> m_SelectedSavedPlayerIndex =
-          new Property<int> { LocatorFunc = m_SelectedSavedPlayerIndexLocator };
-        static Func<ViewModelBase, ValueContainer<int>> m_SelectedSavedPlayerIndexLocator =
-            RegisterContainerLocator<int>(
-                "SelectedSavedPlayerIndex",
+        #region Property IEnumerable<object> SelectedItems Setup
+        protected Property<IEnumerable<object>> m_SelectedItems =
+          new Property<IEnumerable<object>> { LocatorFunc = m_SelectedItemsLocator };
+        static Func<ViewModelBase, ValueContainer<IEnumerable<object>>> m_SelectedItemsLocator =
+            RegisterContainerLocator<IEnumerable<object>>(
+                "SelectedItems",
                 model =>
                 {
-                    model.m_SelectedSavedPlayerIndex =
-                        model.m_SelectedSavedPlayerIndex
+                    model.m_SelectedItems =
+                        model.m_SelectedItems
                         ??
-                        new Property<int> { LocatorFunc = m_SelectedSavedPlayerIndexLocator };
-                    return model.m_SelectedSavedPlayerIndex.Container =
-                        model.m_SelectedSavedPlayerIndex.Container
+                        new Property<IEnumerable<object>> { LocatorFunc = m_SelectedItemsLocator };
+                    return model.m_SelectedItems.Container =
+                        model.m_SelectedItems.Container
                         ??
-                        new ValueContainer<int>("SelectedSavedPlayerIndex",-1, model);
+                        new ValueContainer<IEnumerable<object>>("SelectedItems", model);
                 });
         #endregion
+
+
 
 
 
@@ -289,6 +365,18 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
+
+
+        public CommandModel<ReactiveCommand, String> DeleteItemCommand
+        {
+            get { return m_DeleteItemCommand.WithViewModel(this); }
+            protected set { m_DeleteItemCommand = value; }
+        }
+
+        #region DeleteItemCommand Configuration
+        CommandModel<ReactiveCommand, String> m_DeleteItemCommand
+            = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
+        #endregion
 
 
 

@@ -57,11 +57,11 @@ namespace MVVMSidekick.Reactive
             GetValueChangeEventArgObservable<TValue>(this ValueContainer<TValue> source)
         {
 
-            var eventArgSeq = Observable.FromEvent<EventHandler<ValueChangedEventArgs<TValue>>, ValueChangedEventArgs<TValue>>(
+            var eventArgSeq = Observable.FromEventPattern<EventHandler<ValueChangedEventArgs<TValue>>, ValueChangedEventArgs<TValue>>(
                     eh => source.ValueChanged += eh,
                     eh => source.ValueChanged -= eh);
             return eventArgSeq.Select(
-                        x => EventTuple.Create(source, x)
+                        x => EventTuple.Create( source, x.EventArgs )
                     );
             ;
         }
