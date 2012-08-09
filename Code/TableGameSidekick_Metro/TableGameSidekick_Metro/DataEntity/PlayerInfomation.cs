@@ -72,9 +72,17 @@ namespace TableGameSidekick_Metro.DataEntity
         #endregion
 
 
-        
 
-        
+
+        public override bool Equals(object obj)
+        {
+            var vo = obj as PlayerInfomation;
+            if (vo == null)
+            {
+                return false;
+            }
+            return vo.Name == this.Name; 
+        }
 
 
 

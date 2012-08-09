@@ -1004,4 +1004,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <ItemsPanelTemplate x:Key="WarpGridItemsPanel">
+        <WrapGrid />        
+    </ItemsPanelTemplate>
 </ResourceDictionary>

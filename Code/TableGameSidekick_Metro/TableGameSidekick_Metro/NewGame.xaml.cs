@@ -182,6 +182,11 @@ namespace TableGameSidekick_Metro
 
         #endregion
 
-       
+        private void SelectedPlayerListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DefaultViewModel["SelectedPlayers"] = (sender as ListView).SelectedItems.ToList();
+        }
+
+
     }
 }

@@ -114,6 +114,7 @@
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\CommandBinder.cs" />
     <Compile Include="Common\LayoutAwarePage.cs" />
+    <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Constants.cs" />
@@ -156,6 +157,9 @@
     <None Include="TableGameSidekick_Metro_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\GameType\TradeGame.png" />
+    <Content Include="Assets\GameType\StopwatchGame.png" />
+    <Content Include="Assets\GameType\ScoreGame.png" />
     <Content Include="Assets\Icons\Armour.png" />
     <Content Include="Assets\Icons\BusinessMan.png" />
     <Content Include="Assets\Icons\Car.png" />
@@ -174,6 +178,7 @@
     <Content Include="Assets\SmallLogo.png" />
     <Content Include="Assets\SplashScreen.png" />
     <Content Include="Assets\StoreLogo.png" />
+    <Compile Include="Common\RandomAccessStreamReferenceBitmapConverter.cs" />
     <Content Include="Common\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>

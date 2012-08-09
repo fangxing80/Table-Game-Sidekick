@@ -54,6 +54,13 @@ namespace TableGameSidekick_Metro.ViewModels
                 )
                 .RegisterDispose(this);
 
+            ConfigCommands();
+
+
+        }
+
+        private void ConfigCommands()
+        {
 
             PickContactsCommand.CommandCore
                 .Subscribe
@@ -70,22 +77,58 @@ namespace TableGameSidekick_Metro.ViewModels
 
                         foreach (var c in contacts)
                         {
+
+
+                            var mayAdd = new PlayerInfomation()
+                            {
+                                Name = c.Name,
+                            };
+
+                            //因为已经重写过 PlayerInfomation的Equal 所以只要名字相同就覆盖（也就是先去除再添加）
+                            if (vm.NewGameInfomation.Players.Contains(mayAdd))
+                            {
+                                vm.NewGameInfomation.Players.Remove(mayAdd);
+                            }
                             var rnds = await c.GetThumbnailAsync();
                             var stream = rnds.AsStreamForRead(); ;
                             var bts = new byte[rnds.Size];
                             await stream.ReadAsync(bts, 0, bts.Length);
-                            vm.NewGameInfomation.Players.Add(new PlayerInfomation()
-                                {
-                                    Name = c.Name,
-                                    Image = new ImageData { ByteArray = bts },
-                                });
+                            mayAdd.Image = new ImageData { ByteArray = bts };
+                            vm.NewGameInfomation.Players.Add(mayAdd);
+
+
                         }
 
                     }
                 )
-                .RegisterDispose (this);
+                .RegisterDispose(this);
 
+            //删除已选玩家按钮必须在已选玩家大于0的时候启用
+            m_SelectedPlayersLocator(this)
+                .GetValueChangeObservable()
+                .Select(x => x.EventArgs.Count > 0)
+                .Subscribe(
+                    DeleteSelectedPlayersCommand
+                    .CommandCore
+                    .CanExecuteObserver)
+                .RegisterDispose(this); ;
 
+            DeleteSelectedPlayersCommand.CommandCore
+                .Subscribe(
+                    e =>
+                    {
+                        if (SelectedPlayers != null)
+                        {
+                            foreach (PlayerInfomation item in this.SelectedPlayers)
+                            {
+                                this.NewGameInfomation.Players
+                                    .Remove(item);
+
+                            }
+                        }
+                    }
+
+                );
         }
 
         private void AddGameType(GameType t)
@@ -203,6 +246,31 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
+        public IList<object> SelectedPlayers
+        {
+            get { return m_SelectedPlayersLocator(this).Value; }
+            set { m_SelectedPlayersLocator(this).SetValueAndTryNotify(value); }
+        }
+
+        #region Property IList<object> SelectedPlayers Setup
+        protected Property<IList<object>> m_SelectedPlayers =
+          new Property<IList<object>> { LocatorFunc = m_SelectedPlayersLocator };
+        static Func<ViewModelBase, ValueContainer<IList<object>>> m_SelectedPlayersLocator =
+            RegisterContainerLocator<IList<object>>(
+                "SelectedPlayers",
+                model =>
+                {
+                    model.m_SelectedPlayers =
+                        model.m_SelectedPlayers
+                        ??
+                        new Property<IList<object>> { LocatorFunc = m_SelectedPlayersLocator };
+                    return model.m_SelectedPlayers.Container =
+                        model.m_SelectedPlayers.Container
+                        ??
+                        new ValueContainer<IList<object>>("SelectedPlayers", model);
+                });
+        #endregion
+
 
 
 
@@ -219,13 +287,25 @@ namespace TableGameSidekick_Metro.ViewModels
 
         CommandModel<ReactiveCommand, String> m_PickContactsCommand
             = new ReactiveCommand(true).CreateCommandModel("AddPlayersCommand");
-      
+
         public CommandModel<ReactiveCommand, String> PickContactsCommand
         {
             get { return m_PickContactsCommand.WithViewModel(this); }
             protected set { m_PickContactsCommand = value; }
         }
 
+
+
+        public CommandModel<ReactiveCommand, String> DeleteSelectedPlayersCommand
+        {
+            get { return m_DeleteSelectedPlayersCommand.WithViewModel(this); }
+            protected set { m_DeleteSelectedPlayersCommand = value; }
+        }
+
+        #region DeleteSelectedPlayersCommand Configuration
+        CommandModel<ReactiveCommand, String> m_DeleteSelectedPlayersCommand
+            = new ReactiveCommand(canExecute: true).CreateCommandModel("DeleteSelectedPlayers");
+        #endregion
 
 
     }

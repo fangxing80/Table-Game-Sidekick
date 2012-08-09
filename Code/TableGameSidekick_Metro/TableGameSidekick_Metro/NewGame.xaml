@@ -33,6 +33,22 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
+        <DataTemplate x:Key="PlayersItems">
+            <Grid Width="164" Margin="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10" Width="40" Height="40">
+                    <Image Source="{Binding Image.BitmapImage}" Stretch="UniformToFill"/>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="10,-10,0,0">
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap"/>
+                    <TextBlock Text="{Binding Subtitle}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                    <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
     <common:LayoutAwarePage.DefaultViewModel>
         <vm:NewGame_Model></vm:NewGame_Model>
@@ -101,15 +117,18 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-
-                <Image Grid.Row="1" Margin="0,0,20,0" Width="180" Height="180" Source="{Binding Image}" Stretch="UniformToFill"/>
-               <StackPanel x:Name="itemDetailTitlePanel" Grid.Row="1" Grid.Column="1">
-                    <TextBlock x:Name="itemTitle" Margin="0,-10,0,0" Text="{Binding GameType}" Style="{StaticResource SubheaderTextStyle}"/>
-                    <TextBox x:Name="itemSubtitle" Margin="0,0,0,20"  Text="{Binding GameDescription}"   AcceptsReturn="True"  />
+                <StackPanel Background="White"  Grid.Row="1" Margin="0,0,20,0"  >
+                
+                    <Image Width="180" Height="180" Source="{Binding Image}" Stretch="UniformToFill"/>
                 </StackPanel>
-                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,20,0,0" Text="{Binding Content}" Style="{StaticResource BodyTextStyle}"/>
-                <ListView Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="304" Margin="22,41,0,0" Grid.Row="2" VerticalAlignment="Top" Width="518" ItemsSource="{Binding Players}"/>
+                <StackPanel x:Name="itemDetailTitlePanel" Grid.Row="1" Grid.Column="1">
+                    <TextBlock x:Name="itemTitle" Margin="10" Text="{Binding GameType}" Style="{StaticResource SubheaderTextStyle}"/>
+                    <TextBox x:Name="itemSubtitle" Margin="10"  Text="{Binding GameDescription}"   AcceptsReturn="True"  />
+                </StackPanel>
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,20,0,0" Text="{Binding Content}" Style="{StaticResource BodyTextStyle}" />
+                <ListView Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="304" Margin="22,41,0,0" Grid.Row="2" VerticalAlignment="Top" Width="518" ItemsSource="{Binding Players}" ItemsPanel="{StaticResource WarpGridItemsPanel}" ItemTemplate="{StaticResource PlayersItems}" SelectionMode="Multiple" SelectionChanged="SelectedPlayerListView_SelectionChanged"/>
                 <Button Content="{Binding DefaultViewModel.PickContactsCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="31,371,0,0" Grid.Row="2" VerticalAlignment="Top" Command="{Binding DefaultViewModel.PickContactsCommand, ElementName=pageRoot, Mode=OneWay}"/>
+                <Button Content="{Binding DefaultViewModel.DeleteSelectedPlayersCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="63,371,0,0" Grid.Row="2" VerticalAlignment="Top" Command="{Binding DefaultViewModel.DeleteSelectedPlayersCommand, ElementName=pageRoot, Mode=OneWay}" Grid.Column="1"/>
             </Grid>
         </ScrollViewer>
 
