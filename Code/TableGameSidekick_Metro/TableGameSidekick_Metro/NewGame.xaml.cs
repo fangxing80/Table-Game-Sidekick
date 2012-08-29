@@ -185,6 +185,7 @@ namespace TableGameSidekick_Metro
         private void SelectedPlayerListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DefaultViewModel["SelectedPlayers"] = (sender as ListView).SelectedItems.ToList();
+            
         }
 
 

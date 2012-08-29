@@ -215,6 +215,9 @@
     <Reference Include="System.Reactive">
       <HintPath>..\packages\Rx_Experimental-Main.1.1.11111\lib\WinRT45\System.Reactive.dll</HintPath>
     </Reference>
+    <Reference Include="System.Threading.Tasks.Dataflow">
+      <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.5-rc\lib\netcore45\System.Threading.Tasks.Dataflow.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="GamePlayControls\" />

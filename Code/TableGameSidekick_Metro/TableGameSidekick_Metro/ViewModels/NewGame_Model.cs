@@ -21,14 +21,14 @@ namespace TableGameSidekick_Metro.ViewModels
             ConfigModel();
         }
 
-        private void ConfigModel()
+        private async void ConfigModel()
         {
             GameInfomationPrototypes = new ObservableCollection<DataEntity.GameInfomation>();
 
             //加入三种默认游戏规则
-            AddGameType(GameType.ScoreGame);
-            AddGameType(GameType.StopwatchGame);
-            AddGameType(GameType.TradeGame);
+            await AddGameType(GameType.ScoreGame);
+            await AddGameType(GameType.StopwatchGame);
+            await AddGameType(GameType.TradeGame);
 
             //Todo:将来有更多游戏规则 在这里加入
 
@@ -131,13 +131,24 @@ namespace TableGameSidekick_Metro.ViewModels
                 );
         }
 
-        private void AddGameType(GameType t)
+        private async Task AddGameType(GameType t)
         {
+            byte[] imgdata;
+            var fl = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/GameType/" + t.ToString()+".png"));
+            using (var stream = await fl.OpenReadAsync())
+            {
+                var istrm = new MemoryStream();
+                var dnstream = stream.AsStreamForRead();
+                await dnstream.CopyToAsync(istrm);
+                istrm.Position = 0;
+                imgdata = istrm.ToArray();
+            }
+            //  var id=new ImageData (){ ByteArray = }
             GameInfomationPrototypes.Add(new GameInfomation()
             {
                 AdvanceGameKey = "",
                 GameType = t,
-                Image = null,
+                Image = new ImageData { ByteArray = imgdata },
                 GameDescription = t.ToString() + "类型游戏"
             }
             );
