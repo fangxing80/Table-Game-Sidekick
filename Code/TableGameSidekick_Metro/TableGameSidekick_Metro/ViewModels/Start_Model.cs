@@ -11,6 +11,7 @@ using MVVMSidekick.ViewModels;
 using TableGameSidekick_Metro.DataEntity;
 using System.Reactive.Linq;
 using System.Reactive;
+using TableGameSidekick_Metro.Storages;
 namespace TableGameSidekick_Metro.ViewModels
 {
     public class Start_Model : ViewModelBase<Start_Model>
@@ -18,6 +19,13 @@ namespace TableGameSidekick_Metro.ViewModels
 
         CancellationTokenSource m_CancellationTokenSource;
         public Start_Model()
+        {
+            ConfigProperties();
+
+            ConfigCommands();
+        }
+
+        private void ConfigProperties()
         {
             m_CancellationTokenSource = new CancellationTokenSource();
             m_CancellationTokenSource.RegisterDispose(this);
@@ -30,11 +38,9 @@ namespace TableGameSidekick_Metro.ViewModels
                 new GameInfomation { Id=Guid.NewGuid (), LastEditTime=DateTime.Now ,  StartTime=DateTime.Now     },
                 new GameInfomation { Id=Guid.NewGuid (), LastEditTime=DateTime.Now ,  StartTime=DateTime.Now     },
             };
-
-            ConfigCommands();
         }
 
-        public Start_Model(Storages.IStorage<IEnumerable<GameInfomation>> gameInfoStorage)
+        public Start_Model(Storages.IStorage<Dictionary<Guid, GameInfomation>> gameInfoStorage)
         {
             // TODO: Complete member initialization
             this.m_GameInfoStorage = gameInfoStorage;
@@ -47,7 +53,8 @@ namespace TableGameSidekick_Metro.ViewModels
         {
             await m_GameInfoStorage.Refresh();
             this.Games = new ObservableCollection<GameInfomation>(
-                m_GameInfoStorage.Value.OrderByDescending(g => g.LastEditTime));
+                m_GameInfoStorage.Value.OrderByDescending(g => g.Value.LastEditTime)
+                .Select(x => x.Value));
 
         }
 
@@ -67,20 +74,21 @@ namespace TableGameSidekick_Metro.ViewModels
 
         protected Property<ObservableCollection<GameInfomation>> m_Games =
           new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GamesLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GamesLocator =
             RegisterContainerLocator<ObservableCollection<GameInfomation>>(
-                "Games",
-                model =>
-                {
-                    model.m_Games =
-                        model.m_Games
-                        ??
-                        new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GamesLocator };
-                    return model.m_Games.Container =
-                        model.m_Games.Container
-                        ??
-                        new ValueContainer<ObservableCollection<GameInfomation>>("Games", model);
-                });
+            "Games",
+            model =>
+            {
+                model.m_Games =
+                    model.m_Games
+                    ??
+                    new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GamesLocator };
+                return model.m_Games.Container =
+                    model.m_Games.Container
+                    ??
+                    new ValueContainer<ObservableCollection<GameInfomation>>("Games", model);
+            });
 
         #endregion
 
@@ -104,20 +112,21 @@ namespace TableGameSidekick_Metro.ViewModels
 
         protected Property<GameInfomation> m_SelectedGame =
           new Property<GameInfomation> { LocatorFunc = m_SelectedGameLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<GameInfomation>> m_SelectedGameLocator =
             RegisterContainerLocator<GameInfomation>(
-                "SelectedGame",
-                model =>
-                {
-                    model.m_SelectedGame =
-                        model.m_SelectedGame
-                        ??
-                        new Property<GameInfomation> { LocatorFunc = m_SelectedGameLocator };
-                    return model.m_SelectedGame.Container =
-                        model.m_SelectedGame.Container
-                        ??
-                        new ValueContainer<GameInfomation>("SelectedGame", model);
-                });
+            "SelectedGame",
+            model =>
+            {
+                model.m_SelectedGame =
+                    model.m_SelectedGame
+                    ??
+                    new Property<GameInfomation> { LocatorFunc = m_SelectedGameLocator };
+                return model.m_SelectedGame.Container =
+                    model.m_SelectedGame.Container
+                    ??
+                    new ValueContainer<GameInfomation>("SelectedGame", model);
+            });
 
         #endregion
 
@@ -127,15 +136,12 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
+        private IStorage<Dictionary<Guid, GameInfomation>> m_GameInfoStorage;
 
 
 
 
 
-
-        private CommandModel<ReactiveCommand, string> m_NewGameCommand
-            = new ReactiveCommand(true)
-            .CreateCommandModel("NewGameCommand");
 
         public CommandModel<ReactiveCommand, string> NewGameCommand
         {
@@ -145,12 +151,12 @@ namespace TableGameSidekick_Metro.ViewModels
             }
 
         }
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        private CommandModel<ReactiveCommand, string> m_NewGameCommand
+            = new ReactiveCommand(true)
+            .CreateCommandModel("NewGameCommand");
 
 
-        private CommandModel<ReactiveCommand, string> m_ContinueCommand
-            = new ReactiveCommand(false)
-            .CreateCommandModel("ContinueCommand");
-        private Storages.IStorage<IEnumerable<GameInfomation>> m_GameInfoStorage;
 
         public CommandModel<ReactiveCommand, string> ContinueCommand
         {
@@ -160,11 +166,15 @@ namespace TableGameSidekick_Metro.ViewModels
             }
 
         }
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        private CommandModel<ReactiveCommand, string> m_ContinueCommand
+            = new ReactiveCommand(false)
+            .CreateCommandModel("ContinueCommand");
 
 
         void ConfigCommands()
         {
-            m_NewGameCommand
+            NewGameCommand
                 .CommandCore
                 .Subscribe
                 (
@@ -173,8 +183,8 @@ namespace TableGameSidekick_Metro.ViewModels
                         this,
                         new NavigateCommandEventArgs()
                         {
-                            SourceViewId = App.Views.Start,
-                            TargetViewId = App.Views.NewGame
+                            SourceViewId = Constants.Views.Start,
+                            TargetViewId = Constants.Views.NewGame
                         })
                 )
                 .RegisterDispose(this);
@@ -187,7 +197,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 .RegisterDispose(this);
 
 
-            m_ContinueCommand.CommandCore
+            ContinueCommand.CommandCore
                 .Subscribe
                 (
                     _ =>
@@ -195,12 +205,12 @@ namespace TableGameSidekick_Metro.ViewModels
                         this,
                         new NavigateCommandEventArgs()
                         {
-                            SourceViewId = App.Views.Start,
-                            TargetViewId = App.Views.GamePlay,
+                            SourceViewId = Constants.Views.Start,
+                            TargetViewId = Constants.Views.GamePlay,
                             ParameterDictionary = new Dictionary<string, Object>() 
                             {
-                                {App.Views.MainPage_NavigateParameters.bool_IsNewGame ,false},
-                                {App.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame,this.SelectedGame}
+                                
+                                {Constants.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame,this.SelectedGame}
                             }
                         })
                 )

@@ -25,6 +25,7 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<Guid> m_Id =
           new Property<Guid> { LocatorFunc = m_IdLocator };
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<Guid>> m_IdLocator =
             RegisterContainerLocator<Guid>(
                 "Id",
@@ -65,6 +66,7 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<GameInfomation> m_MyProperty =
           new Property<GameInfomation> { LocatorFunc = m_MyPropertyLocator };
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<GameInfomation>> m_MyPropertyLocator =
             RegisterContainerLocator<GameInfomation>(
                 "MyProperty",

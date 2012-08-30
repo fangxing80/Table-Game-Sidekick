@@ -22,6 +22,7 @@ namespace TableGameSidekick_Metro.DataEntity
         #region Property ImageData Image Setup
         protected Property<ImageData> m_Image =
           new Property<ImageData> { LocatorFunc = m_ImageLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<ImageData>> m_ImageLocator =
             RegisterContainerLocator<ImageData>(
                 "Image",
@@ -42,7 +43,7 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
         [DataMember]
-        
+
         public string GameDescription
         {
             get { return m_GameDescriptionLocator(this).Value; }
@@ -54,6 +55,7 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<string> m_GameDescription =
           new Property<string> { LocatorFunc = m_GameDescriptionLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<string>> m_GameDescriptionLocator =
             RegisterContainerLocator<string>(
                 "GameDescription",
@@ -95,20 +97,21 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<DateTime> m_StartTime =
           new Property<DateTime> { LocatorFunc = m_StartTimeLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<DateTime>> m_StartTimeLocator =
             RegisterContainerLocator<DateTime>(
-                "StartTime",
-                model =>
-                {
-                    model.m_StartTime =
-                        model.m_StartTime
-                        ??
-                        new Property<DateTime> { LocatorFunc = m_StartTimeLocator };
-                    return model.m_StartTime.Container =
-                        model.m_StartTime.Container
-                        ??
-                        new ValueContainer<DateTime>("StartTime", model);
-                });
+            "StartTime",
+            model =>
+            {
+                model.m_StartTime =
+                    model.m_StartTime
+                    ??
+                    new Property<DateTime> { LocatorFunc = m_StartTimeLocator };
+                return model.m_StartTime.Container =
+                    model.m_StartTime.Container
+                    ??
+                    new ValueContainer<DateTime>("StartTime", model);
+            });
 
         #endregion
 
@@ -133,20 +136,21 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<DateTime> m_LastEditTime =
           new Property<DateTime> { LocatorFunc = m_LastEditTimeLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<DateTime>> m_LastEditTimeLocator =
             RegisterContainerLocator<DateTime>(
-                "LastEditTime",
-                model =>
-                {
-                    model.m_LastEditTime =
-                        model.m_LastEditTime
-                        ??
-                        new Property<DateTime> { LocatorFunc = m_LastEditTimeLocator };
-                    return model.m_LastEditTime.Container =
-                        model.m_LastEditTime.Container
-                        ??
-                        new ValueContainer<DateTime>("LastEditTime", model);
-                });
+            "LastEditTime",
+            model =>
+            {
+                model.m_LastEditTime =
+                    model.m_LastEditTime
+                    ??
+                    new Property<DateTime> { LocatorFunc = m_LastEditTimeLocator };
+                return model.m_LastEditTime.Container =
+                    model.m_LastEditTime.Container
+                    ??
+                    new ValueContainer<DateTime>("LastEditTime", model);
+            });
 
         #endregion
 
@@ -174,20 +178,21 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<ObservableCollection<PlayerInfomation>> m_Players =
           new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_PlayersLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_PlayersLocator =
             RegisterContainerLocator<ObservableCollection<PlayerInfomation>>(
-                "Players",
-                model =>
-                {
-                    model.m_Players =
-                        model.m_Players
-                        ??
-                        new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_PlayersLocator };
-                    return model.m_Players.Container =
-                        model.m_Players.Container
-                        ??
-                        new ValueContainer<ObservableCollection<PlayerInfomation>>("Players", model);
-                });
+            "Players",
+            model =>
+            {
+                model.m_Players =
+                    model.m_Players
+                    ??
+                    new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_PlayersLocator };
+                return model.m_Players.Container =
+                    model.m_Players.Container
+                    ??
+                    new ValueContainer<ObservableCollection<PlayerInfomation>>("Players",new ObservableCollection<PlayerInfomation> (), model);
+            });
 
         #endregion
 
@@ -202,7 +207,7 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
         [DataMember]
-        
+
         public Guid Id
         {
             get { return m_IdLocator(this).Value; }
@@ -214,20 +219,21 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<Guid> m_Id =
           new Property<Guid> { LocatorFunc = m_IdLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<Guid>> m_IdLocator =
             RegisterContainerLocator<Guid>(
-                "Id",
-                model =>
-                {
-                    model.m_Id =
-                        model.m_Id
-                        ??
-                        new Property<Guid> { LocatorFunc = m_IdLocator };
-                    return model.m_Id.Container =
-                        model.m_Id.Container
-                        ??
-                        new ValueContainer<Guid>("Id", model);
-                });
+            "Id",
+            model =>
+            {
+                model.m_Id =
+                    model.m_Id
+                    ??
+                    new Property<Guid> { LocatorFunc = m_IdLocator };
+                return model.m_Id.Container =
+                    model.m_Id.Container
+                    ??
+                    new ValueContainer<Guid>("Id",Guid.NewGuid(), model);
+            });
 
         #endregion
 
@@ -241,7 +247,7 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
         [DataMember]
-        
+
         public GameType GameType
         {
             get { return m_GameTypeLocator(this).Value; }
@@ -253,20 +259,21 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<GameType> m_GameType =
           new Property<GameType> { LocatorFunc = m_GameTypeLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<GameType>> m_GameTypeLocator =
             RegisterContainerLocator<GameType>(
-                "GameType",
-                model =>
-                {
-                    model.m_GameType =
-                        model.m_GameType
-                        ??
-                        new Property<GameType> { LocatorFunc = m_GameTypeLocator };
-                    return model.m_GameType.Container =
-                        model.m_GameType.Container
-                        ??
-                        new ValueContainer<GameType>("GameType", model);
-                });
+            "GameType",
+            model =>
+            {
+                model.m_GameType =
+                    model.m_GameType
+                    ??
+                    new Property<GameType> { LocatorFunc = m_GameTypeLocator };
+                return model.m_GameType.Container =
+                    model.m_GameType.Container
+                    ??
+                    new ValueContainer<GameType>("GameType", model);
+            });
 
         #endregion
 
@@ -288,20 +295,21 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<string> m_AdvanceGameKey =
           new Property<string> { LocatorFunc = m_AdvanceGameKeyLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<string>> m_AdvanceGameKeyLocator =
             RegisterContainerLocator<string>(
-                "AdvanceGameKey",
-                model =>
-                {
-                    model.m_AdvanceGameKey =
-                        model.m_AdvanceGameKey
-                        ??
-                        new Property<string> { LocatorFunc = m_AdvanceGameKeyLocator };
-                    return model.m_AdvanceGameKey.Container =
-                        model.m_AdvanceGameKey.Container
-                        ??
-                        new ValueContainer<string>("AdvanceGameKey", model);
-                });
+            "AdvanceGameKey",
+            model =>
+            {
+                model.m_AdvanceGameKey =
+                    model.m_AdvanceGameKey
+                    ??
+                    new Property<string> { LocatorFunc = m_AdvanceGameKeyLocator };
+                return model.m_AdvanceGameKey.Container =
+                    model.m_AdvanceGameKey.Container
+                    ??
+                    new ValueContainer<string>("AdvanceGameKey", model);
+            });
 
         #endregion
 

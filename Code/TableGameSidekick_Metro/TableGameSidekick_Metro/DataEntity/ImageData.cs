@@ -46,7 +46,7 @@ namespace TableGameSidekick_Metro.DataEntity
         public async Task<InMemoryRandomAccessStream> GetStreamAsync()
         {
             return await CreateStreamAsync(ByteArray);
-        
+
         }
 
 
@@ -65,20 +65,21 @@ namespace TableGameSidekick_Metro.DataEntity
         #region Property Byte[] ByteArray Setup
         protected Property<Byte[]> m_ByteArray =
           new Property<Byte[]> { LocatorFunc = m_ByteArrayLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<Byte[]>> m_ByteArrayLocator =
             RegisterContainerLocator<Byte[]>(
-                "ByteArray",
-                model =>
-                {
-                    model.m_ByteArray =
-                        model.m_ByteArray
-                        ??
-                        new Property<Byte[]> { LocatorFunc = m_ByteArrayLocator };
-                    return model.m_ByteArray.Container =
-                        model.m_ByteArray.Container
-                        ??
-                        new ValueContainer<Byte[]>("ByteArray", new byte[0], model);
-                });
+            "ByteArray",
+            model =>
+            {
+                model.m_ByteArray =
+                    model.m_ByteArray
+                    ??
+                    new Property<Byte[]> { LocatorFunc = m_ByteArrayLocator };
+                return model.m_ByteArray.Container =
+                    model.m_ByteArray.Container
+                    ??
+                    new ValueContainer<Byte[]>("ByteArray", new byte[0], model);
+            });
         #endregion
 
         /// <summary>
@@ -107,20 +108,21 @@ namespace TableGameSidekick_Metro.DataEntity
         #region Property BitmapImage BitmapImage Setup
         protected Property<BitmapImage> m_BitmapImage =
           new Property<BitmapImage> { LocatorFunc = m_BitmapImageLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<BitmapImage>> m_BitmapImageLocator =
             RegisterContainerLocator<BitmapImage>(
-                "BitmapImage",
-                model =>
-                {
-                    model.m_BitmapImage =
-                        model.m_BitmapImage
-                        ??
-                        new Property<BitmapImage> { LocatorFunc = m_BitmapImageLocator };
-                    return model.m_BitmapImage.Container =
-                        model.m_BitmapImage.Container
-                        ??
-                        new ValueContainer<BitmapImage>("BitmapImage", model);
-                });
+            "BitmapImage",
+            model =>
+            {
+                model.m_BitmapImage =
+                    model.m_BitmapImage
+                    ??
+                    new Property<BitmapImage> { LocatorFunc = m_BitmapImageLocator };
+                return model.m_BitmapImage.Container =
+                    model.m_BitmapImage.Container
+                    ??
+                    new ValueContainer<BitmapImage>("BitmapImage", model);
+            });
         #endregion
 
 

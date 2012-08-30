@@ -23,7 +23,7 @@ using Windows.Storage;
 
 namespace TableGameSidekick_Metro
 {
-    sealed partial class App
+     static class Constants
     {
         public static string[] PresavedPics = new string[]
        {
@@ -86,7 +86,8 @@ namespace TableGameSidekick_Metro
                         NewGame , 
                         ( p=>
                         {
-                            
+                            var vm = new NewGame_Model(Storages.Instance.GameInfomationsStorage);
+                            p.DefaultViewModel = vm;
                     
                         })
                     },
@@ -141,9 +142,9 @@ namespace TableGameSidekick_Metro
 
             public static Storages Instance = new Storages();
 
-            public CollectionStorage<GameInfomation> GameInfomationsStorage = new CollectionStorage<GameInfomation>("GameInfomations.json");
+            public Storage<Dictionary<Guid, GameInfomation>> GameInfomationsStorage = new Storage<Dictionary<Guid, GameInfomation>>("GameInfomations.json");
             public Dictionary<Guid, IStorage<GameData>> GameDatasStorages = new Dictionary<Guid, IStorage<GameData>>();
-            public CollectionStorage<PlayerInfomation> PlayerInfomationStorage = new CollectionStorage<PlayerInfomation>("PlayerInfomations.json");
+            public Storage<List<PlayerInfomation>> PlayerInfomationStorage = new Storage<List<PlayerInfomation>>("PlayerInfomations.json");
             public List<StorageFile> PlayerImages;
 
 

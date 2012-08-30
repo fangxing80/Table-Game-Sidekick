@@ -119,7 +119,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Background="White"  Grid.Row="1" Margin="0,0,20,0"  >
                 
-                    <Image Width="180" Height="180" Source="{Binding Image}" Stretch="UniformToFill"/>
+                    <Image Width="180" Height="180" Source="{Binding Image.BitmapImage}" Stretch="UniformToFill"/>
                 </StackPanel>
                 <StackPanel x:Name="itemDetailTitlePanel" Grid.Row="1" Grid.Column="1">
                     <TextBlock x:Name="itemTitle" Margin="10" Text="{Binding GameType}" Style="{StaticResource SubheaderTextStyle}"/>
@@ -129,6 +129,7 @@
                 <ListView Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="304" Margin="22,41,0,0" Grid.Row="2" VerticalAlignment="Top" Width="518" ItemsSource="{Binding Players}" ItemsPanel="{StaticResource WarpGridItemsPanel}" ItemTemplate="{StaticResource PlayersItems}" SelectionMode="Multiple" SelectionChanged="SelectedPlayerListView_SelectionChanged"/>
                 <Button Content="{Binding DefaultViewModel.PickContactsCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="31,371,0,0" Grid.Row="2" VerticalAlignment="Top" Command="{Binding DefaultViewModel.PickContactsCommand, ElementName=pageRoot, Mode=OneWay}"/>
                 <Button Content="{Binding DefaultViewModel.DeleteSelectedPlayersCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="63,371,0,0" Grid.Row="2" VerticalAlignment="Top" Command="{Binding DefaultViewModel.DeleteSelectedPlayersCommand, ElementName=pageRoot, Mode=OneWay}" Grid.Column="1"/>
+                <Button Content="{Binding DefaultViewModel.SaveGameInfoAndStartCommand.Resource, ElementName=pageRoot}" HorizontalAlignment="Left" Margin="63,307,0,0" Grid.Row="2" VerticalAlignment="Top" Command="{Binding DefaultViewModel.SaveGameInfoAndStartCommand, ElementName=pageRoot, Mode=OneWay}" Grid.Column="1"/>
             </Grid>
         </ScrollViewer>
 

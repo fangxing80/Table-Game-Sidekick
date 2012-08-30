@@ -13,10 +13,10 @@ namespace TableGameSidekick_Metro.DataEntity
     {
 
         [DataMember]
-        
+
         public string Name
         {
-            get { return m_NameLocator(this).Value??""; }
+            get { return m_NameLocator(this).Value ?? ""; }
             set { m_NameLocator(this).SetValueAndTryNotify(value); }
         }
 
@@ -25,27 +25,28 @@ namespace TableGameSidekick_Metro.DataEntity
 
         protected Property<string> m_Name =
           new Property<string> { LocatorFunc = m_NameLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<string>> m_NameLocator =
             RegisterContainerLocator<string>(
-                "Name",
-                model =>
-                {
-                    model.m_Name =
-                        model.m_Name
-                        ??
-                        new Property<string> { LocatorFunc = m_NameLocator };
-                    return model.m_Name.Container =
-                        model.m_Name.Container
-                        ??
-                        new ValueContainer<string>("Name","", model);
-                });
+            "Name",
+            model =>
+            {
+                model.m_Name =
+                    model.m_Name
+                    ??
+                    new Property<string> { LocatorFunc = m_NameLocator };
+                return model.m_Name.Container =
+                    model.m_Name.Container
+                    ??
+                    new ValueContainer<string>("Name", "", model);
+            });
 
         #endregion
 
 
 
         [DataMember]
-        
+
         public ImageData Image
         {
             get { return m_ImageLocator(this).Value; }
@@ -55,20 +56,21 @@ namespace TableGameSidekick_Metro.DataEntity
         #region Property ImageData Image Setup
         protected Property<ImageData> m_Image =
           new Property<ImageData> { LocatorFunc = m_ImageLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<ImageData>> m_ImageLocator =
             RegisterContainerLocator<ImageData>(
-                "Image",
-                model =>
-                {
-                    model.m_Image =
-                        model.m_Image
-                        ??
-                        new Property<ImageData> { LocatorFunc = m_ImageLocator };
-                    return model.m_Image.Container =
-                        model.m_Image.Container
-                        ??
-                        new ValueContainer<ImageData>("Image", model);
-                });
+            "Image",
+            model =>
+            {
+                model.m_Image =
+                    model.m_Image
+                    ??
+                    new Property<ImageData> { LocatorFunc = m_ImageLocator };
+                return model.m_Image.Container =
+                    model.m_Image.Container
+                    ??
+                    new ValueContainer<ImageData>("Image", model);
+            });
         #endregion
 
 
@@ -81,36 +83,39 @@ namespace TableGameSidekick_Metro.DataEntity
             {
                 return false;
             }
-            return vo.Name == this.Name; 
+            return vo.Name == this.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
         }
 
 
 
-        
-
-
-
-
-        
-
-
-
-        
 
 
 
 
 
-        
-
-        
-
-
-        
 
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

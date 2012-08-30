@@ -64,7 +64,7 @@ namespace MVVMSidekick
             : IDisposable, INotifyPropertyChanged, IDataErrorInfo
         {
 
-            
+
             public abstract IEnumerable<string> FieldNames { get; }
 
             public abstract object this[string colName] { get; set; }
@@ -176,7 +176,7 @@ namespace MVVMSidekick
         }
         public static class DisposableExtensions
         {
-            public static T RegisterDispose<T>(this T item, ViewModelBase vm) where T:IDisposable
+            public static T RegisterDispose<T>(this T item, ViewModelBase vm) where T : IDisposable
             {
                 vm.AddDisposable(item);
                 return item;
@@ -484,20 +484,21 @@ namespace MVVMSidekick
 
             protected Property<string> m_Error =
               new Property<string> { LocatorFunc = m_ErrorLocator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             static Func<ViewModelBase, ValueContainer<string>> m_ErrorLocator =
                 RegisterContainerLocator<string>(
-                    "Error",
-                    model =>
-                    {
-                        model.m_Error =
-                            model.m_Error
-                            ??
-                            new Property<string> { LocatorFunc = m_ErrorLocator };
-                        return model.m_Error.Container =
-                            model.m_Error.Container
-                            ??
-                            new ValueContainer<string>("Error", model);
-                    });
+                "Error",
+                model =>
+                {
+                    model.m_Error =
+                        model.m_Error
+                        ??
+                        new Property<string> { LocatorFunc = m_ErrorLocator };
+                    return model.m_Error.Container =
+                        model.m_Error.Container
+                        ??
+                        new ValueContainer<string>("Error", model);
+                });
 
             #endregion
 
@@ -506,49 +507,15 @@ namespace MVVMSidekick
 
 
 
-
-
-            //public static void AddIfNotIn<TK, TV>(this IDictionary<TK, TV> dic, TK key, TV value)
-            //{
-            //    if (!dic.ContainsKey(key))
-            //    {
-            //        dic.Add(key, value);
-            //    }
-
-            //}
-
             protected static Func<ViewModelBase, ValueContainer<TProperty>> RegisterContainerLocator<TProperty>(string propertyName, Func<TViewModel, ValueContainer<TProperty>> getOrCreateLocatorMethod)
             {
 
-                //_names[propertyName] = propertyName;
+                
                 TypeDic<TProperty>._propertyContainerGetters[propertyName] = getOrCreateLocatorMethod;
                 _plainPropertyContainerGetters[propertyName] = (v) => getOrCreateLocatorMethod(v) as IPropertyContainer;
                 return o => getOrCreateLocatorMethod((TViewModel)o);
             }
 
-
-
-
-            //public ValueChangedEventObject<TProperty> GetPropertyValueChangeEventObject<TProperty>(string propertyName)
-            //{
-            //    Func<TViewModel, PropertyContainer<TProperty>> contianerGetterCreater;
-            //    if (!TypeDic<TProperty>._propertyContainerGetters.TryGetValue(propertyName, out contianerGetterCreater))
-            //    {
-            //        throw new Exception("Property Not Exists!");
-
-            //    }
-
-            //    return contianerGetterCreater((TViewModel)(Object)this).EventObject;
-
-            //}
-
-            //public ValueChangedEventObject<TProperty> GetPropertyValueChangeEventObject<TProperty>(Expression<Func<TViewModel, TProperty>> expression)
-            //{
-
-            //    var propName = GetExpressionMemberName(expression);
-            //    return GetPropertyValueChangeEventObject<TProperty>(propName);
-
-            //}
 
 
             public ValueContainer<TProperty> GetPropertyContainer<TProperty>(string propertyName)
@@ -718,20 +685,21 @@ namespace MVVMSidekick
 
             protected Property<bool> m_LastCanExecuteValue =
               new Property<bool> { LocatorFunc = m_LastCanExecuteValueLocator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             static Func<ViewModelBase, ValueContainer<bool>> m_LastCanExecuteValueLocator =
                 RegisterContainerLocator<bool>(
-                    "LastCanExecuteValue",
-                    model =>
-                    {
-                        model.m_LastCanExecuteValue =
-                            model.m_LastCanExecuteValue
-                            ??
-                            new Property<bool> { LocatorFunc = m_LastCanExecuteValueLocator };
-                        return model.m_LastCanExecuteValue.Container =
-                            model.m_LastCanExecuteValue.Container
-                            ??
-                            new ValueContainer<bool>("LastCanExecuteValue", model);
-                    });
+                "LastCanExecuteValue",
+                model =>
+                {
+                    model.m_LastCanExecuteValue =
+                        model.m_LastCanExecuteValue
+                        ??
+                        new Property<bool> { LocatorFunc = m_LastCanExecuteValueLocator };
+                    return model.m_LastCanExecuteValue.Container =
+                        model.m_LastCanExecuteValue.Container
+                        ??
+                        new ValueContainer<bool>("LastCanExecuteValue", model);
+                });
 
             #endregion
 
@@ -749,20 +717,21 @@ namespace MVVMSidekick
 
             protected Property<TResource> m_Resource =
               new Property<TResource> { LocatorFunc = m_ResourceLocator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             static Func<ViewModelBase, ValueContainer<TResource>> m_ResourceLocator =
                 RegisterContainerLocator<TResource>(
-                    "Resource",
-                    model =>
-                    {
-                        model.m_Resource =
-                            model.m_Resource
-                            ??
-                            new Property<TResource> { LocatorFunc = m_ResourceLocator };
-                        return model.m_Resource.Container =
-                            model.m_Resource.Container
-                            ??
-                            new ValueContainer<TResource>("Resource", model);
-                    });
+                "Resource",
+                model =>
+                {
+                    model.m_Resource =
+                        model.m_Resource
+                        ??
+                        new Property<TResource> { LocatorFunc = m_ResourceLocator };
+                    return model.m_Resource.Container =
+                        model.m_Resource.Container
+                        ??
+                        new ValueContainer<TResource>("Resource", model);
+                });
 
             #endregion
 

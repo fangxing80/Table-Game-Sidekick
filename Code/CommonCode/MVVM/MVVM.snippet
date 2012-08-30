@@ -33,6 +33,7 @@
         #region Property $type$ $property$ Setup        
         protected Property<$type$> m_$property$ =
           new Property<$type$>{ LocatorFunc = m_$property$Locator};
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase,ValueContainer<$type$>> m_$property$Locator=
             RegisterContainerLocator<$type$>(
                 "$property$",
@@ -135,6 +136,7 @@
         }       
         
         #region $commandName$ Configuration
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
         CommandModel<$commandType$, $resourceType$> m_$commandName$
             = new $commandType$(canExecute: true).CreateCommandModel(default($resourceType$));
         #endregion

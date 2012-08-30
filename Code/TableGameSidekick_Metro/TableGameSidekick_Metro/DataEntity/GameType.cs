@@ -11,12 +11,14 @@ namespace TableGameSidekick_Metro.DataEntity
     public enum GameType
     {
         [EnumMember]
-        TradeGame=0,
+        NotSet = 0,
         [EnumMember]
-        ScoreGame=1,
+        TradeGame=1,
         [EnumMember]
-        StopwatchGame=2,
+        ScoreGame=2,
         [EnumMember]
-        Advanced=3
+        StopwatchGame=3,
+        [EnumMember]
+        Advanced=4
     }
 }

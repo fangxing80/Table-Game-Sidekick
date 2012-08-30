@@ -9,7 +9,7 @@ using MVVMSidekick.ViewModels;
 using Windows.Storage;
 namespace TableGameSidekick_Metro.Storages
 {
-    public class Storage<T> : ViewModelBase<Storage<T>>, TableGameSidekick_Metro.Storages.IStorage<T>
+    public class Storage<T> : ViewModelBase<Storage<T>>, TableGameSidekick_Metro.Storages.IStorage<T> where T : new()
     {
         public Storage(string fileName = null, StorageFolder folder = null)
         {
@@ -37,7 +37,7 @@ namespace TableGameSidekick_Metro.Storages
 
         protected Property<StorageFolder> m_Folder =
           new Property<StorageFolder> { LocatorFunc = m_FolderLocator };
-        static Func<ViewModelBase, ValueContainer<StorageFolder>> m_FolderLocator =
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<StorageFolder>> m_FolderLocator =
             RegisterContainerLocator<StorageFolder>(
                 "Folder",
                 model =>
@@ -69,7 +69,7 @@ namespace TableGameSidekick_Metro.Storages
 
 
 
-        protected System.Threading.AutoResetEvent m_BusyWait ;
+        protected System.Threading.AutoResetEvent m_BusyWait;
 
         protected IDisposable CreateBusyLock()
         {
@@ -163,7 +163,20 @@ namespace TableGameSidekick_Metro.Storages
 
         public T Value
         {
-            get { return m_ValueLocator(this).Value; }
+            get
+            {
+
+                var vc = m_ValueLocator(this);
+                var v = vc.Value;
+                if (v ==null || v.Equals(default(T)))
+                {
+
+                    vc.Value = v = new T();
+                }
+
+                return v;
+
+            }
             set { m_ValueLocator(this).SetValueAndTryNotify(value); }
         }
 
@@ -172,7 +185,7 @@ namespace TableGameSidekick_Metro.Storages
 
         protected Property<T> m_Value =
           new Property<T> { LocatorFunc = m_ValueLocator };
-        static Func<ViewModelBase, ValueContainer<T>> m_ValueLocator =
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<T>> m_ValueLocator =
             RegisterContainerLocator<T>(
                 "Value",
                 model =>
@@ -214,54 +227,54 @@ namespace TableGameSidekick_Metro.Storages
     }
 
 
-    public class CollectionStorage<T> : Storage<CollectionStorageTray<T>>, IStorage<IEnumerable<T>>
-    {
-        public CollectionStorage(string fileName, StorageFolder folder = null)
-            : base(fileName, folder)
-        {
-        }
+    //public class CollectionStorage<T> : Storage<CollectionStorageTray<T>>, IStorage<IEnumerable<T>>
+    //{
+    //    public CollectionStorage(string fileName, StorageFolder folder = null)
+    //        : base(fileName, folder)
+    //    {
+    //    }
 
 
-        public new IEnumerable<T> Value
-        {
-            get
-            {
-                if (base.Value == null)
-                {
-                    base.Value = new CollectionStorageTray<T>();
-                }
-                return base.Value.Items;
-            }
-            set
-            {
-                if (base.Value == null)
-                {
-                    base.Value = new CollectionStorageTray<T>();
-                }
-                if (value is IList<T>)
-                {
-                    base.Value.Items = value as IList<T>;
-                }
-                else
-                {
-                    base.Value.Items = value.ToList();
-                }
-            }
-        }
-    }
+    //    public new IEnumerable<T> Value
+    //    {
+    //        get
+    //        {
+    //            if (base.Value == null)
+    //            {
+    //                base.Value = new CollectionStorageTray<T>();
+    //            }
+    //            return base.Value.Items;
+    //        }
+    //        set
+    //        {
+    //            if (base.Value == null)
+    //            {
+    //                base.Value = new CollectionStorageTray<T>();
+    //            }
+    //            if (value is IList<T>)
+    //            {
+    //                base.Value.Items = value as IList<T>;
+    //            }
+    //            else
+    //            {
+    //                base.Value.Items = value.ToList();
+    //            }
+    //        }
+    //    }
+    //}
 
-    [DataContract]
-    public class CollectionStorageTray<T>
-    {
+    //[DataContract]
+    //public class CollectionStorageTray<T>
+    //{
 
-        [DataMember]
-        public IList<T> m_Items;
+    //    [DataMember]
+    //    public IList<T> m_Items;
 
-        public IList<T> Items
-        {
-            get { return m_Items = m_Items ?? new List<T>(); }
-            set { m_Items = value; }
-        }
-    }
+    //    public IList<T> Items
+    //    {
+    //        get { return m_Items = m_Items ?? new List<T>(); }
+    //        set { m_Items = value; }
+    //    }
+    //}
 
 }

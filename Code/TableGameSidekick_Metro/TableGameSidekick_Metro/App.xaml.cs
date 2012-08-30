@@ -46,9 +46,9 @@ namespace TableGameSidekick_Metro
                     ep =>
                     {
                         Action<LayoutAwarePage> initAction = null;
-                        if (Views.PageInitActions.TryGetValue(ep.EventArgs.TargetViewId, out initAction))
+                        if (Constants.Views.PageInitActions.TryGetValue(ep.EventArgs.TargetViewId, out initAction))
                         {
-                            ep.EventArgs.ParameterDictionary[NavigateParameterKeys.ViewInitActionName] = initAction;
+                            ep.EventArgs.ParameterDictionary[Constants.NavigateParameterKeys.ViewInitActionName] = initAction;
                         }
 
 
@@ -86,7 +86,7 @@ namespace TableGameSidekick_Metro
 
             // Create a Frame to act navigation context and navigate to the first page
             MainFrame = MainFrame ?? new Frame();
-            if (!MainFrame.Navigate(typeof(Start), App.Views.PageInitActions[typeof(Start).FullName]))
+            if (!MainFrame.Navigate(typeof(Start), Constants.Views.PageInitActions[typeof(Start).FullName]))
             {
                 throw new Exception("Failed to create initial page");
             }
@@ -117,7 +117,7 @@ namespace TableGameSidekick_Metro
             {
                 var page = new SelectPlayers();
                 Window.Current.Content = page;
-                var vm = new SelectPlayers_Model(((ContactPickerActivatedEventArgs)args).ContactPickerUI, Storages.Instance.PlayerInfomationStorage, PresavedPics);
+                var vm = new SelectPlayers_Model(((ContactPickerActivatedEventArgs)args).ContactPickerUI, Constants.Storages.Instance.PlayerInfomationStorage, Constants.PresavedPics);
                 page.DefaultViewModel = vm;
                 Window.Current.Activate();
             }

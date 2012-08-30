@@ -23,17 +23,17 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public SelectPlayers_Model()
         {
-            m_PlayersStorage = new Storage<IEnumerable<PlayerInfomation>>();
-            m_PlayersStorage.Value = new PlayerInfomation[]
+            m_PlayersStorage = new Storage<List<PlayerInfomation>>();
+            m_PlayersStorage.Value = new List<PlayerInfomation>();
             {
                 //new  PlayerInfomation { GetFieldNames() }
             
             };
-            this.PresavedImagePaths = new ObservableCollection<string>(App.PresavedPics);
+            this.PresavedImagePaths = new ObservableCollection<string>(Constants.PresavedPics);
         }
 
 
-        public SelectPlayers_Model(ContactPickerUI contactPickerUI, IStorage<IEnumerable<PlayerInfomation>> playersStorage, IEnumerable<string> imageFiles)
+        public SelectPlayers_Model(ContactPickerUI contactPickerUI, IStorage<List<PlayerInfomation>> playersStorage, IEnumerable<string> imageFiles)
         {
             m_ContactPickerUI = contactPickerUI;
             m_PlayersStorage = playersStorage;
@@ -61,7 +61,7 @@ namespace TableGameSidekick_Metro.ViewModels
                          var newu = vm.NewPlayer;
                          vm.NewPlayer = new PlayerInfomation();
                          vm.SavedPlayers.Add(newu);
-                         vm.m_PlayersStorage.Value = vm.SavedPlayers.ToArray();
+                         vm.m_PlayersStorage.Value = vm.SavedPlayers.ToList();
                          await vm.m_PlayersStorage.Save();
 
                      }
@@ -87,7 +87,7 @@ namespace TableGameSidekick_Metro.ViewModels
                        {
                            SavedPlayers.Remove(item);
                        }
-                       m_PlayersStorage.Value = SavedPlayers.ToArray();
+                       m_PlayersStorage.Value = SavedPlayers.ToList();
                        await m_PlayersStorage.Save();
                    }
                 )
@@ -154,7 +154,7 @@ namespace TableGameSidekick_Metro.ViewModels
         }
 
         ContactPickerUI m_ContactPickerUI;
-        IStorage<IEnumerable<PlayerInfomation>> m_PlayersStorage;
+        IStorage<List<PlayerInfomation>> m_PlayersStorage;
 
 
 
@@ -216,7 +216,7 @@ namespace TableGameSidekick_Metro.ViewModels
         }
         #region Property ObservableCollection<PlayerInfomation> SavedPlayers Setup
         protected Property<ObservableCollection<PlayerInfomation>> m_SavedPlayers = new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_SavedPlayersLocator };
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_SavedPlayersLocator =
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_SavedPlayersLocator =
             RegisterContainerLocator<ObservableCollection<PlayerInfomation>>(
                 "SavedPlayers",
                 model =>
@@ -247,7 +247,7 @@ namespace TableGameSidekick_Metro.ViewModels
         #region Property IEnumerable<object> SelectedItems Setup
         protected Property<IEnumerable<object>> m_SelectedItems =
           new Property<IEnumerable<object>> { LocatorFunc = m_SelectedItemsLocator };
-        static Func<ViewModelBase, ValueContainer<IEnumerable<object>>> m_SelectedItemsLocator =
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<IEnumerable<object>>> m_SelectedItemsLocator =
             RegisterContainerLocator<IEnumerable<object>>(
                 "SelectedItems",
                 model =>
@@ -275,7 +275,7 @@ namespace TableGameSidekick_Metro.ViewModels
         }
         #region Property ObservableCollection<string> PresavedImagePaths Setup
         protected Property<ObservableCollection<string>> m_PresavedImagePaths = new Property<ObservableCollection<string>> { LocatorFunc = m_PresavedImagePathsLocator };
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<string>>> m_PresavedImagePathsLocator =
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<ObservableCollection<string>>> m_PresavedImagePathsLocator =
             RegisterContainerLocator<ObservableCollection<string>>(
                 "PresavedImagePaths",
                 model =>
@@ -302,7 +302,7 @@ namespace TableGameSidekick_Metro.ViewModels
         }
         #region Property PlayerInfomation NewPlayer Setup
         protected Property<PlayerInfomation> m_NewPlayer = new Property<PlayerInfomation> { LocatorFunc = m_NewPlayerLocator };
-        static Func<ViewModelBase, ValueContainer<PlayerInfomation>> m_NewPlayerLocator =
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<PlayerInfomation>> m_NewPlayerLocator =
             RegisterContainerLocator<PlayerInfomation>(
                 "NewPlayer",
                 model =>
@@ -328,7 +328,7 @@ namespace TableGameSidekick_Metro.ViewModels
         }
         #region Property string NewPlayerPicResourcePath Setup
         protected Property<string> m_NewPlayerPicResourcePath = new Property<string> { LocatorFunc = m_NewPlayerPicResourcePathLocator };
-        static Func<ViewModelBase, ValueContainer<string>> m_NewPlayerPicResourcePathLocator =
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<string>> m_NewPlayerPicResourcePathLocator =
             RegisterContainerLocator<string>(
                 "NewPlayerPicResourcePath",
                 model =>
@@ -358,7 +358,7 @@ namespace TableGameSidekick_Metro.ViewModels
             get { return m_CreateNewUserCommand.WithViewModel(this); }
             protected set { m_CreateNewUserCommand = value; }
         }
-
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         CommandModel<ReactiveCommand, String> m_CreateNewUserCommand
        = new ReactiveCommand(true).CreateCommandModel("AddNew");
 
@@ -374,6 +374,7 @@ namespace TableGameSidekick_Metro.ViewModels
         }
 
         #region DeleteItemCommand Configuration
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         CommandModel<ReactiveCommand, String> m_DeleteItemCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
@@ -390,6 +391,7 @@ namespace TableGameSidekick_Metro.ViewModels
         }
 
         #region DeleteSelectedSavedPlayerCommand Configuration
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         CommandModel<ReactiveCommand, String> m_DeleteSelectedSavedPlayerCommand
             = new ReactiveCommand(canExecute: false).CreateCommandModel("DeleteSelectedPlayer");
 

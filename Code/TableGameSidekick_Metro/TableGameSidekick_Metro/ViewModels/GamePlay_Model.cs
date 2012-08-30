@@ -16,7 +16,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
         }
 
-        
+
         public GameInfomation CurrentGameInfomation
         {
             get { return m_CurrentGameInfomationLocator(this).Value; }
@@ -28,20 +28,21 @@ namespace TableGameSidekick_Metro.ViewModels
 
         protected Property<GameInfomation> m_CurrentGameInfomation =
           new Property<GameInfomation> { LocatorFunc = m_CurrentGameInfomationLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         static Func<ViewModelBase, ValueContainer<GameInfomation>> m_CurrentGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
-                "CurrentGameInfomation",
-                model =>
-                {
-                    model.m_CurrentGameInfomation =
-                        model.m_CurrentGameInfomation
-                        ??
-                        new Property<GameInfomation> { LocatorFunc = m_CurrentGameInfomationLocator };
-                    return model.m_CurrentGameInfomation.Container =
-                        model.m_CurrentGameInfomation.Container
-                        ??
-                        new ValueContainer<GameInfomation>("CurrentGameInfomation", model);
-                });
+            "CurrentGameInfomation",
+            model =>
+            {
+                model.m_CurrentGameInfomation =
+                    model.m_CurrentGameInfomation
+                    ??
+                    new Property<GameInfomation> { LocatorFunc = m_CurrentGameInfomationLocator };
+                return model.m_CurrentGameInfomation.Container =
+                    model.m_CurrentGameInfomation.Container
+                    ??
+                    new ValueContainer<GameInfomation>("CurrentGameInfomation", model);
+            });
 
         #endregion
 

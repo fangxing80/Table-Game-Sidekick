@@ -374,9 +374,9 @@ namespace TableGameSidekick_Metro.Common
                 if (dic != null)
                 {
                     object init = null;
-                    if (dic.TryGetValue(TableGameSidekick_Metro.App.NavigateParameterKeys.ViewInitActionName, out init))
+                    if (dic.TryGetValue(TableGameSidekick_Metro.Constants.NavigateParameterKeys.ViewInitActionName, out init))
                     {
-                        dic.Remove(TableGameSidekick_Metro.App.NavigateParameterKeys.ViewInitActionName);
+                        dic.Remove(TableGameSidekick_Metro.Constants.NavigateParameterKeys.ViewInitActionName);
                     }
 
                     var initAction = init as Action<LayoutAwarePage>;
