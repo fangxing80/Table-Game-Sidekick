@@ -161,7 +161,7 @@ namespace TableGameSidekick_Metro.ViewModels
         async void ConfigModel()
         {
 
-            m_NewPlayerPicResourcePath.Locate(this).GetValueChangeObservable()
+            m_NewPlayerPicResourcePath.LocateValueContainer(this).GetValueChangeObservable()
                 //.Throttle(TimeSpan.FromSeconds(1))
              .Subscribe
              (
@@ -225,7 +225,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     return model.m_SavedPlayers.Container =
                         model.m_SavedPlayers.Container
                         ??
-                        new ValueContainer<ObservableCollection<PlayerInfomation>>("SavedPlayers", new ObservableCollection<PlayerInfomation>(), model);
+                        new ValueContainer<ObservableCollection<PlayerInfomation>>("SavedPlayers", model, new ObservableCollection<PlayerInfomation>());
                 }
             );
         #endregion
@@ -311,7 +311,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     return model.m_NewPlayer.Container =
                         model.m_NewPlayer.Container
                         ??
-                        new ValueContainer<PlayerInfomation>("NewPlayer", new PlayerInfomation(), model);
+                        new ValueContainer<PlayerInfomation>("NewPlayer", model, new PlayerInfomation());
                 }
             );
         #endregion

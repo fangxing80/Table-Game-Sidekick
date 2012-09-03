@@ -38,7 +38,7 @@ namespace TableGameSidekick_Metro.DataEntity
                 return model.m_Name.Container =
                     model.m_Name.Container
                     ??
-                    new ValueContainer<string>("Name", "", model);
+                    new ValueContainer<string>("Name", model,"");
             });
 
         #endregion

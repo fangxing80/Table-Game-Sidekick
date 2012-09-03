@@ -11,13 +11,14 @@ namespace TableGameSidekick_Metro.Storages
 {
     public class Storage<T> : ViewModelBase<Storage<T>>, TableGameSidekick_Metro.Storages.IStorage<T> where T : new()
     {
-        public Storage(string fileName = null, StorageFolder folder = null)
+        public Storage(string fileName = null, StorageFolder folder = null, Type[] knownTypes = null)
         {
+            knownTypes = knownTypes ?? new Type[0];
             m_BusyWait = new System.Threading.AutoResetEvent(true)
                 .RegisterDispose(this);
             Folder = folder ?? Windows.Storage.ApplicationData.Current.LocalFolder;
             m_FileName = fileName ?? typeof(T).FullName;
-            m_Ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(T));
+            m_Ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(T), knownTypes);
 
         }
 
@@ -37,20 +38,21 @@ namespace TableGameSidekick_Metro.Storages
 
         protected Property<StorageFolder> m_Folder =
           new Property<StorageFolder> { LocatorFunc = m_FolderLocator };
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<StorageFolder>> m_FolderLocator =
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<StorageFolder>> m_FolderLocator =
             RegisterContainerLocator<StorageFolder>(
-                "Folder",
-                model =>
-                {
-                    model.m_Folder =
-                        model.m_Folder
-                        ??
-                        new Property<StorageFolder> { LocatorFunc = m_FolderLocator };
-                    return model.m_Folder.Container =
-                        model.m_Folder.Container
-                        ??
-                        new ValueContainer<StorageFolder>("Folder", model);
-                });
+            "Folder",
+            model =>
+            {
+                model.m_Folder =
+                    model.m_Folder
+                    ??
+                    new Property<StorageFolder> { LocatorFunc = m_FolderLocator };
+                return model.m_Folder.Container =
+                    model.m_Folder.Container
+                    ??
+                    new ValueContainer<StorageFolder>("Folder", model);
+            });
 
         #endregion
 
@@ -168,7 +170,7 @@ namespace TableGameSidekick_Metro.Storages
 
                 var vc = m_ValueLocator(this);
                 var v = vc.Value;
-                if (v ==null || v.Equals(default(T)))
+                if (v == null || v.Equals(default(T)))
                 {
 
                     vc.Value = v = new T();
@@ -185,20 +187,21 @@ namespace TableGameSidekick_Metro.Storages
 
         protected Property<T> m_Value =
           new Property<T> { LocatorFunc = m_ValueLocator };
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<T>> m_ValueLocator =
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<T>> m_ValueLocator =
             RegisterContainerLocator<T>(
-                "Value",
-                model =>
-                {
-                    model.m_Value =
-                        model.m_Value
-                        ??
-                        new Property<T> { LocatorFunc = m_ValueLocator };
-                    return model.m_Value.Container =
-                        model.m_Value.Container
-                        ??
-                        new ValueContainer<T>("Value", model);
-                });
+            "Value",
+            model =>
+            {
+                model.m_Value =
+                    model.m_Value
+                    ??
+                    new Property<T> { LocatorFunc = m_ValueLocator };
+                return model.m_Value.Container =
+                    model.m_Value.Container
+                    ??
+                    new ValueContainer<T>("Value", model);
+            });
 
         #endregion
 

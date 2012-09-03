@@ -191,7 +191,7 @@ namespace TableGameSidekick_Metro.DataEntity
                 return model.m_Players.Container =
                     model.m_Players.Container
                     ??
-                    new ValueContainer<ObservableCollection<PlayerInfomation>>("Players",new ObservableCollection<PlayerInfomation> (), model);
+                    new ValueContainer<ObservableCollection<PlayerInfomation>>("Players", model, new ObservableCollection<PlayerInfomation>());
             });
 
         #endregion
@@ -232,7 +232,7 @@ namespace TableGameSidekick_Metro.DataEntity
                 return model.m_Id.Container =
                     model.m_Id.Container
                     ??
-                    new ValueContainer<Guid>("Id",Guid.NewGuid(), model);
+                    new ValueContainer<Guid>("Id", model, Guid.NewGuid());
             });
 
         #endregion

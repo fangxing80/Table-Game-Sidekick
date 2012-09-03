@@ -78,7 +78,7 @@ namespace TableGameSidekick_Metro.DataEntity
                 return model.m_ByteArray.Container =
                     model.m_ByteArray.Container
                     ??
-                    new ValueContainer<Byte[]>("ByteArray", new byte[0], model);
+                    new ValueContainer<Byte[]>("ByteArray", model, new byte[0]);
             });
         #endregion
 

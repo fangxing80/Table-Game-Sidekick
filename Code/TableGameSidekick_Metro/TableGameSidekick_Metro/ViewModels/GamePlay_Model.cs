@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using MVVMSidekick.ViewModels;
 using TableGameSidekick_Metro.DataEntity;
+using System.Runtime.Serialization;
 namespace TableGameSidekick_Metro.ViewModels
 {
+    [DataContract]
     public class GamePlay_Model : ViewModelBase<GamePlay_Model>
     {
 
@@ -15,6 +17,8 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
         }
+
+        
 
 
         public GameInfomation CurrentGameInfomation

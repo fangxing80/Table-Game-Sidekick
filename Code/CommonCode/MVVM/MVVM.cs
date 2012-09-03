@@ -53,22 +53,44 @@ namespace MVVMSidekick
     namespace ViewModels
     {
 
-
+        /// <summary>
+        /// 缺省的 ViewModel。可以用作最简单的字典绑定
+        /// </summary>
         public class DefaultViewModel : ViewModelBase<DefaultViewModel>
         {
 
         }
 
+        /// <summary>
+        /// ViewModel 基类。用在所有不需要明确子类型属性定义的情形。
+        /// </summary>
         [DataContract]
         public abstract class ViewModelBase
             : IDisposable, INotifyPropertyChanged, IDataErrorInfo
         {
 
+            #region 索引与字段名
+            /// <summary>
+            /// 取得本VM实例已经定义的所有字段名。其中包括静态声明的和动态添加的。
+            /// </summary>
+            /// <returns></returns>
+            public abstract string[] GetFieldNames();
 
-            public abstract IEnumerable<string> FieldNames { get; }
+            /// <summary>
+            /// 使用索引方式取得字段值
+            /// </summary>
+            /// <param name="name">字段名</param>
+            /// <returns>字段值</returns>
+            public abstract object this[string name] { get; set; }
 
-            public abstract object this[string colName] { get; set; }
 
+            #endregion
+
+            #region Disposing 相关逻辑
+
+            /// <summary>
+            /// 当本VM被销毁的时候 需要做的若干动作
+            /// </summary>
             private List<Action> _disposeActions = new List<Action>();
 
             /// <summary>
@@ -143,18 +165,66 @@ namespace MVVMSidekick
 
             }
 
+            #endregion
+
+            #region Propery Changed 事件相关逻辑
+
+            internal void RaisePropertyChanged(Lazy<PropertyChangedEventArgs> lazyEAFactory, string propertyName)
+            {
 
 
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged(this, lazyEAFactory.Value);
+                }
+                //无论是否注册PropertyChanged 都要运行一次 OnValidate。确定OnValidate必须在末尾调用，并且不检查Error字段。
+                if (propertyName != "Error")
+                {
+
+                    if (ValidateModel != null)
+                    {
+                        ValidateModel(lazyEAFactory.Value);
+                    }
+                }
+
+            }
+
+            /// <summary>
+            /// VM属性任何绑定用值被修改后，触发此事件
+            /// </summary>
             public event PropertyChangedEventHandler PropertyChanged;
 
 
+            #endregion
+
+            #region 验证与错误相关逻辑
+
+            /// <summary>
+            /// 验证逻辑
+            /// </summary>
+            protected Action<PropertyChangedEventArgs> ValidateModel { get; set; }
 
 
+
+            public IDataErrorInfo DataErrorInfo
+            {
+                get { return this; }
+
+            }
+
+
+            /// <summary>
+            /// 验证错误内容
+            /// </summary>
             public abstract string Error { get; protected set; }
 
 
 
-
+            /// <summary>
+            /// 对于每个字段，验证失败所产生的错误信息
+            /// </summary>
+            /// <param name="columnName"></param>
+            /// <returns></returns>
             string IDataErrorInfo.this[string columnName]
             {
                 get { return GetColumnError(columnName); }
@@ -164,24 +234,38 @@ namespace MVVMSidekick
 
 
 
+            #endregion
 
-            internal void RaisePropertyChanged(Lazy<PropertyChangedEventArgs> lazyEAFactory)
-            {
-                if (this.PropertyChanged != null)
-                {
-                    this.PropertyChanged(this, lazyEAFactory.Value);
-                }
 
-            }
+            public abstract bool IsUIBusy { get; set; }
+
+
         }
+
+        /// <summary>
+        /// 为ViewModel增加的一些关于Dispose的快捷方法
+        /// </summary>
         public static class DisposableExtensions
         {
+            /// <summary>
+            /// 将IDisposable 对象注册到VM中的销毁对象列表。
+            /// </summary>
+            /// <typeparam name="T">VM的类型</typeparam>
+            /// <param name="item">IDisposable实例</param>
+            /// <param name="vm">VM实例</param>
+            /// <returns></returns>
             public static T RegisterDispose<T>(this T item, ViewModelBase vm) where T : IDisposable
             {
                 vm.AddDisposable(item);
                 return item;
             }
         }
+
+
+        /// <summary>
+        /// 属性定义。一个属性定义包括一个创建/定位属性“值容器”的静态方法引用，和一个缓存该方法执行结果“值容器”的槽位
+        /// </summary>
+        /// <typeparam name="TProperty">属性的类型</typeparam>
         public class Property<TProperty>
         {
             public Property()
@@ -189,22 +273,30 @@ namespace MVVMSidekick
 
             }
 
-            public ValueContainer<TProperty> Locate(ViewModelBase viewModel)
+            /// <summary>
+            /// 通过定位方法定位本VM实例中的值容器
+            /// </summary>
+            /// <param name="viewModel">VM实例</param>
+            /// <returns>值容器</returns>
+            public ValueContainer<TProperty> LocateValueContainer(ViewModelBase viewModel)
             {
 
-                return m_LocatorFunc(viewModel);
+                return LocatorFunc(viewModel);
             }
 
 
-            Func<ViewModelBase, ValueContainer<TProperty>> m_LocatorFunc;
-
+            /// <summary>
+            /// 定位值容器用的方法。
+            /// </summary>
             public Func<ViewModelBase, ValueContainer<TProperty>> LocatorFunc
             {
-                private get { return m_LocatorFunc; }
-                set { m_LocatorFunc = value; }
+                private get;
+                set;
             }
 
-
+            /// <summary>
+            /// 值容器实例
+            /// </summary>
             public ValueContainer<TProperty> Container
             {
                 get;
@@ -212,19 +304,25 @@ namespace MVVMSidekick
             }
 
         }
-        public class ValueContainer<TProperty> : IErrorInfo, IValueCanSet<TProperty>, IValueCanGet<TProperty>, IPropertyContainer
+
+        /// <summary>
+        /// 值容器
+        /// </summary>
+        /// <typeparam name="TProperty"></typeparam>
+        public class ValueContainer<TProperty> : IErrorInfo, IValueCanSet<TProperty>, IValueCanGet<TProperty>, IValueContainer
         {
 
 
 
-            public event EventHandler<ValueChangedEventArgs<TProperty>> ValueChanged = (o, e) => { };
+
+            #region 构造器
 
             /// <summary>
             /// 创建属性值容器
             /// </summary>
             /// <param name="info">属性名</param>
             public ValueContainer(string info, ViewModelBase vm)
-                : this(info, (v1, v2) => v1.Equals(v2), default(TProperty), vm)
+                : this(info, vm, (v1, v2) => v1.Equals(v2), default(TProperty))
             {
             }
 
@@ -234,7 +332,7 @@ namespace MVVMSidekick
             /// <param name="info">属性名</param>
             /// <param name="equalityComparer">判断两个值是否相等的比较器</param>
             public ValueContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, ViewModelBase vm)
-                : this(info, equalityComparer, default(TProperty), vm)
+                : this(info, vm, equalityComparer, default(TProperty))
             {
             }
 
@@ -243,8 +341,8 @@ namespace MVVMSidekick
             /// </summary>
             /// <param name="info">属性名</param>
             /// <param name="initValue">初始值</param>
-            public ValueContainer(string info, TProperty initValue, ViewModelBase vm)
-                : this(info, (v1, v2) => v1.Equals(v2), initValue, vm)
+            public ValueContainer(string info, ViewModelBase vm, TProperty initValue)
+                : this(info, vm, (v1, v2) => v1.Equals(v2), initValue)
             {
             }
 
@@ -254,16 +352,20 @@ namespace MVVMSidekick
             /// <param name="info">属性名</param>
             /// <param name="equalityComparer">判断两个值是否相等的比较器</param>
             /// <param name="initValue">初始值</param>
-            public ValueContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, TProperty initValue, ViewModelBase vm)
+            public ValueContainer(string info, ViewModelBase vm, Func<TProperty, TProperty, bool> equalityComparer, TProperty initValue)
             {
                 EqualityComparer = equalityComparer;
                 PropertyName = info;
                 _value = initValue;
-
                 PropertyType = typeof(TProperty);
                 ViewModel = vm;
                 // _eventObject = new ValueChangedEventObject<TProperty>(this);
             }
+
+            #endregion
+
+
+            public event EventHandler<ValueChangedEventArgs<TProperty>> ValueChanged;
 
             /// <summary>
             /// 判断两个值是否相等的比较器
@@ -273,7 +375,7 @@ namespace MVVMSidekick
             /// <summary>
             /// 属性名
             /// </summary>
-            public string PropertyName { get; set; }
+            public string PropertyName { get; private set; }
 
             /// <summary>
             /// 内部值
@@ -310,16 +412,6 @@ namespace MVVMSidekick
             }
 
 
-            //private ValueChangedEventObject<TProperty> _eventObject;
-
-            //public ValueChangedEventObject<TProperty> EventObject
-            //{
-            //    get { return _eventObject; }
-
-            //}
-
-
-
             /// <summary>
             /// 保存值并且触发更改事件
             /// </summary>
@@ -344,7 +436,7 @@ namespace MVVMSidekick
                         = new Lazy<PropertyChangedEventArgs>(() => new ValueChangedEventArgs<TProperty>(message, oldvalue, newValue));
 
 
-                    objectInstance.RaisePropertyChanged(lz);
+                    objectInstance.RaisePropertyChanged(lz, message);
                     if (ValueChanged != null) ValueChanged(this, lz.Value as ValueChangedEventArgs<TProperty>);
 
                 }
@@ -356,8 +448,10 @@ namespace MVVMSidekick
 
 
 
-
-            object IPropertyContainer.Value
+            /// <summary>
+            /// 值，Object形式
+            /// </summary>
+            object IValueContainer.Value
             {
                 get
                 {
@@ -370,13 +464,18 @@ namespace MVVMSidekick
             }
 
 
-
+            /// <summary>
+            /// 值类型
+            /// </summary>
             public Type PropertyType
             {
                 get;
                 private set;
             }
 
+            /// <summary>
+            /// 出现问题的时候保存错误的结构
+            /// </summary>
             public ErrorEntity Error
             {
                 get;
@@ -384,6 +483,11 @@ namespace MVVMSidekick
             }
         }
 
+
+        /// <summary>
+        /// 值变化事件参数
+        /// </summary>
+        /// <typeparam name="TProperty">变化属性的类型</typeparam>
         public class ValueChangedEventArgs<TProperty> : PropertyChangedEventArgs
         {
             public ValueChangedEventArgs(string propertyName, TProperty oldValue, TProperty newValue)
@@ -399,33 +503,30 @@ namespace MVVMSidekick
             public TProperty OldValue { get; private set; }
         }
 
-        //public class ValueChangedEventObject<TProperty>
-        //{
-        //    public ValueChangedEventObject(PropertyContainer<TProperty> core)
-        //    {
-        //        _core = core;
-        //    }
-        //    PropertyContainer<TProperty> _core;
 
-        //    public event EventHandler<ValueChangedEventArgs<TProperty>> ValueChanged
-        //    {
-        //        add
-        //        {
-        //            _core.ValueChanged += value;
-        //        }
-        //        remove
-        //        {
-        //            _core.ValueChanged -= value;
-        //        }
-        //    }
-
-        //}
+        /// <summary>
+        /// 具有子类详细类型定义的VM 使用方式为 class Class1:ViewModelBase<Class1>  用此模式将子类的信息传入ViewModelBase
+        /// </summary>
+        /// <typeparam name="TViewModel">子类类型</typeparam>
         [DataContract]
         public abstract class ViewModelBase<TViewModel> : ViewModelBase where TViewModel : ViewModelBase<TViewModel>
         {
 
+            /// <summary>
+            /// 每个属性类型独占的一个专门的类型缓存。
+            /// </summary>
+            /// <typeparam name="TProperty"></typeparam>
+            protected static class TypeDic<TProperty>
+            {
+                public static Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>> _propertyContainerGetters = new Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>>();
 
-            protected static Task _EmptyStartedTask = Task.Factory.StartNew(() => { });
+            }
+
+            /// <summary>
+            /// 根据索引获取属性值
+            /// </summary>
+            /// <param name="colName">属性名</param>
+            /// <returns>属性值</returns>
             public override object this[string colName]
             {
                 get
@@ -441,9 +542,9 @@ namespace MVVMSidekick
                 }
             }
 
-            private static Func<TViewModel, IPropertyContainer> GetOrCreatePlainLocator(string colName, ViewModelBase viewModel)
+            private static Func<TViewModel, IValueContainer> GetOrCreatePlainLocator(string colName, ViewModelBase viewModel)
             {
-                Func<TViewModel, IPropertyContainer> pf;
+                Func<TViewModel, IValueContainer> pf;
                 if (!_plainPropertyContainerGetters.TryGetValue(colName, out pf))
                 {
                     var p = new ValueContainer<object>(colName, viewModel);
@@ -453,19 +554,19 @@ namespace MVVMSidekick
                 return pf;
             }
 
-            protected static class TypeDic<TProperty>
-            {
-                public static Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>> _propertyContainerGetters = new Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>>();
-
-            }
 
 
 
-            protected static SortedDictionary<string, Func<TViewModel, IPropertyContainer>>
+
+            protected static SortedDictionary<string, Func<TViewModel, IValueContainer>>
                 _plainPropertyContainerGetters =
-                new SortedDictionary<string, Func<TViewModel, IPropertyContainer>>(StringComparer.CurrentCultureIgnoreCase);
+                new SortedDictionary<string, Func<TViewModel, IValueContainer>>(StringComparer.CurrentCultureIgnoreCase);
 
-
+            /// <summary>
+            /// 将一个VM引用特化为本子类型的引用
+            /// </summary>
+            /// <param name="vm"></param>
+            /// <returns></returns>
             protected static TViewModel CastVM(ViewModelBase vm)
             {
                 return (TViewModel)vm;
@@ -473,6 +574,9 @@ namespace MVVMSidekick
             }
 
 
+            /// <summary>
+            /// 验证错误
+            /// </summary>
             public override string Error
             {
                 get { return m_ErrorLocator(this).Value; }
@@ -502,23 +606,63 @@ namespace MVVMSidekick
 
             #endregion
 
+            /// <summary>
+            /// 本UI是否处于忙状态
+            /// </summary>
+            public override bool IsUIBusy
+            {
+                get { return m_IsUIBusyLocator(this).Value; }
+                set { m_IsUIBusyLocator(this).SetValueAndTryNotify(value); }
+            }
+
+            #region Property bool IsUIBusy Setup
+            protected Property<bool> m_IsUIBusy =
+              new Property<bool> { LocatorFunc = m_IsUIBusyLocator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+            static Func<ViewModelBase, ValueContainer<bool>> m_IsUIBusyLocator =
+                RegisterContainerLocator<bool>(
+                    "IsUIBusy",
+                    model =>
+                    {
+                        model.m_IsUIBusy =
+                            model.m_IsUIBusy
+                            ??
+                            new Property<bool> { LocatorFunc = m_IsUIBusyLocator };
+                        return model.m_IsUIBusy.Container =
+                            model.m_IsUIBusy.Container
+                            ??
+                            new ValueContainer<bool>("IsUIBusy", model);
+                    });
+            #endregion
 
 
 
 
 
+            /// <summary>
+            /// 注册一个属性容器的定位器。
+            /// </summary>
+            /// <typeparam name="TProperty">属性类型</typeparam>
+            /// <param name="propertyName">属性名</param>
+            /// <param name="getOrCreateLocatorMethod">属性定位/创建方法 也就是定位器</param>
+            /// <returns>注册后的定位器</returns>
             protected static Func<ViewModelBase, ValueContainer<TProperty>> RegisterContainerLocator<TProperty>(string propertyName, Func<TViewModel, ValueContainer<TProperty>> getOrCreateLocatorMethod)
             {
 
-                
+
                 TypeDic<TProperty>._propertyContainerGetters[propertyName] = getOrCreateLocatorMethod;
-                _plainPropertyContainerGetters[propertyName] = (v) => getOrCreateLocatorMethod(v) as IPropertyContainer;
+                _plainPropertyContainerGetters[propertyName] = (v) => getOrCreateLocatorMethod(v) as IValueContainer;
                 return o => getOrCreateLocatorMethod((TViewModel)o);
             }
 
 
-
-            public ValueContainer<TProperty> GetPropertyContainer<TProperty>(string propertyName)
+            /// <summary>
+            /// 根据属性名取得一个值容器
+            /// </summary>
+            /// <typeparam name="TProperty">属性类型</typeparam>
+            /// <param name="propertyName">属性名</param>
+            /// <returns>值容器</returns>
+            public ValueContainer<TProperty> GetValueContainer<TProperty>(string propertyName)
             {
                 Func<TViewModel, ValueContainer<TProperty>> contianerGetterCreater;
                 if (!TypeDic<TProperty>._propertyContainerGetters.TryGetValue(propertyName, out contianerGetterCreater))
@@ -530,14 +674,49 @@ namespace MVVMSidekick
                 return contianerGetterCreater((TViewModel)(Object)this);
 
             }
-            public ValueContainer<TProperty> GetPropertyContainer<TProperty>(Expression<Func<TViewModel, TProperty>> expression)
+
+            /// <summary>
+            /// 根据表达式树取得一个值容器
+            /// </summary>
+            /// <typeparam name="TProperty">属性类型</typeparam>
+            /// <param name="expression">表达式树</param>
+            /// <returns>值容器</returns>
+            public ValueContainer<TProperty> GetValueContainer<TProperty>(Expression<Func<TViewModel, TProperty>> expression)
             {
                 MemberExpression body = expression.Body as MemberExpression;
                 var propName = (body.Member is PropertyInfo) ? body.Member.Name : string.Empty;
-                return GetPropertyContainer<TProperty>(propName);
+                return GetValueContainer<TProperty>(propName);
 
             }
 
+
+
+            /// <summary>
+            /// 根据属性名取得一个值容器
+            /// </summary>
+            /// <param name="propertyName">属性名</param>
+            /// <returns>值容器</returns>
+            public IValueContainer GetValueContainer(string propertyName)
+            {
+                Func<TViewModel, IValueContainer> contianerGetterCreater;
+                if (_plainPropertyContainerGetters.TryGetValue(propertyName, out contianerGetterCreater))
+                {
+                    throw new Exception("Property Not Exists!");
+
+                }
+
+                return contianerGetterCreater((TViewModel)(Object)this);
+
+            }
+
+
+
+
+            /// <summary>
+            /// 获取某一属性的验证错误信息
+            /// </summary>
+            /// <param name="columnName">属性名</param>
+            /// <returns>错误信息字符串</returns>
             protected override string GetColumnError(string columnName)
             {
                 return _plainPropertyContainerGetters[columnName]((TViewModel)this).Error.Message;
@@ -545,12 +724,20 @@ namespace MVVMSidekick
 
 
 
-
-            public override IEnumerable<string> FieldNames
+            /// <summary>
+            /// 获取所有属性名，包括静态声明和动态添加的
+            /// </summary>
+            /// <returns></returns>
+            public override string[] GetFieldNames()
             {
-                get { return _plainPropertyContainerGetters.Keys; }
+                return _plainPropertyContainerGetters.Keys.ToArray();
             }
 
+
+            /// <summary>
+            /// 创建一个VM副本
+            /// </summary>
+            /// <returns>新引用</returns>
             public TViewModel Clone()
             {
                 var x = (TViewModel)Activator.CreateInstance(typeof(TViewModel));
@@ -560,7 +747,7 @@ namespace MVVMSidekick
 
             public void CopyTo(TViewModel x)
             {
-                foreach (var item in FieldNames)
+                foreach (var item in GetFieldNames())
                 {
                     x[item] = this[item];
                 }
@@ -591,7 +778,7 @@ namespace MVVMSidekick
             T Value { get; }
         }
 
-        public interface IPropertyContainer : IErrorInfo
+        public interface IValueContainer : IErrorInfo
         {
             Type PropertyType { get; }
             Object Value { get; set; }
@@ -599,48 +786,21 @@ namespace MVVMSidekick
 
 
 
-        public static class CommandModelExtensions
-        {
-            public static CommandModel<TCommand, TResource> CreateCommandModel<TCommand, TResource>(this TCommand command, TResource resource)
-                where TCommand : ICommand
-            {
-                return new CommandModel<TCommand, TResource>(command, resource);
-            }
-
-            public static CommandModel<TCommand, object> CreateCommandModel<TCommand>(this TCommand command, object resource = null)
-            where TCommand : ICommand
-            {
-                return new CommandModel<TCommand, object>(command, null);
-            }
-
-            public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, ViewModelBase viewModel)
-                where TCommand : ICommand
-            {
-                //cmdModel.
-                var cmd2 = cmdModel.CommandCore as ICommandWithViewModel;
-                if (cmd2 != null)
-                {
-                    cmd2.ViewModel = viewModel;
-                }
-                return cmdModel;
-            }
-        }
-
-
-        //public class CommandModel<TCommand> : CommandModel<TCommand, Object>
-        //         where TCommand : ICommand
-        //{
-        //    public CommandModel(TCommand commandCore, object resource)
-        //        : base(commandCore, resource)
-        //    { }
-
-        //}
+        /// <summary>
+        /// 用于封装ICommand的ViewModel。一般包括一个Command实例和对应此实例的一组资源
+        /// </summary>
+        /// <typeparam name="TCommand">ICommand 详细类型</typeparam>
+        /// <typeparam name="TResource">配合Command 的资源类型</typeparam>
         public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>, ICommand
             where TCommand : ICommand
         {
             public CommandModel()
             { }
-
+            /// <summary>
+            /// 构造器
+            /// </summary>
+            /// <param name="commandCore">ICommand核心</param>
+            /// <param name="resource">初始资源</param>
             public CommandModel(TCommand commandCore, TResource resource)
             {
                 CommandCore = commandCore;
@@ -658,7 +818,9 @@ namespace MVVMSidekick
             }
 
 
-
+            /// <summary>
+            /// ICommand核心
+            /// </summary>
             public TCommand CommandCore
             {
                 get;
@@ -673,7 +835,9 @@ namespace MVVMSidekick
             //}
 
 
-
+            /// <summary>
+            /// 上一次是否能够运行的值
+            /// </summary>
             public bool LastCanExecuteValue
             {
                 get { return m_LastCanExecuteValueLocator(this).Value; }
@@ -705,7 +869,9 @@ namespace MVVMSidekick
 
 
 
-
+            /// <summary>
+            /// 资源
+            /// </summary>
             public TResource Resource
             {
                 get { return m_ResourceLocator(this).Value; }
@@ -745,7 +911,11 @@ namespace MVVMSidekick
 
 
 
-
+            /// <summary>
+            /// 判断是否可执行
+            /// </summary>
+            /// <param name="parameter">指定参数</param>
+            /// <returns></returns>
             public bool CanExecute(object parameter)
             {
                 var s = CommandCore.CanExecute(parameter);
@@ -755,26 +925,75 @@ namespace MVVMSidekick
 
             public event EventHandler CanExecuteChanged;
 
+            /// <summary>
+            /// 执行
+            /// </summary>
+            /// <param name="parameter">指定参数</param>
             public void Execute(object parameter)
             {
                 CommandCore.Execute(parameter);
             }
         }
+
+        /// <summary>
+        /// 可绑定的CommandVM 扩展方法集
+        /// </summary>
+        public static class CommandModelExtensions
+        {
+            /// <summary>
+            /// 根据ICommand实例创建CommandModel
+            /// </summary>
+            /// <typeparam name="TCommand">ICommand实例的具体类型</typeparam>
+            /// <typeparam name="TResource">附加资源类型</typeparam>
+            /// <param name="command">ICommand实例</param>
+            /// <param name="resource">资源实例</param>
+            /// <returns>CommandModel实例</returns>
+            public static CommandModel<TCommand, TResource> CreateCommandModel<TCommand, TResource>(this TCommand command, TResource resource)
+                where TCommand : ICommand
+            {
+                return new CommandModel<TCommand, TResource>(command, resource);
+            }
+
+            /// <summary>
+            /// 据ICommand实例创建不具备/弱类型资源的CommandModel
+            /// </summary>
+            /// <typeparam name="TCommand">ICommand实例的具体类型</typeparam>
+            /// <param name="command">ICommand实例</param>
+            /// <param name="resource">资源实例</param>
+            /// <returns>CommandModel实例</returns>
+            public static CommandModel<TCommand, object> CreateCommandModel<TCommand>(this TCommand command, object resource = null)
+            where TCommand : ICommand
+            {
+                return new CommandModel<TCommand, object>(command, null);
+            }
+
+            /// <summary>
+            /// 为CommandModel指定ViewModel
+            /// </summary>
+            /// <typeparam name="TCommand">ICommand实例的具体类型</typeparam>
+            /// <typeparam name="TResource">附加资源类型</typeparam>
+            /// <param name="cmdModel">CommandModel具体实例</param>
+            /// <param name="viewModel">ViewModel具体实例</param>
+            /// <returns></returns>
+            public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, ViewModelBase viewModel)
+                where TCommand : ICommand
+            {
+                //cmdModel.
+                var cmd2 = cmdModel.CommandCore as ICommandWithViewModel;
+                if (cmd2 != null)
+                {
+                    cmd2.ViewModel = viewModel;
+                }
+                return cmdModel;
+            }
+        }
+
     }
 
 
     namespace EventRouter
     {
-        public static class EventRouterHelper
-        {
 
-            public static void RaiseEvent<TEventArgs>(this ViewModelBase source, TEventArgs eventArgs)
-                where TEventArgs : EventArgs
-            {
-                EventRouter.Instance.RaiseEvent(source, eventArgs);
-            }
-
-        }
 
         public class EventRouter
         {
@@ -912,7 +1131,16 @@ namespace MVVMSidekick
             public string ViewKeyId { get; set; }
             public Dictionary<string, object> State { get; set; }
         }
+        public static class EventRouterHelper
+        {
 
+            public static void RaiseEvent<TEventArgs>(this ViewModelBase source, TEventArgs eventArgs)
+                where TEventArgs : EventArgs
+            {
+                EventRouter.Instance.RaiseEvent(source, eventArgs);
+            }
+
+        }
 
     }
 

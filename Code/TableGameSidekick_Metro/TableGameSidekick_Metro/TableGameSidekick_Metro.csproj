@@ -118,7 +118,6 @@
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="DataEntity\GameData.cs" />
     <Compile Include="DataEntity\GameInfomation.cs" />
     <Compile Include="DataEntity\GameType.cs" />
     <Compile Include="DataEntity\ImageData.cs" />
@@ -220,7 +219,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="GamePlayControls\" />
+    <Folder Include="Games\ViewModels\" />
+    <Folder Include="Games\Views\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>

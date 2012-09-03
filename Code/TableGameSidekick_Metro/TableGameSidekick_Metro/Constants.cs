@@ -143,7 +143,7 @@ namespace TableGameSidekick_Metro
             public static Storages Instance = new Storages();
 
             public Storage<Dictionary<Guid, GameInfomation>> GameInfomationsStorage = new Storage<Dictionary<Guid, GameInfomation>>("GameInfomations.json");
-            public Dictionary<Guid, IStorage<GameData>> GameDatasStorages = new Dictionary<Guid, IStorage<GameData>>();
+            public Dictionary<Guid, IStorage<GamePlay_Model>> GamePlayModelStorages = new Dictionary<Guid, IStorage<GamePlay_Model>>();
             public Storage<List<PlayerInfomation>> PlayerInfomationStorage = new Storage<List<PlayerInfomation>>("PlayerInfomations.json");
             public List<StorageFile> PlayerImages;
 

@@ -50,7 +50,7 @@ namespace TableGameSidekick_Metro.ViewModels
             #region 配置游戏原型选中后的逻辑
 
             //选中游戏信息原型变化后，其部分信息被直接填充到NewGameInfo.
-            m_SelectedPrototypeGameInfomation.Locate(this)
+            m_SelectedPrototypeGameInfomation.LocateValueContainer(this)
                 .GetValueChangeObservable()
                 .Where(e => e.EventArgs != null)
                 .Subscribe
@@ -158,7 +158,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     )
                 .Concat
                 (
-                    m_SelectedPrototypeGameInfomation.Locate(this)
+                    m_SelectedPrototypeGameInfomation.LocateValueContainer(this)
                     .GetValueChangeObservable()
                     .Select(x => 1)
 
@@ -269,8 +269,8 @@ namespace TableGameSidekick_Metro.ViewModels
         /// </summary>
         public GameInfomation SelectedPrototypeGameInfomation
         {
-            get { return m_SelectedPrototypeGameInfomation.Locate(this).Value; }
-            set { m_SelectedPrototypeGameInfomation.Locate(this).SetValueAndTryNotify(value); }
+            get { return m_SelectedPrototypeGameInfomation.LocateValueContainer(this).Value; }
+            set { m_SelectedPrototypeGameInfomation.LocateValueContainer(this).SetValueAndTryNotify(value); }
         }
         #region Property GameInfomation SelectedPrototypeGameInfomation Setup
         protected Property<GameInfomation> m_SelectedPrototypeGameInfomation = new Property<GameInfomation> { LocatorFunc = m_SelectedPrototypeGameInfomationLocator };
@@ -287,7 +287,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 return model.m_SelectedPrototypeGameInfomation.Container =
                      model.m_SelectedPrototypeGameInfomation.Container
                      ??
-                     new ValueContainer<GameInfomation>("SelectedPrototypeGameInfomation", new GameInfomation() { Id = Guid.NewGuid() }, model);
+                     new ValueContainer<GameInfomation>("SelectedPrototypeGameInfomation", model,new GameInfomation() { Id = Guid.NewGuid() });
 
             });
         #endregion
@@ -326,7 +326,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 return model.m_NewGameInfomation.Container =
                     model.m_NewGameInfomation.Container
                     ??
-                    new ValueContainer<GameInfomation>("NewGameInfomation", new GameInfomation(), model);
+                    new ValueContainer<GameInfomation>("NewGameInfomation", model, new GameInfomation());
             });
 
         #endregion

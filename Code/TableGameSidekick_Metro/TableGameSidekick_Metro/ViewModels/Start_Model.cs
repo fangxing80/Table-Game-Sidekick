@@ -190,7 +190,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 .RegisterDispose(this);
 
 
-            this.GetPropertyContainer(x => x.SelectedGame)
+            this.GetValueContainer(x => x.SelectedGame)
                 .GetValueChangeObservable()
                 .Select(e => e.EventArgs != null)
                 .Subscribe(m_ContinueCommand.CommandCore.CanExecuteObserver)
