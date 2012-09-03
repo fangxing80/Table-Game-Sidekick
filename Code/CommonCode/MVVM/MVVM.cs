@@ -14,6 +14,7 @@ using MVVMSidekick.ViewModels;
 using System.Dynamic;
 
 using MVVMSidekick.Commands;
+using System.Runtime.CompilerServices;
 
 #if NETFX_CORE
 // Summary:
@@ -994,7 +995,9 @@ namespace MVVMSidekick
     namespace EventRouter
     {
 
-
+        /// <summary>
+        /// 全局事件根
+        /// </summary>
         public class EventRouter
         {
             protected EventRouter()
@@ -1009,22 +1012,33 @@ namespace MVVMSidekick
             public static EventRouter Instance { get; protected set; }
 
 
-
-            public virtual void RaiseEvent<TEventArgs>(object sender, TEventArgs eventArgs) where TEventArgs : EventArgs
+            /// <summary>
+            /// 触发事件    
+            /// </summary>
+            /// <typeparam name="TEventArgs">事件数据类型</typeparam>
+            /// <param name="sender">事件发送者</param>
+            /// <param name="eventArgs">事件数据</param>
+            /// <param name="callerMemberName">发送事件名</param>
+            public virtual void RaiseEvent<TEventArgs>(object sender, TEventArgs eventArgs, [CallerMemberName]string callerMemberName = "") where TEventArgs : EventArgs
             {
-                var eventObject = GetInstance(typeof(TEventArgs));
-                eventObject.RaiseEvent(sender, eventArgs);
+                var eventObject = GetIEventObjectInstance(typeof(TEventArgs));
+                eventObject.RaiseEvent(sender, callerMemberName, eventArgs);
 
                 while (eventObject.BaseArgsTypeInstance != null)
                 {
                     eventObject = eventObject.BaseArgsTypeInstance;
-                    eventObject.RaiseEvent(sender, eventArgs);
                 }
             }
 
+
+            /// <summary>
+            /// 取得独立事件类
+            /// </summary>
+            /// <typeparam name="TEventArgs">事件数据类型</typeparam>
+            /// <returns>事件独立类</returns>
             public virtual EventObject<TEventArgs> GetEventObject<TEventArgs>() where TEventArgs : EventArgs
             {
-                var eventObject = (EventObject<TEventArgs>)GetInstance(typeof(TEventArgs));
+                var eventObject = (EventObject<TEventArgs>)GetIEventObjectInstance(typeof(TEventArgs));
 
                 return eventObject;
 
@@ -1032,7 +1046,8 @@ namespace MVVMSidekick
 
             static protected readonly ConcurrentDictionary<Type, IEventObject> EventObjects
                  = new ConcurrentDictionary<Type, IEventObject>();
-            static protected IEventObject GetInstance(Type argsType)
+
+            static protected IEventObject GetIEventObjectInstance(Type argsType)
             {
 
                 var rval = EventObjects.GetOrAdd(
@@ -1050,7 +1065,7 @@ namespace MVVMSidekick
 #endif
                     if (baseT != typeof(object))
                     {
-                        rval.BaseArgsTypeInstance = GetInstance(baseT);
+                        rval.BaseArgsTypeInstance = GetIEventObjectInstance(baseT);
                     }
 
                 }
@@ -1059,14 +1074,19 @@ namespace MVVMSidekick
             }
 
 
-
+            /// <summary>
+            /// 事件对象接口
+            /// </summary>
             protected interface IEventObject
             {
                 IEventObject BaseArgsTypeInstance { get; set; }
-                void RaiseEvent(object sender, EventArgs args);
+                void RaiseEvent(object sender, string eventName, EventArgs args);
             }
 
-
+            /// <summary>
+            ///事件对象
+            /// </summary>
+            /// <typeparam name="TEventArgs"></typeparam>
             public class EventObject<TEventArgs> : IEventObject
                 where TEventArgs : EventArgs
             {
@@ -1074,7 +1094,7 @@ namespace MVVMSidekick
                 {
                 }
 
-                public event EventHandler<TEventArgs> Event;
+                public event EventHandler<RouterEventData<TEventArgs>> Event;
 
 
 
@@ -1085,24 +1105,28 @@ namespace MVVMSidekick
                     set;
                 }
 
-                public void RaiseEvent(object sender, EventArgs args)
+                void IEventObject.RaiseEvent(object sender, string eventName, EventArgs args)
                 {
-                    RaiseEvent(sender, args as TEventArgs);
+                    RaiseEvent(sender, eventName, args as TEventArgs);
                 }
 
-                public void RaiseEvent(object sender, TEventArgs args)
+                public void RaiseEvent(object sender, string eventName, TEventArgs args)
                 {
+
+
                     var a = args;
                     if (a != null && Event != null)
                     {
-                        Event(sender, a);
+                        Event(sender, new RouterEventData<TEventArgs>(sender, eventName, args));
                     }
                 }
             }
 
 
         }
-
+        /// <summary>
+        /// 导航事件数据
+        /// </summary>
         public class NavigateCommandEventArgs : EventArgs
         {
             public NavigateCommandEventArgs()
@@ -1126,6 +1150,9 @@ namespace MVVMSidekick
             public string TargetViewId { get; set; }
         }
 
+        /// <summary>
+        /// 保存状态事件数据
+        /// </summary>
         public class SaveStateEventArgs : EventArgs
         {
             public string ViewKeyId { get; set; }
@@ -1134,12 +1161,25 @@ namespace MVVMSidekick
         public static class EventRouterHelper
         {
 
-            public static void RaiseEvent<TEventArgs>(this ViewModelBase source, TEventArgs eventArgs)
-                where TEventArgs : EventArgs
+            public static void RaiseEvent<TEventArgs>(this ViewModelBase source, TEventArgs eventArgs, [CallerMemberName]string callerMemberName = "")
+                 where TEventArgs : EventArgs
             {
-                EventRouter.Instance.RaiseEvent(source, eventArgs);
+                EventRouter.Instance.RaiseEvent(source, eventArgs, callerMemberName);
             }
 
+        }
+        public class RouterEventData<TEventArgs> : EventArgs
+        {
+            public RouterEventData(object sender, string eventName, TEventArgs eventArgs)
+            {
+
+                Sender = sender;
+                EventName = eventName;
+                EventArgs = eventArgs;
+            }
+            public Object Sender { get; private set; }
+            public string EventName { get; private set; }
+            public TEventArgs EventArgs { get; private set; }
         }
 
     }

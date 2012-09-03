@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Reactive.Subjects;
 using System.Reactive;
 using MVVMSidekick.Commands;
+using MVVMSidekick.EventRouter;
 
 
 namespace MVVMSidekick.Reactive
@@ -67,13 +68,16 @@ namespace MVVMSidekick.Reactive
         }
 
 
-        public static IObservable<EventPattern<TEventArgs>>
+        public static IObservable<RouterEventData<TEventArgs>>
             GetRouterEventObservable<TEventArgs>(this MVVMSidekick.EventRouter.EventRouter.EventObject<TEventArgs> source)
                    where TEventArgs : EventArgs
         {
-            var eventArgSeq = Observable.FromEventPattern<EventHandler<TEventArgs>, TEventArgs>(
-        eh => source.Event += eh,
-        eh => source.Event -= eh);
+            var eventArgSeq = Observable.FromEventPattern<EventHandler<RouterEventData<TEventArgs>>, RouterEventData<TEventArgs>>(
+                eh => source.Event += eh,
+                eh => source.Event -= eh)
+                .Select(e =>
+                    e.EventArgs);
+            ;
             return eventArgSeq;
         }
 
@@ -82,6 +86,7 @@ namespace MVVMSidekick.Reactive
 
     }
 
+    
 
     public class ReactiveCommand : EventCommandBase, ICommand, IObservable<EventPattern<EventCommandEventArgs>>
     {
