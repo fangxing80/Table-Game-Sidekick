@@ -12,10 +12,13 @@ using System.Windows.Input;
 using System.Collections.Concurrent;
 using MVVMSidekick.ViewModels;
 using System.Dynamic;
-
 using MVVMSidekick.Commands;
 using System.Runtime.CompilerServices;
-
+#if NETFX_CORE
+using Windows.UI.Xaml.Data;
+#else
+using System.Windows.Data;
+#endif
 #if NETFX_CORE
 // Summary:
 //     Provides the functionality to offer custom error information that a user
@@ -1326,5 +1329,145 @@ namespace MVVMSidekick
                 }
             }
         }
+    }
+
+
+    namespace ValueConverters
+    {
+
+
+        public class GenericValueConverter<TSource, TTarget, TParemeter> : IValueConverter
+        {
+            public GenericValueConverter()
+            {
+
+            }
+
+            public GenericValueConverter(
+                Func<TSource, TParemeter, string, TTarget> converter,
+
+                Func<TTarget, TParemeter, string, TSource> convertBacker
+                )
+            {
+                Converter = converter;
+                ConvertBacker = convertBacker;
+            }
+            public object Convert(object value, Type targetType, object parameter, string language)
+            {
+                if (Converter == null)
+                {
+                    throw new NotImplementedException();
+                }
+                OnConvertCheckInputType(value, targetType);
+
+
+                return Converter((TSource)value, (TParemeter)parameter, language);
+            }
+
+            public Func<TSource, TParemeter, string, TTarget> Converter { get; set; }
+
+            public Func<TTarget, TParemeter, string, TSource> ConvertBacker { get; set; }
+
+
+
+
+            public  object ConvertBack(object value, Type targetType, object parameter, string language)
+            {
+
+                if (ConvertBacker == null)
+                {
+                    throw new NotImplementedException();
+                }
+
+                OnConvertBackCheckInputType(value, targetType);
+                return ConvertBacker((TTarget)value, (TParemeter)parameter, language);
+            }
+
+
+
+            private static void OnConvertCheckInputType(object sourceValue, Type targetType)
+            {
+                if (!targetType.GetTypeInfo().IsAssignableFrom(typeof(TTarget).GetTypeInfo()))
+                {
+                    throw new ArgumentOutOfRangeException(string.Format("Target type is not supported.  {0} and its base class type would be fine.", typeof(TTarget).FullName));
+                }
+                if (!(sourceValue is TSource))
+                {
+                    throw new ArgumentOutOfRangeException(string.Format("Source type is expected source type. A {0} reference is expected.", typeof(TSource).FullName));
+                }
+            }
+
+            private static void OnConvertBackCheckInputType(object backingValue, Type backType)
+            {
+                if (typeof(TSource) != backType)
+                {
+                    throw new ArgumentOutOfRangeException(string.Format("Target type is not supported.  {0} is expected.", typeof(TSource).FullName));
+                }
+                if (!(backingValue is TTarget))
+                {
+                    throw new ArgumentOutOfRangeException(string.Format("Source type is expected source type. A {0} reference is expected.", typeof(TTarget).FullName));
+                }
+            }
+
+
+#if NETFX_CORE
+#else
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return Convert(value, targetType, parameter, culture.EnglishName);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return Convert(value, targetType, parameter, culture.EnglishName);
+            }
+#endif
+        }
+
+
+        public enum ErrorInfoTextConverterOptions
+        {
+            ErrorOnly,
+            ErrorWithFieldsErrors
+
+        }
+
+
+
+        public class ViewModelDataErrorInfoTextConverter : GenericValueConverter<ViewModelBase, string, ErrorInfoTextConverterOptions>
+        {
+            public ViewModelDataErrorInfoTextConverter()
+            {
+                Converter = (val, options, lan) =>
+                    {
+                        var dataError = val as IDataErrorInfo;
+                        switch (options)
+                        {
+
+
+                            case ErrorInfoTextConverterOptions.ErrorWithFieldsErrors:
+                                var sb = new StringBuilder();
+                                sb.AppendLine(val.Error);
+                                foreach (var fn in val.GetFieldNames().ToArray())
+                                {
+                                    sb.Append("\t").Append(fn).Append(":\t").AppendLine(dataError[fn]);
+                                }
+                                return sb.ToString();
+
+                            case ErrorInfoTextConverterOptions.ErrorOnly:
+                            default:
+                                return val.Error;
+                        }
+                    };
+
+
+
+            }
+
+        }
+
+
+
+
     }
 }

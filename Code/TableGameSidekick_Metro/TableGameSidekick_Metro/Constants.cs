@@ -145,7 +145,7 @@ namespace TableGameSidekick_Metro
             public Storage<Dictionary<Guid, GameInfomation>> GameInfomationsStorage = new Storage<Dictionary<Guid, GameInfomation>>("GameInfomations.json");
             public Dictionary<Guid, IStorage<GamePlay_Model>> GamePlayModelStorages = new Dictionary<Guid, IStorage<GamePlay_Model>>();
             public Storage<List<PlayerInfomation>> PlayerInfomationStorage = new Storage<List<PlayerInfomation>>("PlayerInfomations.json");
-            public List<StorageFile> PlayerImages;
+            //public List<StorageFile> PlayerImages;
 
 
         }
