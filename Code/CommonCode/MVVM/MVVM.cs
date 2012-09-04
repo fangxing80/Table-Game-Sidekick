@@ -1019,7 +1019,7 @@ namespace MVVMSidekick
             /// <param name="sender">事件发送者</param>
             /// <param name="eventArgs">事件数据</param>
             /// <param name="callerMemberName">发送事件名</param>
-            public virtual void RaiseEvent<TEventArgs>(object sender, TEventArgs eventArgs, [CallerMemberName]string callerMemberName = "") where TEventArgs : EventArgs
+            public virtual void RaiseEvent<TEventArgs>(object sender, TEventArgs eventArgs, string callerMemberName = "") where TEventArgs : EventArgs
             {
                 var eventObject = GetIEventObjectInstance(typeof(TEventArgs));
                 eventObject.RaiseEvent(sender, callerMemberName, eventArgs);
@@ -1044,9 +1044,17 @@ namespace MVVMSidekick
 
             }
 
+            /// <summary>
+            /// 事件来源的代理对象实例
+            /// </summary>
             static protected readonly ConcurrentDictionary<Type, IEventObject> EventObjects
                  = new ConcurrentDictionary<Type, IEventObject>();
 
+            /// <summary>
+            /// 创建事件代理对象
+            /// </summary>
+            /// <param name="argsType">事件数据类型</param>
+            /// <returns>代理对象实例</returns>
             static protected IEventObject GetIEventObjectInstance(Type argsType)
             {
 
@@ -1158,16 +1166,31 @@ namespace MVVMSidekick
             public string ViewKeyId { get; set; }
             public Dictionary<string, object> State { get; set; }
         }
+
+        /// <summary>
+        /// 事件路由的扩展方法集合
+        /// </summary>
         public static class EventRouterHelper
         {
-
-            public static void RaiseEvent<TEventArgs>(this ViewModelBase source, TEventArgs eventArgs, [CallerMemberName]string callerMemberName = "")
+            /// <summary>
+            /// 触发事件
+            /// </summary>
+            /// <typeparam name="TEventArgs">事件类型</typeparam>
+            /// <param name="source">事件来源</param>
+            /// <param name="eventArgs">事件数据</param>
+            /// <param name="callerMemberName">事件名</param>
+            public static void RaiseEvent<TEventArgs>(this ViewModelBase source, TEventArgs eventArgs, string callerMemberName = "")
                  where TEventArgs : EventArgs
             {
                 EventRouter.Instance.RaiseEvent(source, eventArgs, callerMemberName);
             }
 
         }
+
+        /// <summary>
+        /// 事件信息
+        /// </summary>
+        /// <typeparam name="TEventArgs">事件数据类型</typeparam>
         public class RouterEventData<TEventArgs> : EventArgs
         {
             public RouterEventData(object sender, string eventName, TEventArgs eventArgs)
@@ -1177,8 +1200,17 @@ namespace MVVMSidekick
                 EventName = eventName;
                 EventArgs = eventArgs;
             }
+            /// <summary>
+            /// 事件发送者
+            /// </summary>
             public Object Sender { get; private set; }
+            /// <summary>
+            /// 事件名
+            /// </summary>
             public string EventName { get; private set; }
+            /// <summary>
+            /// 事件数据
+            /// </summary>
             public TEventArgs EventArgs { get; private set; }
         }
 
@@ -1187,7 +1219,9 @@ namespace MVVMSidekick
 
     namespace Commands
     {
-
+        /// <summary>
+        /// Command被运行触发的事件数据类型
+        /// </summary>
         public class EventCommandEventArgs : EventArgs
         {
             public Object Parameter { get; set; }
@@ -1201,8 +1235,18 @@ namespace MVVMSidekick
             }
         }
 
+        /// <summary>
+        /// 事件Command的助手类
+        /// </summary>
         public static class EventCommandHelper
         {
+            /// <summary>
+            /// 为一个事件Command制定一个VM
+            /// </summary>
+            /// <typeparam name="TCommand">事件Command具体类型</typeparam>
+            /// <param name="cmd">事件Command实例</param>
+            /// <param name="viewModel">VM实例</param>
+            /// <returns>事件Command实例本身</returns>
             public static TCommand WithViewModel<TCommand>(this TCommand cmd, ViewModelBase viewModel)
                 where TCommand : EventCommandBase
             {
@@ -1211,16 +1255,34 @@ namespace MVVMSidekick
             }
 
         }
+
+        /// <summary>
+        /// 带有VM的Command接口
+        /// </summary>
         public interface ICommandWithViewModel : ICommand
         {
             ViewModelBase ViewModel { get; set; }
         }
+
+        /// <summary>
+        /// 事件Command,运行后马上触发一个事件，事件中带有Command实例和VM实例属性
+        /// </summary>
         public abstract class EventCommandBase : ICommandWithViewModel
         {
+            /// <summary>
+            /// VM
+            /// </summary>
             public ViewModelBase ViewModel { get; set; }
 
+            /// <summary>
+            /// 运行时触发的事件
+            /// </summary>
             public event EventHandler<EventCommandEventArgs> CommandExecute;
-            protected void OnCommandExecute(EventCommandEventArgs args)
+            /// <summary>
+            /// 执行时的逻辑
+            /// </summary>
+            /// <param name="args">执行时的事件数据</param>
+            protected virtual void OnCommandExecute(EventCommandEventArgs args)
             {
                 if (CommandExecute != null)
                 {
@@ -1229,11 +1291,21 @@ namespace MVVMSidekick
             }
 
 
-
+            /// <summary>
+            /// 该Command是否能执行
+            /// </summary>
+            /// <param name="parameter">判断参数</param>
+            /// <returns>是否</returns>
             public abstract bool CanExecute(object parameter);
 
-
+            /// <summary>
+            /// 是否能执行的值产生变化的事件
+            /// </summary>
             public event EventHandler CanExecuteChanged;
+
+            /// <summary>
+            /// 是否能执行变化时触发事件的逻辑
+            /// </summary>
             protected void OnCanExecuteChanged()
             {
                 if (CanExecuteChanged != null)
@@ -1241,6 +1313,11 @@ namespace MVVMSidekick
                     CanExecuteChanged(this, EventArgs.Empty);
                 }
             }
+
+            /// <summary>
+            /// 执行Command
+            /// </summary>
+            /// <param name="parameter">参数条件</param>
             public virtual void Execute(object parameter)
             {
                 if (CanExecute(parameter))
