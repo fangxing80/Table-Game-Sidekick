@@ -28,7 +28,7 @@ namespace TableGameSidekick_Metro.ViewModels
         private void ConfigProperties()
         {
             m_CancellationTokenSource = new CancellationTokenSource();
-            m_CancellationTokenSource.RegisterDispose(this);
+            m_CancellationTokenSource.RegisterDisposeToViewModel(this);
 
 
             this.Games = new ObservableCollection<GameInfomation>
@@ -187,14 +187,14 @@ namespace TableGameSidekick_Metro.ViewModels
                             TargetViewId = Constants.Views.NewGame
                         })
                 )
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
 
 
             this.GetValueContainer(x => x.SelectedGame)
                 .GetValueChangeObservable()
                 .Select(e => e.EventArgs != null)
                 .Subscribe(m_ContinueCommand.CommandCore.CanExecuteObserver)
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
 
 
             ContinueCommand.CommandCore
@@ -214,7 +214,7 @@ namespace TableGameSidekick_Metro.ViewModels
                             }
                         })
                 )
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
 
 
         }

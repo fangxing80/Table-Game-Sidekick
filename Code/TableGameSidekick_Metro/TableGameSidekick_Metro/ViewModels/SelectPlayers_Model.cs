@@ -27,7 +27,7 @@ namespace TableGameSidekick_Metro.ViewModels
             m_PlayersStorage.Value = new List<PlayerInfomation>();
             {
                 //new  PlayerInfomation { GetFieldNames() }
-            
+
             };
             this.PresavedImagePaths = new ObservableCollection<string>(Constants.PresavedPics);
         }
@@ -47,6 +47,12 @@ namespace TableGameSidekick_Metro.ViewModels
 
         private void ConfigCommands()
         {
+
+            //this.NewPlayer.GetValueContainer(x => x.Name)
+            //    .GetValueChangeObservable()
+            //    .Select(x => x.EventArgs != "")
+            //    .Subscribe(CreateNewUserCommand.CommandCore.CanExecuteObserver)
+            //    .RegisterDisposeToViewModel(this);
             this.CreateNewUserCommand
                 .CommandCore
                 .Subscribe
@@ -54,20 +60,23 @@ namespace TableGameSidekick_Metro.ViewModels
                      (async (e) =>
                      {
                          var vm = this;
-                         await RefreshNewUserPicFromResource(
-                               vm.NewPlayerPicResourcePath,
-                               vm);
-
                          var newu = vm.NewPlayer;
-                         vm.NewPlayer = new PlayerInfomation();
-                         vm.SavedPlayers.Add(newu);
-                         vm.m_PlayersStorage.Value = vm.SavedPlayers.ToList();
-                         await vm.m_PlayersStorage.Save();
+                         if (!string.IsNullOrEmpty(newu.Name.Trim()))
+                         {
+                             await RefreshNewUserPicFromResource(
+                                    vm.NewPlayerPicResourcePath,
+                                    vm);
 
+
+                             vm.NewPlayer = new PlayerInfomation();
+                             vm.SavedPlayers.Add(newu);
+                             vm.m_PlayersStorage.Value = vm.SavedPlayers.ToList();
+                             await vm.m_PlayersStorage.Save();
+                         }
                      }
                      )
                 )
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
 
 
             m_SelectedItemsLocator(this)
@@ -77,7 +86,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 )
                 .Subscribe(this.DeleteSelectedSavedPlayerCommand
                                 .CommandCore.CanExecuteObserver)
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
             DeleteSelectedSavedPlayerCommand.CommandCore
                 .Subscribe
                 (
@@ -91,7 +100,7 @@ namespace TableGameSidekick_Metro.ViewModels
                        await m_PlayersStorage.Save();
                    }
                 )
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
 
             m_SelectedItemsLocator(this)
                 .GetValueChangeEventArgObservable()
@@ -172,7 +181,7 @@ namespace TableGameSidekick_Metro.ViewModels
                  }
 
              )
-             .RegisterDispose(this);
+             .RegisterDisposeToViewModel(this);
 
 
             await m_PlayersStorage.Refresh();
@@ -216,17 +225,18 @@ namespace TableGameSidekick_Metro.ViewModels
         }
         #region Property ObservableCollection<PlayerInfomation> SavedPlayers Setup
         protected Property<ObservableCollection<PlayerInfomation>> m_SavedPlayers = new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_SavedPlayersLocator };
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_SavedPlayersLocator =
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_SavedPlayersLocator =
             RegisterContainerLocator<ObservableCollection<PlayerInfomation>>(
-                "SavedPlayers",
-                model =>
-                {
-                    model.m_SavedPlayers = model.m_SavedPlayers ?? new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_SavedPlayersLocator };
-                    return model.m_SavedPlayers.Container =
-                        model.m_SavedPlayers.Container
-                        ??
-                        new ValueContainer<ObservableCollection<PlayerInfomation>>("SavedPlayers", model, new ObservableCollection<PlayerInfomation>());
-                }
+            "SavedPlayers",
+            model =>
+            {
+                model.m_SavedPlayers = model.m_SavedPlayers ?? new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_SavedPlayersLocator };
+                return model.m_SavedPlayers.Container =
+                    model.m_SavedPlayers.Container
+                    ??
+                    new ValueContainer<ObservableCollection<PlayerInfomation>>("SavedPlayers", model, new ObservableCollection<PlayerInfomation>());
+            }
             );
         #endregion
 
@@ -247,20 +257,21 @@ namespace TableGameSidekick_Metro.ViewModels
         #region Property IEnumerable<object> SelectedItems Setup
         protected Property<IEnumerable<object>> m_SelectedItems =
           new Property<IEnumerable<object>> { LocatorFunc = m_SelectedItemsLocator };
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<IEnumerable<object>>> m_SelectedItemsLocator =
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<IEnumerable<object>>> m_SelectedItemsLocator =
             RegisterContainerLocator<IEnumerable<object>>(
-                "SelectedItems",
-                model =>
-                {
-                    model.m_SelectedItems =
-                        model.m_SelectedItems
-                        ??
-                        new Property<IEnumerable<object>> { LocatorFunc = m_SelectedItemsLocator };
-                    return model.m_SelectedItems.Container =
-                        model.m_SelectedItems.Container
-                        ??
-                        new ValueContainer<IEnumerable<object>>("SelectedItems", model);
-                });
+            "SelectedItems",
+            model =>
+            {
+                model.m_SelectedItems =
+                    model.m_SelectedItems
+                    ??
+                    new Property<IEnumerable<object>> { LocatorFunc = m_SelectedItemsLocator };
+                return model.m_SelectedItems.Container =
+                    model.m_SelectedItems.Container
+                    ??
+                    new ValueContainer<IEnumerable<object>>("SelectedItems", model);
+            });
         #endregion
 
 
@@ -275,17 +286,18 @@ namespace TableGameSidekick_Metro.ViewModels
         }
         #region Property ObservableCollection<string> PresavedImagePaths Setup
         protected Property<ObservableCollection<string>> m_PresavedImagePaths = new Property<ObservableCollection<string>> { LocatorFunc = m_PresavedImagePathsLocator };
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<ObservableCollection<string>>> m_PresavedImagePathsLocator =
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<ObservableCollection<string>>> m_PresavedImagePathsLocator =
             RegisterContainerLocator<ObservableCollection<string>>(
-                "PresavedImagePaths",
-                model =>
-                {
-                    model.m_PresavedImagePaths = model.m_PresavedImagePaths ?? new Property<ObservableCollection<string>> { LocatorFunc = m_PresavedImagePathsLocator };
-                    return model.m_PresavedImagePaths.Container =
-                        model.m_PresavedImagePaths.Container
-                        ??
-                        new ValueContainer<ObservableCollection<string>>("PresavedImagePaths", model);
-                }
+            "PresavedImagePaths",
+            model =>
+            {
+                model.m_PresavedImagePaths = model.m_PresavedImagePaths ?? new Property<ObservableCollection<string>> { LocatorFunc = m_PresavedImagePathsLocator };
+                return model.m_PresavedImagePaths.Container =
+                    model.m_PresavedImagePaths.Container
+                    ??
+                    new ValueContainer<ObservableCollection<string>>("PresavedImagePaths", model);
+            }
             );
         #endregion
 
@@ -302,17 +314,18 @@ namespace TableGameSidekick_Metro.ViewModels
         }
         #region Property PlayerInfomation NewPlayer Setup
         protected Property<PlayerInfomation> m_NewPlayer = new Property<PlayerInfomation> { LocatorFunc = m_NewPlayerLocator };
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<PlayerInfomation>> m_NewPlayerLocator =
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<PlayerInfomation>> m_NewPlayerLocator =
             RegisterContainerLocator<PlayerInfomation>(
-                "NewPlayer",
-                model =>
-                {
-                    model.m_NewPlayer = model.m_NewPlayer ?? new Property<PlayerInfomation> { LocatorFunc = m_NewPlayerLocator };
-                    return model.m_NewPlayer.Container =
-                        model.m_NewPlayer.Container
-                        ??
-                        new ValueContainer<PlayerInfomation>("NewPlayer", model, new PlayerInfomation());
-                }
+            "NewPlayer",
+            model =>
+            {
+                model.m_NewPlayer = model.m_NewPlayer ?? new Property<PlayerInfomation> { LocatorFunc = m_NewPlayerLocator };
+                return model.m_NewPlayer.Container =
+                    model.m_NewPlayer.Container
+                    ??
+                    new ValueContainer<PlayerInfomation>("NewPlayer", model, new PlayerInfomation());
+            }
             );
         #endregion
 
@@ -328,17 +341,18 @@ namespace TableGameSidekick_Metro.ViewModels
         }
         #region Property string NewPlayerPicResourcePath Setup
         protected Property<string> m_NewPlayerPicResourcePath = new Property<string> { LocatorFunc = m_NewPlayerPicResourcePathLocator };
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]static Func<ViewModelBase, ValueContainer<string>> m_NewPlayerPicResourcePathLocator =
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<string>> m_NewPlayerPicResourcePathLocator =
             RegisterContainerLocator<string>(
-                "NewPlayerPicResourcePath",
-                model =>
-                {
-                    model.m_NewPlayerPicResourcePath = model.m_NewPlayerPicResourcePath ?? new Property<string> { LocatorFunc = m_NewPlayerPicResourcePathLocator };
-                    return model.m_NewPlayerPicResourcePath.Container =
-                        model.m_NewPlayerPicResourcePath.Container
-                        ??
-                        new ValueContainer<string>("NewPlayerPicResourcePath", model);
-                }
+            "NewPlayerPicResourcePath",
+            model =>
+            {
+                model.m_NewPlayerPicResourcePath = model.m_NewPlayerPicResourcePath ?? new Property<string> { LocatorFunc = m_NewPlayerPicResourcePathLocator };
+                return model.m_NewPlayerPicResourcePath.Container =
+                    model.m_NewPlayerPicResourcePath.Container
+                    ??
+                    new ValueContainer<string>("NewPlayerPicResourcePath", model);
+            }
             );
         #endregion
 

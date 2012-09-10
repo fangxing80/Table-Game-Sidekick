@@ -168,7 +168,7 @@ namespace TableGameSidekick_Metro.Controls
                      }
                 )
                 .Subscribe()
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
 
 
         }
@@ -190,7 +190,7 @@ namespace TableGameSidekick_Metro.Controls
                         ActualInputChars.Add(input[0]);
                     }
 
-                ).RegisterDispose(this);
+                ).RegisterDisposeToViewModel(this);
 
             btnClick.Where(x => x.Length != 1)
                 .Subscribe
@@ -231,7 +231,7 @@ namespace TableGameSidekick_Metro.Controls
                         }
                     }
 
-                ).RegisterDispose(this);
+                ).RegisterDisposeToViewModel(this);
             #endregion
 
             #region 绑定到 Textbox上的命令
@@ -267,7 +267,7 @@ namespace TableGameSidekick_Metro.Controls
                       }
 
                   }
-                ).RegisterDispose(this);
+                ).RegisterDisposeToViewModel(this);
             #endregion
         }
 
@@ -384,7 +384,9 @@ namespace TableGameSidekick_Metro.Controls
         CommandModel<ReactiveCommand, String> m_ButtonPushCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
+        
 
+     
 
 
         public ICommandModel<ReactiveCommand, String> ShowInputCommand

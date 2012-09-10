@@ -129,7 +129,7 @@
       <Code Language="csharp" >
         <![CDATA[
 
-        public CommandModel<$commandType$, $resourceType$> $commandName$
+        public ICommandModel<$commandType$, $resourceType$> $commandName$
         {
             get { return m_$commandName$.WithViewModel(this); }
             protected set { m_$commandName$ = value; }

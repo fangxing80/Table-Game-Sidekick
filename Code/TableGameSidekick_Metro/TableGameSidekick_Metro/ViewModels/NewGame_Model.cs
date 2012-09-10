@@ -68,7 +68,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     }
 
                 )
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
 
             #endregion
 
@@ -105,17 +105,23 @@ namespace TableGameSidekick_Metro.ViewModels
                             vm.NewGameInfomation.Players.Remove(mayAdd);
                         }
                         var rnds = await c.GetThumbnailAsync();
-                        var stream = rnds.AsStreamForRead(); ;
-                        var bts = new byte[rnds.Size];
-                        await stream.ReadAsync(bts, 0, bts.Length);
-                        mayAdd.Image = new ImageData { ByteArray = bts };
+                        if (rnds != null)
+                        {
+
+
+                            var stream = rnds.AsStreamForRead();
+
+                            var bts = new byte[rnds.Size];
+                            await stream.ReadAsync(bts, 0, bts.Length);
+                            mayAdd.Image = new ImageData { ByteArray = bts };
+                        }
                         vm.NewGameInfomation.Players.Add(mayAdd);
 
                     }
 
                 }
             )
-            .RegisterDispose(this);
+            .RegisterDisposeToViewModel(this);
             #endregion
 
             #region 设置删除已选玩家 Command
@@ -127,7 +133,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     DeleteSelectedPlayersCommand
                     .CommandCore
                     .CanExecuteObserver)
-                .RegisterDispose(this); ;
+                .RegisterDisposeToViewModel(this); ;
 
             DeleteSelectedPlayersCommand.CommandCore
                 .Subscribe(
@@ -168,7 +174,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 (
                     SaveGameInfoAndStartCommand.CommandCore.CanExecuteObserver
                 )
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
 
             SaveGameInfoAndStartCommand.CommandCore
                 .Subscribe(
@@ -186,7 +192,7 @@ namespace TableGameSidekick_Metro.ViewModels
                         });
                      }
                 )
-                .RegisterDispose(this);
+                .RegisterDisposeToViewModel(this);
             #endregion
         }
 
@@ -287,7 +293,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 return model.m_SelectedPrototypeGameInfomation.Container =
                      model.m_SelectedPrototypeGameInfomation.Container
                      ??
-                     new ValueContainer<GameInfomation>("SelectedPrototypeGameInfomation", model,new GameInfomation() { Id = Guid.NewGuid() });
+                     new ValueContainer<GameInfomation>("SelectedPrototypeGameInfomation", model, new GameInfomation() { Id = Guid.NewGuid() });
 
             });
         #endregion

@@ -258,7 +258,7 @@ namespace MVVMSidekick
             /// <param name="item">IDisposable实例</param>
             /// <param name="vm">VM实例</param>
             /// <returns></returns>
-            public static T RegisterDispose<T>(this T item, ViewModelBase vm) where T : IDisposable
+            public static T RegisterDisposeToViewModel<T>(this T item, ViewModelBase vm) where T : IDisposable
             {
                 vm.AddDisposable(item);
                 return item;
@@ -788,14 +788,19 @@ namespace MVVMSidekick
             Object Value { get; set; }
         }
 
-
+        public interface ICommandModel<TCommand, TResource>:ICommand
+        {
+            TCommand CommandCore { get; }
+            bool LastCanExecuteValue { get; set; }
+            TResource Resource { get; set; }
+        }
 
         /// <summary>
         /// 用于封装ICommand的ViewModel。一般包括一个Command实例和对应此实例的一组资源
         /// </summary>
         /// <typeparam name="TCommand">ICommand 详细类型</typeparam>
         /// <typeparam name="TResource">配合Command 的资源类型</typeparam>
-        public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>, ICommand
+        public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>,ICommandModel<TCommand, TResource>
             where TCommand : ICommand
         {
             public CommandModel()
