@@ -43,7 +43,7 @@ namespace TableGameSidekick_Metro.Controls
         {
             if (e != null)
             {
-                ValueTarget.Text = Double.Parse( this.ViewModel.ShowString).ToString();
+                ValueTarget.Text = Double.Parse(this.ViewModel.ShowString).ToString();
             }
 
             this.Reset();
@@ -53,7 +53,7 @@ namespace TableGameSidekick_Metro.Controls
         {
 
             ViewModel.Visibility = Visibility.Collapsed;
-           // ViewModel.ActualInputChars.Clear();
+            // ViewModel.ActualInputChars.Clear();
 
         }
 
@@ -135,7 +135,7 @@ namespace TableGameSidekick_Metro.Controls
                 );
 
             obsCol
-                .Where(_=>_raiseCollectionChangedEvent)
+                .Where(_ => _raiseCollectionChangedEvent)
                 .Do //进行验证并且把结果输出到 ShowString属性
                 (
                      e =>
@@ -143,26 +143,30 @@ namespace TableGameSidekick_Metro.Controls
                          //TODO:验证逻辑
                          var str = new string(ActualInputChars.ToArray());
                          double v;
-                         if (double.TryParse(str, out v))
+                         if (!double.TryParse(str, out v))
                          {
-                             str = str.TrimStart('0');
-                             if (string.IsNullOrEmpty (str ))
+                             if (this.ActualInputChars.Count > 0)
+                             {
+                                 this.ActualInputChars.RemoveAt(this.ActualInputChars.Count - 1);
+
+                             }
+                             else
                              {
                                  str = DefaultValue;
                              }
-                             if (str.StartsWith ("."))
-                             {
-                                 str = "0" + str;
-                             }
-                             
                          }
-                         else
-                         {                            
-                             ShowString = DefaultValue;                         
-
+                         str = new string(ActualInputChars.ToArray());
+                         str = str.TrimStart('0');
+                         if (string.IsNullOrEmpty(str))
+                         {
+                             str = DefaultValue;
+                         }
+                         if (str.StartsWith("."))
+                         {
+                             str = "0" + str;
                          }
                          //验证后显示
-                  
+
                          GetValueContainer(x => x.ShowString).SetValueAndTryNotify(str);
 
                      }
@@ -384,9 +388,9 @@ namespace TableGameSidekick_Metro.Controls
         CommandModel<ReactiveCommand, String> m_ButtonPushCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
-        
 
-     
+
+
 
 
         public ICommandModel<ReactiveCommand, String> ShowInputCommand
