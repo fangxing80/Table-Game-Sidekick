@@ -4,18 +4,18 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BF62B780-79CA-4DE4-8EE5-127C0E9E0520}</ProjectGuid>
-    <OutputType>AppContainerExe</OutputType>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F69407B0-9503-4242-85C4-C0B9BE28A73F}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TableGameSidekick_Metro</RootNamespace>
-    <AssemblyName>TableGameSidekick_Metro</AssemblyName>
+    <RootNamespace>MVVMSidekick_Metro</RootNamespace>
+    <AssemblyName>MVVMSidekick_Metro</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>TableGameSidekick_Metro_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,7 +25,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -100,113 +99,13 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
+    <Compile Include="..\..\CommonCode\MVVM\MVVM.cs">
+      <Link>MVVM.cs</Link>
     </Compile>
-    <Compile Include="Common\BindableBase.cs" />
-    <Compile Include="Common\BooleanNegationConverter.cs" />
-    <Compile Include="Common\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Common\CommandBinder.cs" />
-    <Compile Include="Common\LayoutAwarePage.cs" />
-    <Compile Include="Common\ObservableDictionary.cs" />
-    <Compile Include="Common\RichTextColumns.cs" />
-    <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Controls\CalcNumberPad.xaml.cs">
-      <DependentUpon>CalcNumberPad.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="DataEntity\GameInfomation.cs" />
-    <Compile Include="DataEntity\GameType.cs" />
-    <Compile Include="DataEntity\ImageData.cs" />
-    <Compile Include="DataEntity\PlayerInfomation.cs" />
-    <Compile Include="GamePlay.xaml.cs">
-      <DependentUpon>GamePlay.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="NewGame.xaml.cs">
-      <DependentUpon>NewGame.xaml</DependentUpon>
+    <Compile Include="..\..\CommonCode\MVVM\MVVMRxExtensions.cs">
+      <Link>MVVMRxExtensions.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectGameType.xaml.cs">
-      <DependentUpon>SelectGameType.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SelectPlayers.xaml.cs">
-      <DependentUpon>SelectPlayers.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Start.xaml.cs">
-      <DependentUpon>Start.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Storages\IStorage.cs" />
-    <Compile Include="Storages\Storage.cs" />
-    <Compile Include="ViewModels\GamePlay_Model.cs" />
-    <Compile Include="ViewModels\NewGame_Model.cs" />
-    <Compile Include="ViewModels\SelectPlayers_Model.cs" />
-    <Compile Include="ViewModels\Start_Model.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
-      <SubType>Designer</SubType>
-    </AppxManifest>
-    <None Include="packages.config" />
-    <None Include="TableGameSidekick_Metro_TemporaryKey.pfx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Assets\GameType\TradeGame.png" />
-    <Content Include="Assets\GameType\StopwatchGame.png" />
-    <Content Include="Assets\GameType\ScoreGame.png" />
-    <Content Include="Assets\Icons\Armour.png" />
-    <Content Include="Assets\Icons\BusinessMan.png" />
-    <Content Include="Assets\Icons\Car.png" />
-    <Content Include="Assets\Icons\Countingmachine.png" />
-    <Content Include="Assets\Icons\Globe.png" />
-    <Content Include="Assets\Icons\Gold.png" />
-    <Content Include="Assets\Icons\Key.png" />
-    <Content Include="Assets\Icons\MedicalBag.png" />
-    <Content Include="Assets\Icons\Negative.png" />
-    <Content Include="Assets\Icons\Positive.png" />
-    <Content Include="Assets\Icons\Pound.png" />
-    <Content Include="Assets\Icons\Recycle.png" />
-    <Content Include="Assets\Icons\StockIndexUp.png" />
-    <Content Include="Assets\Icons\Wheelchair.png" />
-    <Content Include="Assets\Logo.png" />
-    <Content Include="Assets\SmallLogo.png" />
-    <Content Include="Assets\SplashScreen.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Compile Include="Common\RandomAccessStreamReferenceBitmapConverter.cs" />
-    <Content Include="Common\ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="Common\StandardStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\CalcNumberPad.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="GamePlay.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="NewGame.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SelectGameType.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SelectPlayers.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Start.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Reactive.Core">
@@ -226,14 +125,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Games\ViewModels\" />
-    <Folder Include="Games\Views\" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MVVMSidekick_Metro\MVVMSidekick_Metro.csproj">
-      <Project>{f69407b0-9503-4242-85c4-c0b9be28a73f}</Project>
-      <Name>MVVMSidekick_Metro</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>

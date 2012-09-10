@@ -7,6 +7,7 @@ using Windows.UI.Xaml;
 using System.Windows.Input;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.UI.Xaml.Controls;
 namespace TableGameSidekick_Metro.Common
 {
         //Code Sample
@@ -19,6 +20,14 @@ namespace TableGameSidekick_Metro.Common
         //    </common:CommandBinder.CommandBinder>            
         //</Button>
 
+    public class CommandBinderParameter
+    {
+        public DependencyObject SourceObject { get; set; }
+        public Object Paremeter { get; set; }
+        public string EventName { get; set; }
+        public object EventArgs { get; set; }
+    
+    }
     public class CommandBinder : DependencyObject
     {
 
@@ -101,14 +110,14 @@ namespace TableGameSidekick_Metro.Common
                     TypeEventDic[t] = es;
                 }
                 EventInfo eventInfo;
-                if (es.TryGetValue((string)cb.GetValue(EventNameProperty), out eventInfo))
+                if (es.TryGetValue(cb.EventName, out eventInfo))
                 {
                     var r = new RoutedEventHandler(
                         (o, e) =>
                             (
                                 (ICommand)cb.GetValue(CommandProperty))
                                     .Execute(
-                                        cb.GetValue(ParameterProperty)
+                                       new CommandBinderParameter { EventArgs = e, EventName = cb.EventName , Paremeter =cb.Parameter, SourceObject =d}
                                     )
                             );
 
