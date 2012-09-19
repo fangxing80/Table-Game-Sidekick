@@ -42,11 +42,7 @@ namespace TableGameSidekick_Metro
             "ms-appx:///Assets/Icons/StockIndexUp.png",
             "ms-appx:///Assets/Icons/Wheelchair.png",
        };
-        public static class DefaultViewModelKeys
-        {
-            public static readonly string DefaultTypedViewModelName = "Model";
-
-        }
+      
         public static class NavigateParameterKeys
         {
             public static readonly string ViewInitActionName = "InitAction";

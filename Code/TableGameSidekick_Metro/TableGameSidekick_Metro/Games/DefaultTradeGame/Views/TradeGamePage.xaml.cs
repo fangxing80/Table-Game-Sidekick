@@ -15,15 +15,15 @@ using Windows.UI.Xaml.Navigation;
 
 // The Split Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234234
 
-namespace TableGameSidekick_Metro
+namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views
 {
     /// <summary>
     /// A page that displays a group title, a list of items within the group, and details for
     /// the currently selected item.
     /// </summary>
-    public sealed partial class GamePlay : TableGameSidekick_Metro.Common.LayoutAwarePage
+    public sealed partial class TradeGamePage : TableGameSidekick_Metro.Common.LayoutAwarePage
     {
-        public GamePlay()
+        public TradeGamePage()
         {
             this.InitializeComponent();
         }
@@ -131,7 +131,20 @@ namespace TableGameSidekick_Metro
         /// <param name="e">Event data that describes how the back button was clicked.</param>
         protected override void GoBack(object sender, RoutedEventArgs e)
         {
-
+            if (this.UsingLogicalPageNavigation() && itemListView.SelectedItem != null)
+            {
+                // When logical page navigation is in effect and there's a selected item that
+                // item's details are currently displayed.  Clearing the selection will return to
+                // the item list.  From the user's point of view this is a logical backward
+                // navigation.
+                this.itemListView.SelectedItem = null;
+            }
+            else
+            {
+                // When logical page navigation is not in effect, or when there is no selected
+                // item, use the default back button behavior.
+                base.GoBack(sender, e);
+            }
         }
 
         /// <summary>
@@ -142,33 +155,31 @@ namespace TableGameSidekick_Metro
         /// <returns>The name of the desired visual state.  This is the same as the name of the
         /// view state except when there is a selected item in portrait and snapped views where
         /// this additional logical page is represented by adding a suffix of _Detail.</returns>
-        //protected override string DetermineVisualState(ApplicationViewState viewState)
-        //{
-        //    //// Update the back button's enabled state when the view state changes
-        //    //var logicalPageBack = this.UsingLogicalPageNavigation(viewState) && this.itemListView.SelectedItem != null;
-        //    //var physicalPageBack = this.Frame != null && this.Frame.CanGoBack;
-        //    //this.DefaultViewModel["CanGoBack"] = logicalPageBack || physicalPageBack;
+        protected override string DetermineVisualState(ApplicationViewState viewState)
+        {
+            // Update the back button's enabled state when the view state changes
+            var logicalPageBack = this.UsingLogicalPageNavigation(viewState) && this.itemListView.SelectedItem != null;
+            var physicalPageBack = this.Frame != null && this.Frame.CanGoBack;
+            this.DefaultViewModel["CanGoBack"] = logicalPageBack || physicalPageBack;
 
-        //    //// Determine visual states for landscape layouts based not on the view state, but
-        //    //// on the width of the window.  This page has one layout that is appropriate for
-        //    //// 1366 virtual pixels or wider, and another for narrower displays or when a snapped
-        //    //// application reduces the horizontal space available to less than 1366.
-        //    //if (viewState == ApplicationViewState.Filled ||
-        //    //    viewState == ApplicationViewState.FullScreenLandscape)
-        //    //{
-        //    //    var windowWidth = Window.Current.Bounds.Width;
-        //    //    if (windowWidth >= 1366) return "FullScreenLandscapeOrWide";
-        //    //    return "FilledOrNarrow";
-        //    //}
+            // Determine visual states for landscape layouts based not on the view state, but
+            // on the width of the window.  This page has one layout that is appropriate for
+            // 1366 virtual pixels or wider, and another for narrower displays or when a snapped
+            // application reduces the horizontal space available to less than 1366.
+            if (viewState == ApplicationViewState.Filled ||
+                viewState == ApplicationViewState.FullScreenLandscape)
+            {
+                var windowWidth = Window.Current.Bounds.Width;
+                if (windowWidth >= 1366) return "FullScreenLandscapeOrWide";
+                return "FilledOrNarrow";
+            }
 
-        //    //// When in portrait or snapped start with the default visual state name, then add a
-        //    //// suffix when viewing details instead of the list
-        //    //var defaultStateName = base.DetermineVisualState(viewState);
-        //    //return logicalPageBack ? defaultStateName + "_Detail" : defaultStateName;
-        //}
+            // When in portrait or snapped start with the default visual state name, then add a
+            // suffix when viewing details instead of the list
+            var defaultStateName = base.DetermineVisualState(viewState);
+            return logicalPageBack ? defaultStateName + "_Detail" : defaultStateName;
+        }
 
         #endregion
-
-
     }
 }

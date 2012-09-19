@@ -14,9 +14,9 @@ using System.Reactive.Linq;
 namespace TableGameSidekick_Metro.ViewModels
 {
     [DataContract]
-    public class GamePlay_Model: ViewModelBase<GamePlay_Model> 
+    public class GamePlay_Model : ViewModelBase<GamePlay_Model>
     {
-      protected  IStorage<GamePlay_Model> m_StorageFactory;
+        protected IStorage<GamePlay_Model> m_StorageFactory;
 
 
         public GamePlay_Model(IStorage<GamePlay_Model> storageFactory)
@@ -25,7 +25,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
         }
 
-      protected virtual   async Task ConfigCommands()
+        protected virtual async Task ConfigCommands()
         {
             #region SaveDataCommand 设置
             GetValueContainer(x => x.CurrentGameInfomation)
@@ -61,7 +61,7 @@ namespace TableGameSidekick_Metro.ViewModels
             }
         }
 
-
+        [DataMember]
         public GameInfomation CurrentGameInfomation
         {
             get { return m_CurrentGameInfomationLocator(this).Value; }
@@ -93,9 +93,35 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
+        [DataMember]
+        public System.ComponentModel.INotifyPropertyChanged GameData
+        {
+            get { return m_GameDataLocator(this).Value; }
+            set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
+        }
+
+        #region Property System.ComponentModel.INotifyPropertyChanged GameData Setup
+        protected Property<System.ComponentModel.INotifyPropertyChanged> m_GameData =
+          new Property<System.ComponentModel.INotifyPropertyChanged> { LocatorFunc = m_GameDataLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<System.ComponentModel.INotifyPropertyChanged>> m_GameDataLocator =
+            RegisterContainerLocator<System.ComponentModel.INotifyPropertyChanged>(
+                "GameData",
+                model =>
+                {
+                    model.m_GameData =
+                        model.m_GameData
+                        ??
+                        new Property<System.ComponentModel.INotifyPropertyChanged> { LocatorFunc = m_GameDataLocator };
+                    return model.m_GameData.Container =
+                        model.m_GameData.Container
+                        ??
+                        new ValueContainer<System.ComponentModel.INotifyPropertyChanged>("GameData", model);
+                });
+        #endregion
 
 
-        
+
 
         public CommandModel<ReactiveCommand, String> SaveDataCommand
         {

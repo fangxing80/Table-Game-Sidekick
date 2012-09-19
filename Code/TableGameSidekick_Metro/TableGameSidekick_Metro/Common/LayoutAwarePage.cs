@@ -11,6 +11,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Data;
 
 namespace TableGameSidekick_Metro.Common
 {
@@ -84,9 +85,20 @@ namespace TableGameSidekick_Metro.Common
                 Window.Current.CoreWindow.PointerPressed -=
                     this.CoreWindow_PointerPressed;
             };
+
+            //var bEnable = new Binding()
+            //{
+            //    Source = this,
+            //    Path = new PropertyPath("DefaultViewModel.IsUIBusy"),
+            //    Mode = BindingMode.OneWay,
+            //    Converter = BooleanNotConverter.Instance,                
+            //};
+
+            //this.SetBinding(IsEnabledProperty, bEnable);
+            
         }
 
-
+        
         public ViewModelBase DefaultViewModel
         {
             get
@@ -439,13 +451,13 @@ namespace TableGameSidekick_Metro.Common
 
         #endregion
 
-    
+
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             DisposeViewModel();
             base.OnNavigatingFrom(e);
-            
+
         }
     }
 }

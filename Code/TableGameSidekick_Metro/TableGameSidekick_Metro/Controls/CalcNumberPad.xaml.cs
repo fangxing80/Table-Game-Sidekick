@@ -88,7 +88,7 @@ namespace TableGameSidekick_Metro.Controls
             obj.SetValue(CalcNumberPadProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for CalcNumberPad.  This enables animation, styling, binding, etc...
+
         public static readonly DependencyProperty CalcNumberPadProperty =
             DependencyProperty.RegisterAttached("CalcNumberPad", typeof(CalcNumberPad), typeof(CalcNumberPad), new PropertyMetadata(null,
                 (o, e) =>
@@ -105,6 +105,44 @@ namespace TableGameSidekick_Metro.Controls
 
                 ));
 
+
+
+
+
+
+        public static bool GetUseCalcPad(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(UseCalcPadProperty);
+        }
+
+        public static void SetUseCalcPad(DependencyObject obj, bool value)
+        {
+            obj.SetValue(UseCalcPadProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for UseCalcPad.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty UseCalcPadProperty =
+            DependencyProperty.RegisterAttached("UseCalcPad", typeof(bool), typeof(CalcNumberPad), new PropertyMetadata(false,
+                  (o, e) =>
+                  {
+                      if (e.OldValue != null || (bool)e.NewValue == true)
+                      {
+                          var tb = o as TextBox;
+                          if (tb != null)
+                          {
+                              // var pad = (e.NewValue as Panel).GetValue(CalcNumberPadProperty) as CalcNumberPad;
+                              tb.GotFocus +=
+                                  (object sender, RoutedEventArgs ev) =>
+                                  {
+                                      CalcNumberPad_Model.ShowCommand(tb);
+
+                                  };
+
+                          }
+
+                      }
+
+                  }));
 
 
 
@@ -135,7 +173,7 @@ namespace TableGameSidekick_Metro.Controls
                 );
 
             obsCol
-                .Where(_ => _raiseCollectionChangedEvent)
+
                 .Do //进行验证并且把结果输出到 ShowString属性
                 (
                      e =>
@@ -148,7 +186,6 @@ namespace TableGameSidekick_Metro.Controls
                              if (this.ActualInputChars.Count > 0)
                              {
                                  this.ActualInputChars.RemoveAt(this.ActualInputChars.Count - 1);
-
                              }
                              else
                              {
@@ -244,52 +281,59 @@ namespace TableGameSidekick_Metro.Controls
                   e =>
                   {
 
-                      var pm = e.EventArgs.Parameter as CommandBinderParameter;
+                      // var pm = e.EventArgs.Parameter as CommandBinderParameter;
 
-                      CalcNumberPad calc = null;
-                      FrameworkElement elem = pm.SourceObject as FrameworkElement;
-                      while (elem != null)
-                      {
-                          calc = elem.GetValue(CalcNumberPad.CalcNumberPadProperty) as CalcNumberPad;
-                          if (calc != null)
-                          {
-                              break;
-                          }
-                          elem = elem.Parent as FrameworkElement;
-                      }
+                      var fel = e.EventArgs.Parameter as FrameworkElement;
 
-
-                      if (calc != null)
-                      {
-                          calc.ValueTarget = pm.SourceObject as TextBox;
-                          ActualInputChars.Clear();
-                          foreach (var item in calc.ValueTarget.Text)
-                          {
-                              ActualInputChars.Add(item);
-                          }
-                          calc.ViewModel.Visibility = Visibility.Visible;
-                      }
+                      ShowCommand(fel as TextBox);
 
                   }
                 ).RegisterDisposeToViewModel(this);
             #endregion
         }
 
-        bool _raiseCollectionChangedEvent = true;
+        public static void ShowCommand(TextBox eventSource)
+        {
+            CalcNumberPad calc = null;
+            FrameworkElement elem = eventSource;
+            while (elem != null)
+            {
+                calc = elem.GetValue(CalcNumberPad.CalcNumberPadProperty) as CalcNumberPad;
+                if (calc != null)
+                {
+                    break;
+                }
+                elem = elem.Parent as FrameworkElement;
+            }
+
+
+            if (calc != null)
+            {
+                calc.ValueTarget = eventSource;
+                calc.ViewModel.ActualInputChars.Clear();
+                foreach (var item in calc.ValueTarget.Text)
+                {
+                    calc.ViewModel.ActualInputChars.Add(item);
+                }
+                calc.ViewModel.Visibility = Visibility.Visible;
+            }
+        }
+
+        // bool _raiseCollectionChangedEvent = true;
 
         public String ShowString
         {
             get { return m_ShowStringLocator(this).Value; }
             set
             {
-                _raiseCollectionChangedEvent = false;
+                //   _raiseCollectionChangedEvent = false;
                 m_ShowStringLocator(this).Value = value;
                 ActualInputChars.Clear();
                 foreach (var c in DefaultValue)
                 {
                     ActualInputChars.Add(c);
                 }
-                _raiseCollectionChangedEvent = true;
+                //  _raiseCollectionChangedEvent = true;
             }
         }
 

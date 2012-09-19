@@ -186,6 +186,11 @@ namespace TableGameSidekick_Metro
 
         #endregion
 
+        private void Disable(object sender, RoutedEventArgs e)
+        {
+            this.DefaultViewModel.IsUIBusy = !this.DefaultViewModel.IsUIBusy;
+        }
+
 
         
     }

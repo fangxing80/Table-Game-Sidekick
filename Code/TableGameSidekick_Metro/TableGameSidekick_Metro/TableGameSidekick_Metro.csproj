@@ -107,6 +107,7 @@
     <Compile Include="Common\BooleanNegationConverter.cs" />
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\CommandBinder.cs" />
+    <Compile Include="Common\BooleanNotConverter.cs" />
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
@@ -122,6 +123,15 @@
     <Compile Include="GamePlay.xaml.cs">
       <DependentUpon>GamePlay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Games\DefaultTradeGame\DefaultTradeGameDataFactory.cs" />
+    <Compile Include="Games\DefaultTradeGame\Models\PlayerData.cs" />
+    <Compile Include="Games\DefaultTradeGame\Models\ResourcesEntry.cs" />
+    <Compile Include="Games\DefaultTradeGame\Models\TradeGameData.cs" />
+    <Compile Include="Games\DefaultTradeGame\Models\TradeHistoryEntry.cs" />
+    <Compile Include="Games\DefaultTradeGame\Views\TradeGamePage.xaml.cs">
+      <DependentUpon>TradeGamePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Games\GameDataFactoryBase.cs" />
     <Compile Include="NewGame.xaml.cs">
       <DependentUpon>NewGame.xaml</DependentUpon>
     </Compile>
@@ -191,6 +201,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Games\DefaultTradeGame\Views\TradeGamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NewGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -206,6 +220,10 @@
     <Page Include="Start.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -225,10 +243,7 @@
       <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.5-rc\lib\netcore45\System.Threading.Tasks.Dataflow.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Games\ViewModels\" />
-    <Folder Include="Games\Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\MVVMSidekick_Metro\MVVMSidekick_Metro.csproj">
       <Project>{f69407b0-9503-4242-85c4-c0b9be28a73f}</Project>

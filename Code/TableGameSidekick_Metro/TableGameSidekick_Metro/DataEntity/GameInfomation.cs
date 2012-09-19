@@ -75,6 +75,32 @@ namespace TableGameSidekick_Metro.DataEntity
 
 
 
+        [DataMember]
+        public Dictionary<string, object> Settings
+        {
+            get { return m_SettingsLocator(this).Value; }
+            set { m_SettingsLocator(this).SetValueAndTryNotify(value); }
+        }
+
+        #region Property Dictionary<string,object> Settings Setup
+        protected Property<Dictionary<string, object>> m_Settings =
+          new Property<Dictionary<string, object>> { LocatorFunc = m_SettingsLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<ViewModelBase, ValueContainer<Dictionary<string, object>>> m_SettingsLocator =
+            RegisterContainerLocator<Dictionary<string, object>>(
+                "Settings",
+                model =>
+                {
+                    model.m_Settings =
+                        model.m_Settings
+                        ??
+                        new Property<Dictionary<string, object>> { LocatorFunc = m_SettingsLocator };
+                    return model.m_Settings.Container =
+                        model.m_Settings.Container
+                        ??
+                        new ValueContainer<Dictionary<string, object>>("Settings", model);
+                });
+        #endregion
 
 
 
