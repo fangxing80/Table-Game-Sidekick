@@ -90,7 +90,7 @@ namespace TableGameSidekick_Metro.Controls
 
 
         public static readonly DependencyProperty CalcNumberPadProperty =
-            DependencyProperty.RegisterAttached("CalcNumberPad", typeof(CalcNumberPad), typeof(CalcNumberPad), new PropertyMetadata(null,
+            DependencyProperty.RegisterAttached("CalcNumberPad", typeof(CalcNumberPad), typeof(CalcNumberPad),new PropertyMetadata(null,
                 (o, e) =>
                 {
                     var itm = o as Panel;
@@ -98,16 +98,10 @@ namespace TableGameSidekick_Metro.Controls
                     {
                         var np = e.NewValue as CalcNumberPad;
                         itm.Children.Add(np);
-
                     }
-
                 }
 
                 ));
-
-
-
-
 
 
         public static bool GetUseCalcPad(DependencyObject obj)

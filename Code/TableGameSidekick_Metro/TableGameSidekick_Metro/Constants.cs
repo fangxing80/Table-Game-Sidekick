@@ -20,10 +20,11 @@ using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.Common;
 using TableGameSidekick_Metro.ViewModels;
 using Windows.Storage;
-
+using TableGameSidekick_Metro.Games;
+using MVVMSidekick.ViewModels;
 namespace TableGameSidekick_Metro
 {
-     static class Constants
+    static class Constants
     {
         public static string[] PresavedPics = new string[]
        {
@@ -42,10 +43,32 @@ namespace TableGameSidekick_Metro
             "ms-appx:///Assets/Icons/StockIndexUp.png",
             "ms-appx:///Assets/Icons/Wheelchair.png",
        };
-      
+
         public static class NavigateParameterKeys
         {
             public static readonly string ViewInitActionName = "InitAction";
+            public static readonly string GameInfomation_ChosenGame = "GameInfomation_ChosenGame";
+
+
+        }
+
+
+        public static class Games
+        {
+            public static IDictionary<string, GameFactoryBase> Factories
+               = new Dictionary<string, GameFactoryBase> { 
+               {
+                   Names.TradeGame, new TableGameSidekick_Metro.Games.DefaultTradeGame.DefaultTradeGameFactory()}               
+               };
+
+            public static class Names
+            {
+                public static readonly string TradeGame = GameType.TradeGame.ToString();
+                public static readonly string StopwatchGame = GameType.StopwatchGame.ToString();
+                public static readonly string ScoreGame = GameType.ScoreGame.ToString();
+
+            }
+
 
         }
 
@@ -57,18 +80,18 @@ namespace TableGameSidekick_Metro
             public static readonly string GamePlay = typeof(GamePlay).FullName;
             public static readonly string SelectPlayers = typeof(SelectPlayers).FullName;
 
-            public static Dictionary<string, Action<LayoutAwarePage>>
-            SaveStateActions = new Dictionary<string, Action<LayoutAwarePage>>
+            public static Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>>
+            SaveStateActions = new Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>>
             {
 
             };
 
-            public static Dictionary<string, Action<LayoutAwarePage>>
-                PageInitActions = new Dictionary<string, Action<LayoutAwarePage>> 
+            public static Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>>
+                PageInitActions = new Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>> 
                 { 
                     {
                         Start , 
-                        ( p=>
+                        ( (p,pars)=>
                         {
                             var st=Storages.Instance.GameInfomationsStorage;
 
@@ -80,7 +103,7 @@ namespace TableGameSidekick_Metro
                     },
                     {
                         NewGame , 
-                        ( p=>
+                        ( (p,pars)=>
                         {
                             var vm = new NewGame_Model(Storages.Instance.GameInfomationsStorage);
                             p.DefaultViewModel = vm;
@@ -89,15 +112,30 @@ namespace TableGameSidekick_Metro
                     },
                     {
                         GamePlay , 
-                        ( p=>
+                        ( async (p,pars)=>
                         {
-                            
-                    
+
+                            var gi=pars[NavigateParameterKeys.GameInfomation_ChosenGame] as GameInfomation;
+                            var gameKey=gi.GameType == GameType.Advanced ? gi.AdvanceGameKey :gi.GameType.ToString (); 
+                            var fac = Games.Factories[gameKey ] as GameFactoryBase ;
+                            var game = await fac.CreateGame(gi);
+                            p.DefaultViewModel = new GamePlay_Model()
+                            {
+                                GameData  = game.DefaultViewModel,
+                                CurrentGameInfomation = gi,                                
+                            };
+
+
+
+                            var gplayp = p as GamePlay;
+                            gplayp.GamePage = game;
+
+
                         })
                     },
                     {
                         SelectPlayers ,
-                        p=>
+                        (p,pars)=>
                             {}
 
                     
@@ -118,13 +156,7 @@ namespace TableGameSidekick_Metro
             //    return viewCache[name].Value;
             //}
 
-            public static class MainPage_NavigateParameters
-            {
 
-                public static readonly string GameInfomation_ChosenGame = "GameInfomation_ChosenGame";
-                public static readonly string bool_IsNewGame = "bool_IsNewGame";
-
-            }
         }
         public class Storages
         {
@@ -132,7 +164,7 @@ namespace TableGameSidekick_Metro
             public Storages()
             {
 
-              
+
             }
 
 

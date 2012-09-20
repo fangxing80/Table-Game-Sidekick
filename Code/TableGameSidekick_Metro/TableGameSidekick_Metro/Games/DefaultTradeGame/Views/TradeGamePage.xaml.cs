@@ -48,19 +48,19 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views
             {
                 // When this is a new page, select the first item automatically unless logical page
                 // navigation is being used (see the logical page navigation #region below.)
-                if (!this.UsingLogicalPageNavigation() && this.itemsViewSource.View != null)
-                {
-                    this.itemsViewSource.View.MoveCurrentToFirst();
-                }
+                //if (!this.UsingLogicalPageNavigation() && this.itemsViewSource.View != null)
+                //{
+                //    this.itemsViewSource.View.MoveCurrentToFirst();
+                //}
             }
             else
             {
                 // Restore the previously saved state associated with this page
-                if (pageState.ContainsKey("SelectedItem") && this.itemsViewSource.View != null)
-                {
-                    // TODO: Invoke this.itemsViewSource.View.MoveCurrentTo() with the selected
-                    //       item as specified by the value of pageState["SelectedItem"]
-                }
+                //if (pageState.ContainsKey("SelectedItem") && this.itemsViewSource.View != null)
+                //{
+                //    // TODO: Invoke this.itemsViewSource.View.MoveCurrentTo() with the selected
+                //    //       item as specified by the value of pageState["SelectedItem"]
+                //}
             }
         }
 
@@ -72,12 +72,12 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views
         /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
         protected override void SaveState(Dictionary<String, Object> pageState)
         {
-            if (this.itemsViewSource.View != null)
-            {
-                var selectedItem = this.itemsViewSource.View.CurrentItem;
-                // TODO: Derive a serializable navigation parameter and assign it to
-                //       pageState["SelectedItem"]
-            }
+            //if (this.itemsViewSource.View != null)
+            //{
+            //    var selectedItem = this.itemsViewSource.View.CurrentItem;
+            //    // TODO: Derive a serializable navigation parameter and assign it to
+            //    //       pageState["SelectedItem"]
+            //}
         }
 
         #endregion

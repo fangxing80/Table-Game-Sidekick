@@ -170,5 +170,21 @@ namespace TableGameSidekick_Metro
         #endregion
 
 
+
+
+        public Common.LayoutAwarePage GamePage
+        {
+            get { return (Common.LayoutAwarePage)GetValue(GamePageProperty); }
+            set { SetValue(GamePageProperty, value);
+            m_GameFrame.Content = value;
+            }
+        }
+
+        // Using a DependencyProperty as the backing store for GamePage.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty GamePageProperty =
+            DependencyProperty.Register("GamePage", typeof(Common.LayoutAwarePage), typeof(GamePlay), new PropertyMetadata(null));
+
+
+
     }
 }

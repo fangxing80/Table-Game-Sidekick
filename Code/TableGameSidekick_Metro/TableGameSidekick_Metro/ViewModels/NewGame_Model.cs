@@ -183,13 +183,13 @@ namespace TableGameSidekick_Metro.ViewModels
                          m_Storage.Value[NewGameInfomation.Id] = NewGameInfomation;
                          await m_Storage.Save();
                          App.MainEventRouter.RaiseEvent(
-                        this,
-                        new NavigateCommandEventArgs()
-                        {
-                            SourceViewId = Constants.Views.NewGame,
-                            TargetViewId = Constants.Views.GamePlay,
-                            ParameterDictionary = new Dictionary<string, object> { { Constants.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame, NewGameInfomation } }
-                        });
+                            this,
+                            new NavigateCommandEventArgs()
+                            {
+                                SourceViewId = Constants.Views.NewGame,
+                                TargetViewId = Constants.Views.GamePlay,
+                                ParameterDictionary = new Dictionary<string, object> { { Constants.NavigateParameterKeys.GameInfomation_ChosenGame, NewGameInfomation } }
+                            });
                      }
                 )
                 .RegisterDisposeToViewModel(this);

@@ -210,7 +210,7 @@ namespace TableGameSidekick_Metro.ViewModels
                             ParameterDictionary = new Dictionary<string, Object>() 
                             {
                                 
-                                {Constants.Views.MainPage_NavigateParameters.GameInfomation_ChosenGame,this.SelectedGame}
+                                {Constants.NavigateParameterKeys.GameInfomation_ChosenGame,this.SelectedGame}
                             }
                         })
                 )

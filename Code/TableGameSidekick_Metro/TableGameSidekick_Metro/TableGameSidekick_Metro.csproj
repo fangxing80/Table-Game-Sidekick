@@ -123,7 +123,7 @@
     <Compile Include="GamePlay.xaml.cs">
       <DependentUpon>GamePlay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Games\DefaultTradeGame\DefaultTradeGameDataFactory.cs" />
+    <Compile Include="Games\DefaultTradeGame\DefaultTradeGameFactory.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\PlayerData.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\ResourcesEntry.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\TradeGameData.cs" />
@@ -131,7 +131,7 @@
     <Compile Include="Games\DefaultTradeGame\Views\TradeGamePage.xaml.cs">
       <DependentUpon>TradeGamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Games\GameDataFactoryBase.cs" />
+    <Compile Include="Games\GameFactoryBase.cs" />
     <Compile Include="NewGame.xaml.cs">
       <DependentUpon>NewGame.xaml</DependentUpon>
     </Compile>

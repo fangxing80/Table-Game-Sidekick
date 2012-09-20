@@ -45,13 +45,11 @@ namespace TableGameSidekick_Metro
                 .Subscribe(
                     ep =>
                     {
-                        Action<LayoutAwarePage> initAction = null;
-                        if (Constants.Views.PageInitActions.TryGetValue(ep.EventArgs.TargetViewId, out initAction))
-                        {
-                            ep.EventArgs.ParameterDictionary[Constants.NavigateParameterKeys.ViewInitActionName] = initAction;
-                        }
-
-
+                        Action<LayoutAwarePage, IDictionary<string, object>> initAction = null;
+                        //if (Constants.Views.PageInitActions.TryGetValue(ep.EventArgs.TargetViewId, out initAction))
+                        //{
+                        //    ep.EventArgs.ParameterDictionary[Constants.NavigateParameterKeys.ViewInitActionName] = initAction;
+                        //}
                         MainFrame.Navigate(Type.GetType(ep.EventArgs.TargetViewId), ep.EventArgs.ParameterDictionary);
                     }
                 );
@@ -86,7 +84,9 @@ namespace TableGameSidekick_Metro
 
             // Create a Frame to act navigation context and navigate to the first page
             MainFrame = MainFrame ?? new Frame();
-            if (!MainFrame.Navigate(typeof(Start), Constants.Views.PageInitActions[typeof(Start).FullName]))
+            if (!MainFrame.Navigate(typeof(Start),
+                null
+                ))
             {
                 throw new Exception("Failed to create initial page");
             }

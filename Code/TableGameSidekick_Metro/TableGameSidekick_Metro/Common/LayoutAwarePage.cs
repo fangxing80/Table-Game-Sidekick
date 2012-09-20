@@ -95,10 +95,10 @@ namespace TableGameSidekick_Metro.Common
             //};
 
             //this.SetBinding(IsEnabledProperty, bEnable);
-            
+
         }
 
-        
+
         public ViewModelBase DefaultViewModel
         {
             get
@@ -158,6 +158,7 @@ namespace TableGameSidekick_Metro.Common
         {
             // Use the navigation frame to return to the previous page
             if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
+
         }
 
         /// <summary>
@@ -361,10 +362,7 @@ namespace TableGameSidekick_Metro.Common
             base.OnNavigatedTo(e);
             // Returning to a cached page through navigation shouldn't trigger state loading
 
-            if (e.Parameter is Action<LayoutAwarePage>)
-            {
-                (e.Parameter as Action<LayoutAwarePage>)(this);
-            }
+
 
             if (this._pageKey != null) return;
 
@@ -383,20 +381,10 @@ namespace TableGameSidekick_Metro.Common
                     nextPageKey = "Page-" + nextPageIndex;
                 }
 
-                if (dic != null)
-                {
-                    object init = null;
-                    if (dic.TryGetValue(TableGameSidekick_Metro.Constants.NavigateParameterKeys.ViewInitActionName, out init))
-                    {
-                        dic.Remove(TableGameSidekick_Metro.Constants.NavigateParameterKeys.ViewInitActionName);
-                    }
 
-                    var initAction = init as Action<LayoutAwarePage>;
-                    if (initAction != null)
-                    {
-                        initAction(this);
-                    }
-                }
+
+
+
 
                 // Pass the navigation parameter to the new page
                 this.LoadState(e.Parameter, dic);
@@ -408,6 +396,13 @@ namespace TableGameSidekick_Metro.Common
                 // from cache
                 this.LoadState(e.Parameter, (Dictionary<String, Object>)frameState[this._pageKey]);
             }
+
+            Action<LayoutAwarePage, IDictionary<string, object>> init = null;
+            if (TableGameSidekick_Metro.Constants.Views.PageInitActions.TryGetValue(this.GetType().FullName, out init))
+            {
+                init(this, dic);
+            }
+
         }
 
         /// <summary>

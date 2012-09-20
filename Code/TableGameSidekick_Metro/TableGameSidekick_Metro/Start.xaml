@@ -13,7 +13,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"  >
 
-        <Page.Resources>
+    <Page.Resources>
 
         <!-- Collection of items displayed by this page -->
         <CollectionViewSource
@@ -38,11 +38,11 @@
         </DataTemplate>
     </Page.Resources>
     <common:LayoutAwarePage.DefaultViewModel>
-       <vm:Start_Model></vm:Start_Model>
+        <vm:Start_Model></vm:Start_Model>
     </common:LayoutAwarePage.DefaultViewModel>
     <common:LayoutAwarePage.BottomAppBar >
         <AppBar >
-            
+
             <StackPanel Margin="100,0,0,0">
                 <Button   Command="{Binding NewGameCommand}" >
                     <TextBlock Text="{Binding NewGameCommand.Resource}"></TextBlock>
@@ -107,15 +107,14 @@
             Padding="70,0,120,0"
             DataContext="{Binding SelectedItem, ElementName=itemListView}"
             Style="{StaticResource VerticalScrollViewerStyle}">
-
-            <Button Content="Disable" Height="50" Width="130" Click="Disable"/>
+            <StackPanel>
+                <Button Content="Disable" Height="50" Width="130" Click="Disable"/>
+                <Button Content="Continue" Height="50" Width="130" Command="{Binding DefaultViewModel.ContinueCommand, ElementName=pageRoot, Mode=OneWay}"/>
+            </StackPanel>
         </ScrollViewer>
-        <TextBox Grid.Column="1" HorizontalAlignment="Left"   Margin="135,420,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"
-                 controls:CalcNumberPad.UseCalcPad="True"
-                 >
-           
-        </TextBox>
-        
+        <TextBox Grid.Column="1" HorizontalAlignment="Left"   Margin="135,420,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" controls:CalcNumberPad.UseCalcPad="True" />
+
+
 
         <VisualStateManager.VisualStateGroups>
 

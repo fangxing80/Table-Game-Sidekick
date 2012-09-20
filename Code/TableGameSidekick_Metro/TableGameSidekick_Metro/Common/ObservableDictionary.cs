@@ -15,6 +15,11 @@ namespace TableGameSidekick_Metro.Common
     [DataContract]
     public class ObservableDictionary<K, V> : IObservableMap<K, V>
     {
+
+        public ObservableDictionary(IDictionary<K, V> coreDic)
+        {
+            _dictionary = coreDic;
+        }
         private class ObservableDictionaryChangedEventArgs : IMapChangedEventArgs<K>
         {
             public ObservableDictionaryChangedEventArgs(CollectionChange change, K key)
@@ -28,9 +33,9 @@ namespace TableGameSidekick_Metro.Common
         }
 
 
-        private Dictionary<K, V> _dictionary = new Dictionary<K, V>();
+        private IDictionary<K, V> _dictionary = new Dictionary<K, V>();
         [DataMember]
-        public Dictionary<K, V> Dictionary
+        public IDictionary<K, V> Dictionary
         {
             get { return _dictionary; }
             set { _dictionary = value; }

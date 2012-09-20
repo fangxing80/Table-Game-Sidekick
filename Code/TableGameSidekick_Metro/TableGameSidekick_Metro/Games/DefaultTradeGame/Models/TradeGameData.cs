@@ -9,11 +9,30 @@ using TableGameSidekick_Metro.Common;
 using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.ViewModels;
 using System.Collections.ObjectModel;
+using TableGameSidekick_Metro.Storages;
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 {
     [DataContract]
     public class TradeGameData : ViewModelBase<TradeGameData>
     {
+        public TradeGameData()
+
+        { }
+
+        public TradeGameData(IStorage<TradeGameData> storage, GameInfomation gameInfomation)
+        {
+            m_GameInfomation = gameInfomation;
+            m_Storage = storage;
+
+
+            Players = new ObservableDictionary<string, PlayerInfomation>(
+                     gameInfomation.Players.ToDictionary(x => x.Name, x => x));
+        }
+
+
+        GameInfomation m_GameInfomation;
+
+        IStorage<TradeGameData> m_Storage;
 
         public ObservableDictionary<String, PlayerInfomation> Players
         {

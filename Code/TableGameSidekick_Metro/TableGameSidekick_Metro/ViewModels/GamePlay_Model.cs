@@ -19,9 +19,9 @@ namespace TableGameSidekick_Metro.ViewModels
         protected IStorage<GamePlay_Model> m_StorageFactory;
 
 
-        public GamePlay_Model(IStorage<GamePlay_Model> storageFactory)
+        public GamePlay_Model()
         {
-            m_StorageFactory = storageFactory;
+            
 
         }
 
@@ -61,7 +61,7 @@ namespace TableGameSidekick_Metro.ViewModels
             }
         }
 
-        [DataMember]
+    
         public GameInfomation CurrentGameInfomation
         {
             get { return m_CurrentGameInfomationLocator(this).Value; }
@@ -93,33 +93,32 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
-        [DataMember]
-        public System.ComponentModel.INotifyPropertyChanged GameData
+    
+        public ViewModelBase GameData
         {
             get { return m_GameDataLocator(this).Value; }
             set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
         }
 
-        #region Property System.ComponentModel.INotifyPropertyChanged GameData Setup
-        protected Property<System.ComponentModel.INotifyPropertyChanged> m_GameData =
-          new Property<System.ComponentModel.INotifyPropertyChanged> { LocatorFunc = m_GameDataLocator };
+        #region Property ViewModelBase GameData Setup
+        protected Property<ViewModelBase> m_GameData =
+          new Property<ViewModelBase> { LocatorFunc = m_GameDataLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<System.ComponentModel.INotifyPropertyChanged>> m_GameDataLocator =
-            RegisterContainerLocator<System.ComponentModel.INotifyPropertyChanged>(
+        static Func<ViewModelBase, ValueContainer<ViewModelBase>> m_GameDataLocator =
+            RegisterContainerLocator<ViewModelBase>(
                 "GameData",
                 model =>
                 {
                     model.m_GameData =
                         model.m_GameData
                         ??
-                        new Property<System.ComponentModel.INotifyPropertyChanged> { LocatorFunc = m_GameDataLocator };
+                        new Property<ViewModelBase> { LocatorFunc = m_GameDataLocator };
                     return model.m_GameData.Container =
                         model.m_GameData.Container
                         ??
-                        new ValueContainer<System.ComponentModel.INotifyPropertyChanged>("GameData", model);
+                        new ValueContainer<ViewModelBase>("GameData", model);
                 });
         #endregion
-
 
 
 
