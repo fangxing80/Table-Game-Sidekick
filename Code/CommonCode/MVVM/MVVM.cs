@@ -561,11 +561,16 @@ namespace MVVMSidekick
 
 
 
+#if SILVERLIGHT
+            protected static Dictionary<string, Func<TViewModel, IValueContainer>>
+             _plainPropertyContainerGetters =
+             new Dictionary<string, Func<TViewModel, IValueContainer>>(StringComparer.CurrentCultureIgnoreCase);
+#else
 
             protected static SortedDictionary<string, Func<TViewModel, IValueContainer>>
                 _plainPropertyContainerGetters =
                 new SortedDictionary<string, Func<TViewModel, IValueContainer>>(StringComparer.CurrentCultureIgnoreCase);
-
+#endif
             /// <summary>
             /// 将一个VM引用特化为本子类型的引用
             /// </summary>
@@ -788,7 +793,7 @@ namespace MVVMSidekick
             Object Value { get; set; }
         }
 
-        public interface ICommandModel<TCommand, TResource>:ICommand
+        public interface ICommandModel<TCommand, TResource> : ICommand
         {
             TCommand CommandCore { get; }
             bool LastCanExecuteValue { get; set; }
@@ -800,7 +805,7 @@ namespace MVVMSidekick
         /// </summary>
         /// <typeparam name="TCommand">ICommand 详细类型</typeparam>
         /// <typeparam name="TResource">配合Command 的资源类型</typeparam>
-        public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>,ICommandModel<TCommand, TResource>
+        public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>, ICommandModel<TCommand, TResource>
             where TCommand : ICommand
         {
             public CommandModel()
@@ -1055,9 +1060,33 @@ namespace MVVMSidekick
             /// <summary>
             /// 事件来源的代理对象实例
             /// </summary>
-            static protected readonly ConcurrentDictionary<Type, IEventObject> EventObjects
-                 = new ConcurrentDictionary<Type, IEventObject>();
+#if SILVERLIGHT
+            public class ConcurrentDictionary<TK, TV> : Dictionary<TK, TV>
+            {
+                public TV GetOrAdd(TK key, Func<TK, TV> factory)
+                {
+                    TV rval = default(TV);
 
+                    if (!base.TryGetValue(key, out rval))
+                    {
+                        lock (this)
+                        {
+                            if (!base.TryGetValue(key, out rval))
+                            {
+                                rval = factory(key);
+                                base.Add(key, rval);
+                            }
+
+
+                        }
+                    }
+
+                    return rval;
+                }
+            }
+#endif
+            static protected readonly ConcurrentDictionary<Type, IEventObject> EventObjects
+     = new ConcurrentDictionary<Type, IEventObject>();
             /// <summary>
             /// 创建事件代理对象
             /// </summary>
@@ -1376,7 +1405,7 @@ namespace MVVMSidekick
 
 
 
-            public  object ConvertBack(object value, Type targetType, object parameter, string language)
+            public object ConvertBack(object value, Type targetType, object parameter, string language)
             {
 
                 if (ConvertBacker == null)
@@ -1392,10 +1421,17 @@ namespace MVVMSidekick
 
             private static void OnConvertCheckInputType(object sourceValue, Type targetType)
             {
+#if NETFX_CORE
                 if (!targetType.GetTypeInfo().IsAssignableFrom(typeof(TTarget).GetTypeInfo()))
                 {
                     throw new ArgumentOutOfRangeException(string.Format("Target type is not supported.  {0} and its base class type would be fine.", typeof(TTarget).FullName));
                 }
+#else
+                if (!targetType.IsAssignableFrom(typeof(TTarget)))
+                {
+                    throw new ArgumentOutOfRangeException(string.Format("Target type is not supported.  {0} and its base class type would be fine.", typeof(TTarget).FullName));
+                }
+#endif
                 if (!(sourceValue is TSource))
                 {
                     throw new ArgumentOutOfRangeException(string.Format("Source type is expected source type. A {0} reference is expected.", typeof(TSource).FullName));
