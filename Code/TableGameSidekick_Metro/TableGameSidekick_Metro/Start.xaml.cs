@@ -30,8 +30,8 @@ namespace TableGameSidekick_Metro
 
             this.DefaultViewModel = new Start_Model();
         }
-  
-        
+
+
         #region Page state management
 
         /// <summary>
@@ -188,10 +188,10 @@ namespace TableGameSidekick_Metro
 
         private void Disable(object sender, RoutedEventArgs e)
         {
-            this.DefaultViewModel.IsUIBusy = !this.DefaultViewModel.IsUIBusy;
+            this.DefaultViewModel["IsUIBusy"] = !(bool)this.DefaultViewModel["IsUIBusy"];
         }
 
 
-        
+
     }
 }

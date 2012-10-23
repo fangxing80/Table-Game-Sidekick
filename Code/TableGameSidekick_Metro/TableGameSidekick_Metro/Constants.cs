@@ -48,7 +48,7 @@ namespace TableGameSidekick_Metro
         {
             public static readonly string ViewInitActionName = "InitAction";
             public static readonly string GameInfomation_ChosenGame = "GameInfomation_ChosenGame";
-
+            public static readonly string FinishedCallback = "FinishedCallback";
 
         }
 
@@ -121,7 +121,7 @@ namespace TableGameSidekick_Metro
                             var game = await fac.CreateGame(gi);
                             p.DefaultViewModel = new GamePlay_Model()
                             {
-                                GameData  = game.DefaultViewModel,
+                                GameData  = (BindableBase)game.DefaultViewModel,
                                 CurrentGameInfomation = gi,                                
                             };
 

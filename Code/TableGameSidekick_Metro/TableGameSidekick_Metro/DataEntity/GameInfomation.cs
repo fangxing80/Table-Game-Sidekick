@@ -10,7 +10,7 @@ using MVVMSidekick.ViewModels;
 namespace TableGameSidekick_Metro.DataEntity
 {
     [DataContract]
-    public class GameInfomation : ViewModelBase<GameInfomation>
+    public class GameInfomation : BindableBase<GameInfomation>
     {
         [DataMember]
         public ImageData Image
@@ -23,7 +23,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<ImageData> m_Image =
           new Property<ImageData> { LocatorFunc = m_ImageLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<ImageData>> m_ImageLocator =
+        static Func<BindableBase, ValueContainer<ImageData>> m_ImageLocator =
             RegisterContainerLocator<ImageData>(
                 "Image",
                 model =>
@@ -56,7 +56,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<string> m_GameDescription =
           new Property<string> { LocatorFunc = m_GameDescriptionLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<string>> m_GameDescriptionLocator =
+        static Func<BindableBase, ValueContainer<string>> m_GameDescriptionLocator =
             RegisterContainerLocator<string>(
                 "GameDescription",
                 model =>
@@ -86,7 +86,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<Dictionary<string, object>> m_Settings =
           new Property<Dictionary<string, object>> { LocatorFunc = m_SettingsLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<Dictionary<string, object>>> m_SettingsLocator =
+        static Func<BindableBase, ValueContainer<Dictionary<string, object>>> m_SettingsLocator =
             RegisterContainerLocator<Dictionary<string, object>>(
                 "Settings",
                 model =>
@@ -124,7 +124,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<DateTime> m_StartTime =
           new Property<DateTime> { LocatorFunc = m_StartTimeLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<DateTime>> m_StartTimeLocator =
+        static Func<BindableBase, ValueContainer<DateTime>> m_StartTimeLocator =
             RegisterContainerLocator<DateTime>(
             "StartTime",
             model =>
@@ -163,7 +163,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<DateTime> m_LastEditTime =
           new Property<DateTime> { LocatorFunc = m_LastEditTimeLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<DateTime>> m_LastEditTimeLocator =
+        static Func<BindableBase, ValueContainer<DateTime>> m_LastEditTimeLocator =
             RegisterContainerLocator<DateTime>(
             "LastEditTime",
             model =>
@@ -205,7 +205,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<ObservableCollection<PlayerInfomation>> m_Players =
           new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_PlayersLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_PlayersLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_PlayersLocator =
             RegisterContainerLocator<ObservableCollection<PlayerInfomation>>(
             "Players",
             model =>
@@ -246,7 +246,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<Guid> m_Id =
           new Property<Guid> { LocatorFunc = m_IdLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<Guid>> m_IdLocator =
+        static Func<BindableBase, ValueContainer<Guid>> m_IdLocator =
             RegisterContainerLocator<Guid>(
             "Id",
             model =>
@@ -286,7 +286,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<GameType> m_GameType =
           new Property<GameType> { LocatorFunc = m_GameTypeLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<GameType>> m_GameTypeLocator =
+        static Func<BindableBase, ValueContainer<GameType>> m_GameTypeLocator =
             RegisterContainerLocator<GameType>(
             "GameType",
             model =>
@@ -322,7 +322,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<string> m_AdvanceGameKey =
           new Property<string> { LocatorFunc = m_AdvanceGameKeyLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<string>> m_AdvanceGameKeyLocator =
+        static Func<BindableBase, ValueContainer<string>> m_AdvanceGameKeyLocator =
             RegisterContainerLocator<string>(
             "AdvanceGameKey",
             model =>

@@ -131,20 +131,8 @@ namespace TableGameSidekick_Metro
         /// <param name="e">Event data that describes how the back button was clicked.</param>
         protected override void GoBack(object sender, RoutedEventArgs e)
         {
-            if (this.UsingLogicalPageNavigation() && itemListView.SelectedItem != null)
-            {
-                // When logical page navigation is in effect and there's a selected item that
-                // item's details are currently displayed.  Clearing the selection will return to
-                // the item list.  From the user's point of view this is a logical backward
-                // navigation.
-                this.itemListView.SelectedItem = null;
-            }
-            else
-            {
-                // When logical page navigation is not in effect, or when there is no selected
-                // item, use the default back button behavior.
-                base.GoBack(sender, e);
-            }
+           
+            base.GoBack(sender, e);
         }
 
         /// <summary>
@@ -185,7 +173,7 @@ namespace TableGameSidekick_Metro
         private void SelectedPlayerListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DefaultViewModel["SelectedPlayers"] = (sender as ListView).SelectedItems.ToList();
-            
+
         }
 
 

@@ -39,7 +39,7 @@ namespace TableGameSidekick_Metro.Storages
         protected Property<StorageFolder> m_Folder =
           new Property<StorageFolder> { LocatorFunc = m_FolderLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<StorageFolder>> m_FolderLocator =
+        static Func<BindableBase, ValueContainer<StorageFolder>> m_FolderLocator =
             RegisterContainerLocator<StorageFolder>(
             "Folder",
             model =>
@@ -188,7 +188,7 @@ namespace TableGameSidekick_Metro.Storages
         protected Property<T> m_Value =
           new Property<T> { LocatorFunc = m_ValueLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<T>> m_ValueLocator =
+        static Func<BindableBase, ValueContainer<T>> m_ValueLocator =
             RegisterContainerLocator<T>(
             "Value",
             model =>

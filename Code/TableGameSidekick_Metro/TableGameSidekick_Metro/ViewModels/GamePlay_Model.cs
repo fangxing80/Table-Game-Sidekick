@@ -74,7 +74,7 @@ namespace TableGameSidekick_Metro.ViewModels
         protected Property<GameInfomation> m_CurrentGameInfomation =
           new Property<GameInfomation> { LocatorFunc = m_CurrentGameInfomationLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<GameInfomation>> m_CurrentGameInfomationLocator =
+        static Func<BindableBase, ValueContainer<GameInfomation>> m_CurrentGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
             "CurrentGameInfomation",
             model =>
@@ -94,29 +94,29 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
     
-        public ViewModelBase GameData
+        public BindableBase GameData
         {
             get { return m_GameDataLocator(this).Value; }
             set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property ViewModelBase GameData Setup
-        protected Property<ViewModelBase> m_GameData =
-          new Property<ViewModelBase> { LocatorFunc = m_GameDataLocator };
+        protected Property<BindableBase> m_GameData =
+          new Property<BindableBase> { LocatorFunc = m_GameDataLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<ViewModelBase>> m_GameDataLocator =
-            RegisterContainerLocator<ViewModelBase>(
+        static Func<BindableBase, ValueContainer<BindableBase>> m_GameDataLocator =
+            RegisterContainerLocator<BindableBase>(
                 "GameData",
                 model =>
                 {
                     model.m_GameData =
                         model.m_GameData
                         ??
-                        new Property<ViewModelBase> { LocatorFunc = m_GameDataLocator };
+                        new Property<BindableBase> { LocatorFunc = m_GameDataLocator };
                     return model.m_GameData.Container =
                         model.m_GameData.Container
                         ??
-                        new ValueContainer<ViewModelBase>("GameData", model);
+                        new ValueContainer<BindableBase>("GameData", model);
                 });
         #endregion
 

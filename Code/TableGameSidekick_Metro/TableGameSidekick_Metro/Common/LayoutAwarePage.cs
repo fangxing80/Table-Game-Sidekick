@@ -12,6 +12,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Data;
+using System.Threading.Tasks;
 
 namespace TableGameSidekick_Metro.Common
 {
@@ -42,7 +43,7 @@ namespace TableGameSidekick_Metro.Common
         /// Identifies the <see cref="DefaultViewModel"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty DefaultViewModelProperty =
-            DependencyProperty.Register("DefaultViewModel", typeof(ViewModelBase),
+            DependencyProperty.Register("DefaultViewModel", typeof(IViewModelBase),
             typeof(LayoutAwarePage), new PropertyMetadata(new DefaultViewModel()));
 
         private List<Control> _layoutAwareControls;
@@ -99,11 +100,11 @@ namespace TableGameSidekick_Metro.Common
         }
 
 
-        public ViewModelBase DefaultViewModel
+        public IViewModelBase DefaultViewModel
         {
             get
             {
-                return this.GetValue(DefaultViewModelProperty) as ViewModelBase;
+                return this.GetValue(DefaultViewModelProperty) as IViewModelBase;
             }
 
             set
@@ -115,7 +116,7 @@ namespace TableGameSidekick_Metro.Common
 
         protected void DisposeViewModel()
         {
-            var oldv = this.GetValue(DefaultViewModelProperty) as ViewModelBase;
+            var oldv = this.GetValue(DefaultViewModelProperty) as BindableBase;
             if (oldv != null)
             {
                 try
@@ -156,8 +157,9 @@ namespace TableGameSidekick_Metro.Common
         /// event.</param>
         protected virtual void GoBack(object sender, RoutedEventArgs e)
         {
-            // Use the navigation frame to return to the previous page
-            if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
+            DefaultViewModel.Close();
+
+            
 
         }
 
@@ -170,8 +172,8 @@ namespace TableGameSidekick_Metro.Common
         /// event.</param>
         protected virtual void GoForward(object sender, RoutedEventArgs e)
         {
-            // Use the navigation frame to move to the next page
-            if (this.Frame != null && this.Frame.CanGoForward) this.Frame.GoForward();
+            //// Use the navigation frame to move to the next page
+            //if (this.Frame != null && this.Frame.CanGoForward) this.Frame.GoForward();
         }
 
         /// <summary>
@@ -402,6 +404,24 @@ namespace TableGameSidekick_Metro.Common
             {
                 init(this, dic);
             }
+            object fin = null;
+            if (dic !=null)
+            {
+                if (dic.TryGetValue(Constants.NavigateParameterKeys.FinishedCallback, out fin))
+                {
+                    Action<LayoutAwarePage> finishNavCallback = fin as Action<LayoutAwarePage>;
+                    DefaultViewModel.AddDisposeAction(() =>
+                        {
+                            finishNavCallback(this);
+                            if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
+                            //GoBack(this, null);
+                        }
+                        );
+             
+                }
+            }
+
+
 
         }
 
@@ -450,9 +470,22 @@ namespace TableGameSidekick_Metro.Common
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            DisposeViewModel();
+          //  DisposeViewModel();
             base.OnNavigatingFrom(e);
 
         }
+
+
+
+
+        public TResult GetResult<TResult>()
+        {
+            if (DefaultViewModel["Result"] is TResult)
+                return (TResult)DefaultViewModel["Result"];
+            else
+                return default(TResult);
+        }
+
+
     }
 }

@@ -16,7 +16,7 @@ using MVVMSidekick.EventRouter;
 using System.Collections.Specialized;
 namespace TableGameSidekick_Metro.ViewModels
 {
-    public class NewGame_Model : ViewModelBase<NewGame_Model>
+    public class NewGame_Model : ViewModelBase<NewGame_Model,GameInfomation>
     {
         public NewGame_Model()
         {
@@ -182,14 +182,8 @@ namespace TableGameSidekick_Metro.ViewModels
                      {
                          m_Storage.Value[NewGameInfomation.Id] = NewGameInfomation;
                          await m_Storage.Save();
-                         App.MainEventRouter.RaiseEvent(
-                            this,
-                            new NavigateCommandEventArgs()
-                            {
-                                SourceViewId = Constants.Views.NewGame,
-                                TargetViewId = Constants.Views.GamePlay,
-                                ParameterDictionary = new Dictionary<string, object> { { Constants.NavigateParameterKeys.GameInfomation_ChosenGame, NewGameInfomation } }
-                            });
+                         this.Result = NewGameInfomation;
+                         this.Close();
                      }
                 )
                 .RegisterDisposeToViewModel(this);
@@ -249,7 +243,7 @@ namespace TableGameSidekick_Metro.ViewModels
         protected Property<ObservableCollection<GameInfomation>> m_GameInfomationPrototypes =
             new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GameInfomationPrototypesLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GameInfomationPrototypesLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GameInfomationPrototypesLocator =
             RegisterContainerLocator<ObservableCollection<GameInfomation>>(
             "GameInfomationPrototypes",
             model =>
@@ -281,7 +275,7 @@ namespace TableGameSidekick_Metro.ViewModels
         #region Property GameInfomation SelectedPrototypeGameInfomation Setup
         protected Property<GameInfomation> m_SelectedPrototypeGameInfomation = new Property<GameInfomation> { LocatorFunc = m_SelectedPrototypeGameInfomationLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<GameInfomation>> m_SelectedPrototypeGameInfomationLocator =
+        static Func<BindableBase, ValueContainer<GameInfomation>> m_SelectedPrototypeGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
             "SelectedPrototypeGameInfomation",
             model =>
@@ -320,7 +314,7 @@ namespace TableGameSidekick_Metro.ViewModels
         protected Property<GameInfomation> m_NewGameInfomation =
           new Property<GameInfomation> { LocatorFunc = m_NewGameInfomationLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<GameInfomation>> m_NewGameInfomationLocator =
+        static Func<BindableBase, ValueContainer<GameInfomation>> m_NewGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
             "NewGameInfomation",
             model =>
@@ -351,7 +345,7 @@ namespace TableGameSidekick_Metro.ViewModels
         protected Property<IList<object>> m_SelectedPlayers =
           new Property<IList<object>> { LocatorFunc = m_SelectedPlayersLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<IList<object>>> m_SelectedPlayersLocator =
+        static Func<BindableBase, ValueContainer<IList<object>>> m_SelectedPlayersLocator =
             RegisterContainerLocator<IList<object>>(
             "SelectedPlayers",
             model =>

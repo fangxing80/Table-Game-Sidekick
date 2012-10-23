@@ -226,7 +226,7 @@ namespace TableGameSidekick_Metro.ViewModels
         #region Property ObservableCollection<PlayerInfomation> SavedPlayers Setup
         protected Property<ObservableCollection<PlayerInfomation>> m_SavedPlayers = new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_SavedPlayersLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_SavedPlayersLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_SavedPlayersLocator =
             RegisterContainerLocator<ObservableCollection<PlayerInfomation>>(
             "SavedPlayers",
             model =>
@@ -258,7 +258,7 @@ namespace TableGameSidekick_Metro.ViewModels
         protected Property<IEnumerable<object>> m_SelectedItems =
           new Property<IEnumerable<object>> { LocatorFunc = m_SelectedItemsLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<IEnumerable<object>>> m_SelectedItemsLocator =
+        static Func<BindableBase, ValueContainer<IEnumerable<object>>> m_SelectedItemsLocator =
             RegisterContainerLocator<IEnumerable<object>>(
             "SelectedItems",
             model =>
@@ -287,7 +287,7 @@ namespace TableGameSidekick_Metro.ViewModels
         #region Property ObservableCollection<string> PresavedImagePaths Setup
         protected Property<ObservableCollection<string>> m_PresavedImagePaths = new Property<ObservableCollection<string>> { LocatorFunc = m_PresavedImagePathsLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<string>>> m_PresavedImagePathsLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<string>>> m_PresavedImagePathsLocator =
             RegisterContainerLocator<ObservableCollection<string>>(
             "PresavedImagePaths",
             model =>
@@ -315,7 +315,7 @@ namespace TableGameSidekick_Metro.ViewModels
         #region Property PlayerInfomation NewPlayer Setup
         protected Property<PlayerInfomation> m_NewPlayer = new Property<PlayerInfomation> { LocatorFunc = m_NewPlayerLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<PlayerInfomation>> m_NewPlayerLocator =
+        static Func<BindableBase, ValueContainer<PlayerInfomation>> m_NewPlayerLocator =
             RegisterContainerLocator<PlayerInfomation>(
             "NewPlayer",
             model =>
@@ -342,7 +342,7 @@ namespace TableGameSidekick_Metro.ViewModels
         #region Property string NewPlayerPicResourcePath Setup
         protected Property<string> m_NewPlayerPicResourcePath = new Property<string> { LocatorFunc = m_NewPlayerPicResourcePathLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<string>> m_NewPlayerPicResourcePathLocator =
+        static Func<BindableBase, ValueContainer<string>> m_NewPlayerPicResourcePathLocator =
             RegisterContainerLocator<string>(
             "NewPlayerPicResourcePath",
             model =>

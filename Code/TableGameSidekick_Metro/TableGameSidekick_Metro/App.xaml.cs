@@ -19,6 +19,7 @@ using TableGameSidekick_Metro.Storages;
 using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.Common;
 using TableGameSidekick_Metro.ViewModels;
+using System.Threading.Tasks;
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
 namespace TableGameSidekick_Metro
@@ -45,7 +46,7 @@ namespace TableGameSidekick_Metro
                 .Subscribe(
                     ep =>
                     {
-                        Action<LayoutAwarePage, IDictionary<string, object>> initAction = null;
+                        //Action<LayoutAwarePage, IDictionary<string, object>> initAction = null;
                         //if (Constants.Views.PageInitActions.TryGetValue(ep.EventArgs.TargetViewId, out initAction))
                         //{
                         //    ep.EventArgs.ParameterDictionary[Constants.NavigateParameterKeys.ViewInitActionName] = initAction;
@@ -55,6 +56,55 @@ namespace TableGameSidekick_Metro
                 );
 
 
+
+        }
+
+
+        public static Task RootFrameNavigate(string targetViewName, Dictionary<string, object> parameters = null)
+        {
+
+            var arg = new NavigateCommandEventArgs()
+            {
+                ParameterDictionary = parameters,
+                TargetViewId = targetViewName,
+            };
+
+            Task task = new Task(() => { });
+            Action<LayoutAwarePage> finishNavigateAction =
+                page =>
+                {
+
+                    task.Start();
+                };
+            arg.ParameterDictionary[Constants.NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+            MainEventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+
+            return task;
+
+        }
+
+
+        public static Task<TResult> RootFrameNavigate<TResult>(string targetViewName, Dictionary<string, object> parameters = null)
+        {
+            TResult result = default(TResult);
+
+            var arg = new NavigateCommandEventArgs()
+            {
+                ParameterDictionary = parameters,
+                TargetViewId = targetViewName,
+            };
+
+            Task<TResult> task = new Task<TResult>(() => result);
+            Action<LayoutAwarePage> finishNavigateAction =
+                page =>
+                {
+                    result = page.GetResult<TResult>();
+                    task.Start();
+                };
+            arg.ParameterDictionary[Constants.NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+            MainEventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+
+            return task;
 
         }
 

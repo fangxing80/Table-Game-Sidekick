@@ -103,7 +103,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Common\BooleanNegationConverter.cs" />
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\CommandBinder.cs" />
@@ -126,7 +125,7 @@
     <Compile Include="Games\DefaultTradeGame\DefaultTradeGameFactory.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\PlayerData.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\ResourcesEntry.cs" />
-    <Compile Include="Games\DefaultTradeGame\Models\TradeGameData.cs" />
+    <Compile Include="Games\DefaultTradeGame\Models\TradeGameData_Model.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\TradeHistoryEntry.cs" />
     <Compile Include="Games\DefaultTradeGame\Views\TradeGamePage.xaml.cs">
       <DependentUpon>TradeGamePage.xaml</DependentUpon>

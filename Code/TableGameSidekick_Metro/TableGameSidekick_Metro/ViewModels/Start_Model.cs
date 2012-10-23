@@ -75,7 +75,7 @@ namespace TableGameSidekick_Metro.ViewModels
         protected Property<ObservableCollection<GameInfomation>> m_Games =
           new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GamesLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GamesLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GamesLocator =
             RegisterContainerLocator<ObservableCollection<GameInfomation>>(
             "Games",
             model =>
@@ -113,7 +113,7 @@ namespace TableGameSidekick_Metro.ViewModels
         protected Property<GameInfomation> m_SelectedGame =
           new Property<GameInfomation> { LocatorFunc = m_SelectedGameLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<GameInfomation>> m_SelectedGameLocator =
+        static Func<BindableBase, ValueContainer<GameInfomation>> m_SelectedGameLocator =
             RegisterContainerLocator<GameInfomation>(
             "SelectedGame",
             model =>
@@ -178,14 +178,23 @@ namespace TableGameSidekick_Metro.ViewModels
                 .CommandCore
                 .Subscribe
                 (
-                    _ =>
-                        App.MainEventRouter.RaiseEvent(
-                        this,
-                        new NavigateCommandEventArgs()
-                        {
-                            SourceViewId = Constants.Views.Start,
-                            TargetViewId = Constants.Views.NewGame
-                        })
+                  async _ =>
+                  {
+
+                      var ng = await App.RootFrameNavigate<GameInfomation>(
+                                   Constants.Views.NewGame,
+                                   new Dictionary<string, object>()
+                           );
+                      if (ng!=null)
+                      {
+                          await App.RootFrameNavigate(
+                                     Constants.Views.GamePlay,
+                                    new Dictionary<string, object> { { Constants.NavigateParameterKeys.GameInfomation_ChosenGame, ng } }
+
+                          );
+                      }
+             
+                  }
                 )
                 .RegisterDisposeToViewModel(this);
 
@@ -200,19 +209,16 @@ namespace TableGameSidekick_Metro.ViewModels
             ContinueCommand.CommandCore
                 .Subscribe
                 (
-                    _ =>
-                        App.MainEventRouter.RaiseEvent(
-                        this,
-                        new NavigateCommandEventArgs()
-                        {
-                            SourceViewId = Constants.Views.Start,
-                            TargetViewId = Constants.Views.GamePlay,
-                            ParameterDictionary = new Dictionary<string, Object>() 
+                    async _ =>
+
+                       await App.RootFrameNavigate(
+                            Constants.Views.GamePlay,
+                         new Dictionary<string, Object>() 
                             {
                                 
                                 {Constants.NavigateParameterKeys.GameInfomation_ChosenGame,this.SelectedGame}
                             }
-                        })
+                        )
                 )
                 .RegisterDisposeToViewModel(this);
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 {
-    public class ResourcesEntry : ViewModelBase<ResourcesEntry>
+    public class ResourcesEntry : BindableBase<ResourcesEntry>
     {
 
     }

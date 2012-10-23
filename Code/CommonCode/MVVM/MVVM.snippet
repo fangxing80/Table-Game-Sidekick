@@ -34,7 +34,7 @@
         protected Property<$type$> m_$property$ =
           new Property<$type$>{ LocatorFunc = m_$property$Locator};
         [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase,ValueContainer<$type$>> m_$property$Locator=
+        static Func<BindableBase,ValueContainer<$type$>> m_$property$Locator=
             RegisterContainerLocator<$type$>(
                 "$property$",
                 model =>
@@ -129,7 +129,7 @@
       <Code Language="csharp" >
         <![CDATA[
 
-        public ICommandModel<$commandType$, $resourceType$> $commandName$
+        public CommandModel<$commandType$, $resourceType$> $commandName$
         {
             get { return m_$commandName$.WithViewModel(this); }
             protected set { m_$commandName$ = value; }

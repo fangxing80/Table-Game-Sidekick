@@ -25,7 +25,7 @@
         * Row 0 contains the back button and page title
         * Row 1 contains the rest of the page layout
     -->
-    <Grid Style="{StaticResource LayoutRootStyle}"  DataContext="{Binding DefaultViewModel, ElementName=pageRoot}" >
+    <Grid Background="Gray" Style="{StaticResource LayoutRootStyle}"  DataContext="{Binding DefaultViewModel, ElementName=pageRoot}" >
         <Grid.RowDefinitions>
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>
@@ -51,16 +51,14 @@
 
         <!-- Vertical scrolling item list -->
         <ListView
-            x:Name="itemListView"
-            AutomationProperties.AutomationId="ItemsListView"
-            AutomationProperties.Name="Items"
+            x:Name="itemListView"    
             TabIndex="1"
             Margin="-6,130,752,0"
             Padding="120,0,0,60"
             ItemsSource="{Binding Players}"
             IsSwipeEnabled="False"
             SelectionChanged="ItemListView_SelectionChanged"
-            ItemTemplate="{StaticResource Standard130ItemTemplate}" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+            ItemTemplate="{StaticResource Standard130ItemTemplate}" Grid.ColumnSpan="2" Grid.RowSpan="2" />
 
         <!-- Details for selected item -->
         <ScrollViewer

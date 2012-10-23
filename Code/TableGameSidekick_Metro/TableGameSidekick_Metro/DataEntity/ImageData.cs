@@ -15,7 +15,7 @@ using Windows.Graphics.Imaging;
 namespace TableGameSidekick_Metro.DataEntity
 {
     [DataContract]
-    public class ImageData : ViewModelBase<ImageData>
+    public class ImageData : BindableBase<ImageData>
     {
 
         public ImageData()
@@ -66,7 +66,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<Byte[]> m_ByteArray =
           new Property<Byte[]> { LocatorFunc = m_ByteArrayLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<Byte[]>> m_ByteArrayLocator =
+        static Func<BindableBase, ValueContainer<Byte[]>> m_ByteArrayLocator =
             RegisterContainerLocator<Byte[]>(
             "ByteArray",
             model =>
@@ -109,7 +109,7 @@ namespace TableGameSidekick_Metro.DataEntity
         protected Property<BitmapImage> m_BitmapImage =
           new Property<BitmapImage> { LocatorFunc = m_BitmapImageLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<BitmapImage>> m_BitmapImageLocator =
+        static Func<BindableBase, ValueContainer<BitmapImage>> m_BitmapImageLocator =
             RegisterContainerLocator<BitmapImage>(
             "BitmapImage",
             model =>

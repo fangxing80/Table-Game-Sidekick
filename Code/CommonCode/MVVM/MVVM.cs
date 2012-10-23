@@ -56,7 +56,8 @@ namespace MVVMSidekick
 {
     namespace ViewModels
     {
-
+        using MVVMSidekick.Commands;
+        using MVVMSidekick.Reactive;
         /// <summary>
         /// 缺省的 ViewModel。可以用作最简单的字典绑定
         /// </summary>
@@ -69,8 +70,8 @@ namespace MVVMSidekick
         /// ViewModel 基类。用在所有不需要明确子类型属性定义的情形。
         /// </summary>
         [DataContract]
-        public abstract class ViewModelBase
-            : IDisposable, INotifyPropertyChanged, IDataErrorInfo
+        public abstract class BindableBase
+            : IDisposable, INotifyPropertyChanged, IDataErrorInfo, IBindableBase
         {
 
             #region 索引与字段名
@@ -101,7 +102,7 @@ namespace MVVMSidekick
             /// 注册在销毁时需要做的操作
             /// </summary>
             /// <param name="newAction">新操作</param>
-            protected void AddDisposeAction(Action newAction)
+            public  void AddDisposeAction(Action newAction)
             {
                 List<Action> disposeActions;
 
@@ -241,7 +242,7 @@ namespace MVVMSidekick
             #endregion
 
 
-            public abstract bool IsUIBusy { get; set; }
+            //   public abstract bool IsUIBusy { get; set; }
 
 
         }
@@ -258,7 +259,7 @@ namespace MVVMSidekick
             /// <param name="item">IDisposable实例</param>
             /// <param name="vm">VM实例</param>
             /// <returns></returns>
-            public static T RegisterDisposeToViewModel<T>(this T item, ViewModelBase vm) where T : IDisposable
+            public static T RegisterDisposeToViewModel<T>(this T item, BindableBase vm) where T : IDisposable
             {
                 vm.AddDisposable(item);
                 return item;
@@ -282,7 +283,7 @@ namespace MVVMSidekick
             /// </summary>
             /// <param name="viewModel">VM实例</param>
             /// <returns>值容器</returns>
-            public ValueContainer<TProperty> LocateValueContainer(ViewModelBase viewModel)
+            public ValueContainer<TProperty> LocateValueContainer(BindableBase viewModel)
             {
 
                 return LocatorFunc(viewModel);
@@ -292,7 +293,7 @@ namespace MVVMSidekick
             /// <summary>
             /// 定位值容器用的方法。
             /// </summary>
-            public Func<ViewModelBase, ValueContainer<TProperty>> LocatorFunc
+            public Func<BindableBase, ValueContainer<TProperty>> LocatorFunc
             {
                 private get;
                 set;
@@ -325,7 +326,7 @@ namespace MVVMSidekick
             /// 创建属性值容器
             /// </summary>
             /// <param name="info">属性名</param>
-            public ValueContainer(string info, ViewModelBase vm)
+            public ValueContainer(string info, BindableBase vm)
                 : this(info, vm, (v1, v2) => v1.Equals(v2), default(TProperty))
             {
             }
@@ -335,7 +336,7 @@ namespace MVVMSidekick
             /// </summary>
             /// <param name="info">属性名</param>
             /// <param name="equalityComparer">判断两个值是否相等的比较器</param>
-            public ValueContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, ViewModelBase vm)
+            public ValueContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, BindableBase vm)
                 : this(info, vm, equalityComparer, default(TProperty))
             {
             }
@@ -345,7 +346,7 @@ namespace MVVMSidekick
             /// </summary>
             /// <param name="info">属性名</param>
             /// <param name="initValue">初始值</param>
-            public ValueContainer(string info, ViewModelBase vm, TProperty initValue)
+            public ValueContainer(string info, BindableBase vm, TProperty initValue)
                 : this(info, vm, (v1, v2) => v1.Equals(v2), initValue)
             {
             }
@@ -356,7 +357,7 @@ namespace MVVMSidekick
             /// <param name="info">属性名</param>
             /// <param name="equalityComparer">判断两个值是否相等的比较器</param>
             /// <param name="initValue">初始值</param>
-            public ValueContainer(string info, ViewModelBase vm, Func<TProperty, TProperty, bool> equalityComparer, TProperty initValue)
+            public ValueContainer(string info, BindableBase vm, Func<TProperty, TProperty, bool> equalityComparer, TProperty initValue)
             {
                 EqualityComparer = equalityComparer;
                 PropertyName = info;
@@ -423,7 +424,7 @@ namespace MVVMSidekick
             /// <param name="newValue">新值</param>
             /// <param name="currentValue">当前值</param>
             /// <param name="message">属性名</param>
-            void InternalPropertyChange(ViewModelBase objectInstance, TProperty newValue, ref TProperty currentValue, string message)
+            void InternalPropertyChange(BindableBase objectInstance, TProperty newValue, ref TProperty currentValue, string message)
             {
                 var changing = (this.EqualityComparer == null) ?
                     !this.EqualityComparer(newValue, currentValue) :
@@ -446,7 +447,7 @@ namespace MVVMSidekick
                 }
             }
 
-            public ViewModelBase ViewModel { get; internal set; }
+            public BindableBase ViewModel { get; internal set; }
 
 
 
@@ -513,7 +514,7 @@ namespace MVVMSidekick
         /// </summary>
         /// <typeparam name="TViewModel">子类类型</typeparam>
         [DataContract]
-        public abstract class ViewModelBase<TViewModel> : ViewModelBase where TViewModel : ViewModelBase<TViewModel>
+        public abstract class BindableBase<TBindable> : BindableBase where TBindable : BindableBase<TBindable>
         {
 
             /// <summary>
@@ -522,7 +523,7 @@ namespace MVVMSidekick
             /// <typeparam name="TProperty"></typeparam>
             protected static class TypeDic<TProperty>
             {
-                public static Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>> _propertyContainerGetters = new Dictionary<string, Func<TViewModel, ValueContainer<TProperty>>>();
+                public static Dictionary<string, Func<TBindable, ValueContainer<TProperty>>> _propertyContainerGetters = new Dictionary<string, Func<TBindable, ValueContainer<TProperty>>>();
 
             }
 
@@ -536,19 +537,19 @@ namespace MVVMSidekick
                 get
                 {
                     var lc = GetOrCreatePlainLocator(colName, this);
-                    return lc((TViewModel)this).Value;
+                    return lc((TBindable)this).Value;
                 }
                 set
                 {
 
                     var lc = GetOrCreatePlainLocator(colName, this);
-                    lc((TViewModel)this).Value = value;
+                    lc((TBindable)this).Value = value;
                 }
             }
 
-            private static Func<TViewModel, IValueContainer> GetOrCreatePlainLocator(string colName, ViewModelBase viewModel)
+            private static Func<TBindable, IValueContainer> GetOrCreatePlainLocator(string colName, BindableBase viewModel)
             {
-                Func<TViewModel, IValueContainer> pf;
+                Func<TBindable, IValueContainer> pf;
                 if (!_plainPropertyContainerGetters.TryGetValue(colName, out pf))
                 {
                     var p = new ValueContainer<object>(colName, viewModel);
@@ -562,23 +563,23 @@ namespace MVVMSidekick
 
 
 #if SILVERLIGHT
-            protected static Dictionary<string, Func<TViewModel, IValueContainer>>
+            protected static Dictionary<string, Func<TBindable, IValueContainer>>
              _plainPropertyContainerGetters =
-             new Dictionary<string, Func<TViewModel, IValueContainer>>(StringComparer.CurrentCultureIgnoreCase);
+             new Dictionary<string, Func<TBindable, IValueContainer>>(StringComparer.CurrentCultureIgnoreCase);
 #else
 
-            protected static SortedDictionary<string, Func<TViewModel, IValueContainer>>
+            protected static SortedDictionary<string, Func<TBindable, IValueContainer>>
                 _plainPropertyContainerGetters =
-                new SortedDictionary<string, Func<TViewModel, IValueContainer>>(StringComparer.CurrentCultureIgnoreCase);
+                new SortedDictionary<string, Func<TBindable, IValueContainer>>(StringComparer.CurrentCultureIgnoreCase);
 #endif
             /// <summary>
             /// 将一个VM引用特化为本子类型的引用
             /// </summary>
             /// <param name="vm"></param>
             /// <returns></returns>
-            protected static TViewModel CastVM(ViewModelBase vm)
+            protected static TBindable CastVM(BindableBase vm)
             {
-                return (TViewModel)vm;
+                return (TBindable)vm;
 
             }
 
@@ -598,7 +599,7 @@ namespace MVVMSidekick
             protected Property<string> m_Error =
               new Property<string> { LocatorFunc = m_ErrorLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<ViewModelBase, ValueContainer<string>> m_ErrorLocator =
+            static Func<BindableBase, ValueContainer<string>> m_ErrorLocator =
                 RegisterContainerLocator<string>(
                 "Error",
                 model =>
@@ -615,34 +616,6 @@ namespace MVVMSidekick
 
             #endregion
 
-            /// <summary>
-            /// 本UI是否处于忙状态
-            /// </summary>
-            public override bool IsUIBusy
-            {
-                get { return m_IsUIBusyLocator(this).Value; }
-                set { m_IsUIBusyLocator(this).SetValueAndTryNotify(value); }
-            }
-
-            #region Property bool IsUIBusy Setup
-            protected Property<bool> m_IsUIBusy =
-              new Property<bool> { LocatorFunc = m_IsUIBusyLocator };
-            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<ViewModelBase, ValueContainer<bool>> m_IsUIBusyLocator =
-                RegisterContainerLocator<bool>(
-                    "IsUIBusy",
-                    model =>
-                    {
-                        model.m_IsUIBusy =
-                            model.m_IsUIBusy
-                            ??
-                            new Property<bool> { LocatorFunc = m_IsUIBusyLocator };
-                        return model.m_IsUIBusy.Container =
-                            model.m_IsUIBusy.Container
-                            ??
-                            new ValueContainer<bool>("IsUIBusy", model);
-                    });
-            #endregion
 
 
 
@@ -655,13 +628,13 @@ namespace MVVMSidekick
             /// <param name="propertyName">属性名</param>
             /// <param name="getOrCreateLocatorMethod">属性定位/创建方法 也就是定位器</param>
             /// <returns>注册后的定位器</returns>
-            protected static Func<ViewModelBase, ValueContainer<TProperty>> RegisterContainerLocator<TProperty>(string propertyName, Func<TViewModel, ValueContainer<TProperty>> getOrCreateLocatorMethod)
+            protected static Func<BindableBase, ValueContainer<TProperty>> RegisterContainerLocator<TProperty>(string propertyName, Func<TBindable, ValueContainer<TProperty>> getOrCreateLocatorMethod)
             {
 
 
                 TypeDic<TProperty>._propertyContainerGetters[propertyName] = getOrCreateLocatorMethod;
                 _plainPropertyContainerGetters[propertyName] = (v) => getOrCreateLocatorMethod(v) as IValueContainer;
-                return o => getOrCreateLocatorMethod((TViewModel)o);
+                return o => getOrCreateLocatorMethod((TBindable)o);
             }
 
 
@@ -673,14 +646,14 @@ namespace MVVMSidekick
             /// <returns>值容器</returns>
             public ValueContainer<TProperty> GetValueContainer<TProperty>(string propertyName)
             {
-                Func<TViewModel, ValueContainer<TProperty>> contianerGetterCreater;
+                Func<TBindable, ValueContainer<TProperty>> contianerGetterCreater;
                 if (!TypeDic<TProperty>._propertyContainerGetters.TryGetValue(propertyName, out contianerGetterCreater))
                 {
                     throw new Exception("Property Not Exists!");
 
                 }
 
-                return contianerGetterCreater((TViewModel)(Object)this);
+                return contianerGetterCreater((TBindable)(Object)this);
 
             }
 
@@ -690,7 +663,7 @@ namespace MVVMSidekick
             /// <typeparam name="TProperty">属性类型</typeparam>
             /// <param name="expression">表达式树</param>
             /// <returns>值容器</returns>
-            public ValueContainer<TProperty> GetValueContainer<TProperty>(Expression<Func<TViewModel, TProperty>> expression)
+            public ValueContainer<TProperty> GetValueContainer<TProperty>(Expression<Func<TBindable, TProperty>> expression)
             {
                 MemberExpression body = expression.Body as MemberExpression;
                 var propName = (body.Member is PropertyInfo) ? body.Member.Name : string.Empty;
@@ -707,14 +680,14 @@ namespace MVVMSidekick
             /// <returns>值容器</returns>
             public IValueContainer GetValueContainer(string propertyName)
             {
-                Func<TViewModel, IValueContainer> contianerGetterCreater;
+                Func<TBindable, IValueContainer> contianerGetterCreater;
                 if (_plainPropertyContainerGetters.TryGetValue(propertyName, out contianerGetterCreater))
                 {
                     throw new Exception("Property Not Exists!");
 
                 }
 
-                return contianerGetterCreater((TViewModel)(Object)this);
+                return contianerGetterCreater((TBindable)(Object)this);
 
             }
 
@@ -728,7 +701,7 @@ namespace MVVMSidekick
             /// <returns>错误信息字符串</returns>
             protected override string GetColumnError(string columnName)
             {
-                return _plainPropertyContainerGetters[columnName]((TViewModel)this).Error.Message;
+                return _plainPropertyContainerGetters[columnName]((TBindable)this).Error.Message;
             }
 
 
@@ -747,14 +720,14 @@ namespace MVVMSidekick
             /// 创建一个VM副本
             /// </summary>
             /// <returns>新引用</returns>
-            public TViewModel Clone()
+            public TBindable Clone()
             {
-                var x = (TViewModel)Activator.CreateInstance(typeof(TViewModel));
+                var x = (TBindable)Activator.CreateInstance(typeof(TBindable));
                 CopyTo(x);
                 return x;
             }
 
-            public void CopyTo(TViewModel x)
+            public void CopyTo(TBindable x)
             {
                 foreach (var item in GetFieldNames())
                 {
@@ -764,6 +737,144 @@ namespace MVVMSidekick
 
 
         }
+
+        public interface IBindableBase : INotifyPropertyChanged
+        {
+            void AddDisposeAction(Action action);
+            System.ComponentModel.IDataErrorInfo DataErrorInfo { get; }
+            void Dispose();
+            string Error { get; }
+            string[] GetFieldNames();
+            object this[string name] { get; set; }
+        }
+        public interface IViewModelBase : IBindableBase, INotifyPropertyChanged
+        {
+            bool IsUIBusy { get; set; }
+            bool HaveReturnValue { get; }
+            void Close();
+        }
+
+        [DataContract]
+        public struct NoResult
+        {
+
+        }
+        [DataContract]
+        public class ViewModelBase<TViewModel, TResult> : ViewModelBase<TViewModel> where TViewModel : ViewModelBase<TViewModel, TResult>
+        {
+
+            public override bool HaveReturnValue { get { return true; } }
+
+            public Task<TResult> WaitForCloseWithResult(Action closingCallback = null)
+            {
+                var t = new Task<TResult>(() => Result);
+                if (closingCallback != null)
+                {
+                    this.AddDisposeAction(
+                        () =>
+                        {
+                            closingCallback();
+                            t.Start();
+                        }
+                        );
+                }
+
+                return t;
+            }
+
+            public TResult Result
+            {
+                get { return m_ResultLocator(this).Value; }
+                set { m_ResultLocator(this).SetValueAndTryNotify(value); }
+            }
+
+            #region Property TResult Result Setup
+            protected Property<TResult> m_Result =
+              new Property<TResult> { LocatorFunc = m_ResultLocator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+            static Func<BindableBase, ValueContainer<TResult>> m_ResultLocator =
+                RegisterContainerLocator<TResult>(
+                    "Result",
+                    model =>
+                    {
+                        model.m_Result =
+                            model.m_Result
+                            ??
+                            new Property<TResult> { LocatorFunc = m_ResultLocator };
+                        return model.m_Result.Container =
+                            model.m_Result.Container
+                            ??
+                            new ValueContainer<TResult>("Result", model);
+                    });
+            #endregion
+
+
+
+
+        }
+
+        [DataContract]
+        public abstract class ViewModelBase<TViewModel> : BindableBase<TViewModel>, IViewModelBase where TViewModel : ViewModelBase<TViewModel>
+        {
+            
+
+
+
+
+            public virtual bool HaveReturnValue { get { return false; } }
+            /// <summary>
+            /// 本UI是否处于忙状态
+            /// </summary>
+            public bool IsUIBusy
+            {
+                get { return m_IsUIBusyLocator(this).Value; }
+                set { m_IsUIBusyLocator(this).SetValueAndTryNotify(value); }
+            }
+
+            #region Property bool IsUIBusy Setup
+            protected Property<bool> m_IsUIBusy =
+              new Property<bool> { LocatorFunc = m_IsUIBusyLocator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+            static Func<BindableBase, ValueContainer<bool>> m_IsUIBusyLocator =
+                RegisterContainerLocator<bool>(
+                    "IsUIBusy",
+                    model =>
+                    {
+                        model.m_IsUIBusy =
+                            model.m_IsUIBusy
+                            ??
+                            new Property<bool> { LocatorFunc = m_IsUIBusyLocator };
+                        return model.m_IsUIBusy.Container =
+                            model.m_IsUIBusy.Container
+                            ??
+                            new ValueContainer<bool>("IsUIBusy", model);
+                    });
+            #endregion
+
+            public Task WaitForClose(Action closingCallback = null)
+            {
+                var t = new Task(() => { });
+                if (closingCallback != null)
+                {
+                    this.AddDisposeAction(
+                        () =>
+                        {
+                            closingCallback();
+                            t.Start();
+                        }
+                        );
+                }
+
+                return t;
+            }
+            public void Close()
+            {
+                this.Dispose();
+            }
+
+
+        }
+
 
 
 
@@ -805,7 +916,7 @@ namespace MVVMSidekick
         /// </summary>
         /// <typeparam name="TCommand">ICommand 详细类型</typeparam>
         /// <typeparam name="TResource">配合Command 的资源类型</typeparam>
-        public class CommandModel<TCommand, TResource> : ViewModelBase<CommandModel<TCommand, TResource>>, ICommandModel<TCommand, TResource>
+        public class CommandModel<TCommand, TResource> : BindableBase<CommandModel<TCommand, TResource>>, ICommandModel<TCommand, TResource>
             where TCommand : ICommand
         {
             public CommandModel()
@@ -864,7 +975,7 @@ namespace MVVMSidekick
             protected Property<bool> m_LastCanExecuteValue =
               new Property<bool> { LocatorFunc = m_LastCanExecuteValueLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<ViewModelBase, ValueContainer<bool>> m_LastCanExecuteValueLocator =
+            static Func<BindableBase, ValueContainer<bool>> m_LastCanExecuteValueLocator =
                 RegisterContainerLocator<bool>(
                 "LastCanExecuteValue",
                 model =>
@@ -898,7 +1009,7 @@ namespace MVVMSidekick
             protected Property<TResource> m_Resource =
               new Property<TResource> { LocatorFunc = m_ResourceLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<ViewModelBase, ValueContainer<TResource>> m_ResourceLocator =
+            static Func<BindableBase, ValueContainer<TResource>> m_ResourceLocator =
                 RegisterContainerLocator<TResource>(
                 "Resource",
                 model =>
@@ -989,7 +1100,7 @@ namespace MVVMSidekick
             /// <param name="cmdModel">CommandModel具体实例</param>
             /// <param name="viewModel">ViewModel具体实例</param>
             /// <returns></returns>
-            public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, ViewModelBase viewModel)
+            public static CommandModel<TCommand, TResource> WithViewModel<TCommand, TResource>(this CommandModel<TCommand, TResource> cmdModel, BindableBase viewModel)
                 where TCommand : ICommand
             {
                 //cmdModel.
@@ -1193,6 +1304,8 @@ namespace MVVMSidekick
             public string SourceViewId { get; set; }
 
             public string TargetViewId { get; set; }
+
+            public IViewModelBase ViewModel { get; set; }
         }
 
         /// <summary>
@@ -1216,7 +1329,7 @@ namespace MVVMSidekick
             /// <param name="source">事件来源</param>
             /// <param name="eventArgs">事件数据</param>
             /// <param name="callerMemberName">事件名</param>
-            public static void RaiseEvent<TEventArgs>(this ViewModelBase source, TEventArgs eventArgs, string callerMemberName = "")
+            public static void RaiseEvent<TEventArgs>(this BindableBase source, TEventArgs eventArgs, string callerMemberName = "")
                  where TEventArgs : EventArgs
             {
                 EventRouter.Instance.RaiseEvent(source, eventArgs, callerMemberName);
@@ -1284,7 +1397,7 @@ namespace MVVMSidekick
             /// <param name="cmd">事件Command实例</param>
             /// <param name="viewModel">VM实例</param>
             /// <returns>事件Command实例本身</returns>
-            public static TCommand WithViewModel<TCommand>(this TCommand cmd, ViewModelBase viewModel)
+            public static TCommand WithViewModel<TCommand>(this TCommand cmd, BindableBase viewModel)
                 where TCommand : EventCommandBase
             {
                 cmd.ViewModel = viewModel;
@@ -1298,7 +1411,7 @@ namespace MVVMSidekick
         /// </summary>
         public interface ICommandWithViewModel : ICommand
         {
-            ViewModelBase ViewModel { get; set; }
+            BindableBase ViewModel { get; set; }
         }
 
         /// <summary>
@@ -1309,7 +1422,7 @@ namespace MVVMSidekick
             /// <summary>
             /// VM
             /// </summary>
-            public ViewModelBase ViewModel { get; set; }
+            public BindableBase ViewModel { get; set; }
 
             /// <summary>
             /// 运行时触发的事件
@@ -1475,7 +1588,7 @@ namespace MVVMSidekick
 
 
 
-        public class ViewModelDataErrorInfoTextConverter : GenericValueConverter<ViewModelBase, string, ErrorInfoTextConverterOptions>
+        public class ViewModelDataErrorInfoTextConverter : GenericValueConverter<BindableBase, string, ErrorInfoTextConverterOptions>
         {
             public ViewModelDataErrorInfoTextConverter()
             {

@@ -335,7 +335,7 @@ namespace TableGameSidekick_Metro.Controls
         protected Property<String> m_ShowString =
           new Property<String> { LocatorFunc = m_ShowStringLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<String>> m_ShowStringLocator =
+        static Func<BindableBase, ValueContainer<String>> m_ShowStringLocator =
             RegisterContainerLocator<String>(
                 "ShowString",
                 model =>
@@ -364,7 +364,7 @@ namespace TableGameSidekick_Metro.Controls
         protected Property<ObservableCollection<Char>> m_ActualInputChars =
           new Property<ObservableCollection<Char>> { LocatorFunc = m_ActualInputCharsLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<ObservableCollection<Char>>> m_ActualInputCharsLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<Char>>> m_ActualInputCharsLocator =
             RegisterContainerLocator<ObservableCollection<Char>>(
                 "ActualInputChars",
                 model =>
@@ -391,7 +391,7 @@ namespace TableGameSidekick_Metro.Controls
         protected Property<Visibility> m_Visibility =
           new Property<Visibility> { LocatorFunc = m_VisibilityLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<ViewModelBase, ValueContainer<Visibility>> m_VisibilityLocator =
+        static Func<BindableBase, ValueContainer<Visibility>> m_VisibilityLocator =
             RegisterContainerLocator<Visibility>(
                 "Visibility",
                 model =>
