@@ -20,6 +20,9 @@ using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.Common;
 using TableGameSidekick_Metro.ViewModels;
 using System.Threading.Tasks;
+using MVVMSidekick.ViewModels;
+using MVVMSidekick.Views;
+using TableGameSidekick_Metro.Games;
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
 namespace TableGameSidekick_Metro
@@ -29,9 +32,11 @@ namespace TableGameSidekick_Metro
     /// </summary>
     sealed partial class App : Application
     {
-        public static Frame MainFrame;
-
-
+        /// <summary>
+        /// 本App的主Frame
+        /// </summary>
+        public static Frame MainFrame{get;private set;}
+      
 
 
         /// <summary>
@@ -46,12 +51,8 @@ namespace TableGameSidekick_Metro
                 .Subscribe(
                     ep =>
                     {
-                        //Action<LayoutAwarePage, IDictionary<string, object>> initAction = null;
-                        //if (Constants.Views.PageInitActions.TryGetValue(ep.EventArgs.TargetViewId, out initAction))
-                        //{
-                        //    ep.EventArgs.ParameterDictionary[Constants.NavigateParameterKeys.ViewInitActionName] = initAction;
-                        //}
-                        MainFrame.Navigate(Type.GetType(ep.EventArgs.TargetViewId), ep.EventArgs.ParameterDictionary);
+
+                        ((Frame)ep.EventArgs.TargetFrame).Navigate(Type.GetType(ep.EventArgs.TargetViewId), ep.EventArgs.ParameterDictionary);
                     }
                 );
 
@@ -59,54 +60,65 @@ namespace TableGameSidekick_Metro
 
         }
 
-
-        public static Task RootFrameNavigate(string targetViewName, Dictionary<string, object> parameters = null)
+        static App()
         {
+            MVVMSidekick.Views.LayoutAwarePage.PageInitActions = new Dictionary<string, Action<MVVMSidekick.Views.LayoutAwarePage, IDictionary<string, object>>> 
+         { 
+                    {
+                    Constants.Views.    Start , 
+                        ( (p,pars)=>
+                        {
+                            var st = Constants.Storages.Instance.GameInfomationsStorage;
 
-            var arg = new NavigateCommandEventArgs()
-            {
-                ParameterDictionary = parameters,
-                TargetViewId = targetViewName,
-            };
+                            var vm = new Start_Model(st);
+                      
+                            p.DefaultViewModel = vm;
+                    
+                        })
+                    },
+                    {
+                    Constants.Views.    NewGame , 
+                        ( (p,pars)=>
+                        {
+                            var vm = new NewGame_Model(Constants.Storages.Instance.GameInfomationsStorage);
+                            p.DefaultViewModel = vm;
+                    
+                        })
+                    },
+                    {
+                      Constants.Views.  GamePlay , 
+                        ( async (p,pars)=>
+                        {
 
-            Task task = new Task(() => { });
-            Action<LayoutAwarePage> finishNavigateAction =
-                page =>
-                {
+                            var gi=pars[NavigateParameterKeys.GameInfomation_ChosenGame] as GameInfomation;
+                            var gameKey=gi.GameType == GameType.Advanced ? gi.AdvanceGameKey :gi.GameType.ToString ();
+                            var fac = Constants.Games.Factories[gameKey] as GameFactoryBase;
+                            var game = await fac.CreateGame(gi);
+                            p.DefaultViewModel = new GamePlay_Model()
+                            {
+                                GameData  = (BindableBase)game.DefaultViewModel,
+                                CurrentGameInfomation = gi,                                
+                            };
 
-                    task.Start();
+
+
+                            var gplayp = p as GamePlay;
+                            gplayp.GamePage = game;
+
+
+                        })
+                    },
+                    {
+                      Constants.Views.  SelectPlayers ,
+                        (p,pars)=>
+                            {}
+
+                    
+                    }
                 };
-            arg.ParameterDictionary[Constants.NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
-            MainEventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
-
-            return task;
 
         }
 
-
-        public static Task<TResult> RootFrameNavigate<TResult>(string targetViewName, Dictionary<string, object> parameters = null)
-        {
-            TResult result = default(TResult);
-
-            var arg = new NavigateCommandEventArgs()
-            {
-                ParameterDictionary = parameters,
-                TargetViewId = targetViewName,
-            };
-
-            Task<TResult> task = new Task<TResult>(() => result);
-            Action<LayoutAwarePage> finishNavigateAction =
-                page =>
-                {
-                    result = page.GetResult<TResult>();
-                    task.Start();
-                };
-            arg.ParameterDictionary[Constants.NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
-            MainEventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
-
-            return task;
-
-        }
 
         public static EventRouter MainEventRouter = EventRouter.Instance;
 
@@ -133,7 +145,12 @@ namespace TableGameSidekick_Metro
             }
 
             // Create a Frame to act navigation context and navigate to the first page
-            MainFrame = MainFrame ?? new Frame();
+            if (MainFrame == null)
+            {
+                MainFrame = new Frame();
+                MainFrame.SetFrameNavigator(  new FrameNavigator(MainFrame, MainEventRouter));
+            }
+
             if (!MainFrame.Navigate(typeof(Start),
                 null
                 ))

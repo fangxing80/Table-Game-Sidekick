@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MVVMSidekick.Views;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace TableGameSidekick_Metro
     /// A page that displays a group title, a list of items within the group, and details for
     /// the currently selected item.
     /// </summary>
-    public sealed partial class GamePlay : TableGameSidekick_Metro.Common.LayoutAwarePage
+    public sealed partial class GamePlay :MVVMSidekick.Views.LayoutAwarePage
     {
         public GamePlay()
         {
@@ -172,9 +173,9 @@ namespace TableGameSidekick_Metro
 
 
 
-        public Common.LayoutAwarePage GamePage
+        public LayoutAwarePage GamePage
         {
-            get { return (Common.LayoutAwarePage)GetValue(GamePageProperty); }
+            get { return (LayoutAwarePage)GetValue(GamePageProperty); }
             set { SetValue(GamePageProperty, value);
             m_GameFrame.Content = value;
             }
@@ -182,7 +183,7 @@ namespace TableGameSidekick_Metro
 
         // Using a DependencyProperty as the backing store for GamePage.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty GamePageProperty =
-            DependencyProperty.Register("GamePage", typeof(Common.LayoutAwarePage), typeof(GamePlay), new PropertyMetadata(null));
+            DependencyProperty.Register("GamePage", typeof(LayoutAwarePage), typeof(GamePlay), new PropertyMetadata(null));
 
 
 

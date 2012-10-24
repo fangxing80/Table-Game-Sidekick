@@ -1,4 +1,5 @@
 ﻿using MVVMSidekick.ViewModels;
+using MVVMSidekick.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;

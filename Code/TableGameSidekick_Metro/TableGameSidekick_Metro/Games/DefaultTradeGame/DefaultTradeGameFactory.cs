@@ -8,6 +8,7 @@ using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.Games.DefaultTradeGame.Models;
 using Windows.UI.Xaml.Controls;
 using MVVMSidekick.ViewModels;
+using MVVMSidekick.Views;
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame
 {
     public class DefaultTradeGameFactory : GameFactoryBase

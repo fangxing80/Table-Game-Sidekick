@@ -22,6 +22,7 @@ using TableGameSidekick_Metro.ViewModels;
 using Windows.Storage;
 using TableGameSidekick_Metro.Games;
 using MVVMSidekick.ViewModels;
+using MVVMSidekick.Views;
 namespace TableGameSidekick_Metro
 {
     static class Constants
@@ -44,13 +45,7 @@ namespace TableGameSidekick_Metro
             "ms-appx:///Assets/Icons/Wheelchair.png",
        };
 
-        public static class NavigateParameterKeys
-        {
-            public static readonly string ViewInitActionName = "InitAction";
-            public static readonly string GameInfomation_ChosenGame = "GameInfomation_ChosenGame";
-            public static readonly string FinishedCallback = "FinishedCallback";
 
-        }
 
 
         public static class Games
@@ -86,61 +81,8 @@ namespace TableGameSidekick_Metro
 
             };
 
-            public static Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>>
-                PageInitActions = new Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>> 
-                { 
-                    {
-                        Start , 
-                        ( (p,pars)=>
-                        {
-                            var st=Storages.Instance.GameInfomationsStorage;
 
-                            var vm = new Start_Model(st);
-                      
-                            p.DefaultViewModel = vm;
-                    
-                        })
-                    },
-                    {
-                        NewGame , 
-                        ( (p,pars)=>
-                        {
-                            var vm = new NewGame_Model(Storages.Instance.GameInfomationsStorage);
-                            p.DefaultViewModel = vm;
-                    
-                        })
-                    },
-                    {
-                        GamePlay , 
-                        ( async (p,pars)=>
-                        {
-
-                            var gi=pars[NavigateParameterKeys.GameInfomation_ChosenGame] as GameInfomation;
-                            var gameKey=gi.GameType == GameType.Advanced ? gi.AdvanceGameKey :gi.GameType.ToString (); 
-                            var fac = Games.Factories[gameKey ] as GameFactoryBase ;
-                            var game = await fac.CreateGame(gi);
-                            p.DefaultViewModel = new GamePlay_Model()
-                            {
-                                GameData  = (BindableBase)game.DefaultViewModel,
-                                CurrentGameInfomation = gi,                                
-                            };
-
-
-
-                            var gplayp = p as GamePlay;
-                            gplayp.GamePage = game;
-
-
-                        })
-                    },
-                    {
-                        SelectPlayers ,
-                        (p,pars)=>
-                            {}
-
-                    
-                    }
-                };
+                
             //static Dictionary<string, Lazy<Page>> viewCache
             //    = new Dictionary<string, Lazy<Page>> 
             //    { 

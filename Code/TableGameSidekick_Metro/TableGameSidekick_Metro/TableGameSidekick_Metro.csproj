@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\TableGameSidekick_Metro.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -107,6 +108,7 @@
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\CommandBinder.cs" />
     <Compile Include="Common\BooleanNotConverter.cs" />
+    <Compile Include="Common\FrameNavigator.cs" />
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RichTextColumns.cs" />

@@ -4,12 +4,13 @@
     xmlns:local="using:TableGameSidekick_Metro.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:Common="using:TableGameSidekick_Metro.Common"
+    xmlns:Common="using:MVVMSidekick.Views"
+    xmlns:CommonLocal="using:TableGameSidekick_Metro.Common"
     x:Class="TableGameSidekick_Metro.Controls.CalcNumberPad"
 Canvas.ZIndex="100"
     mc:Ignorable="d"  Grid.RowSpan="100" Grid.ColumnSpan="100" HorizontalAlignment="Stretch"  VerticalContentAlignment="Stretch">
     <UserControl.Resources>
-        <Common:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <CommonLocal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="PadButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource ButtonBackgroundThemeBrush}"/>
             <Setter Property="Foreground" Value="{StaticResource ButtonForegroundThemeBrush}"/>

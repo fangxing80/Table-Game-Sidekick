@@ -16,6 +16,7 @@ using MVVMSidekick.Commands;
 using System.Runtime.CompilerServices;
 #if NETFX_CORE
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Controls;
 #else
 using System.Windows.Data;
 #endif
@@ -102,7 +103,7 @@ namespace MVVMSidekick
             /// 注册在销毁时需要做的操作
             /// </summary>
             /// <param name="newAction">新操作</param>
-            public  void AddDisposeAction(Action newAction)
+            public void AddDisposeAction(Action newAction)
             {
                 List<Action> disposeActions;
 
@@ -760,7 +761,7 @@ namespace MVVMSidekick
 
         }
         [DataContract]
-        public class ViewModelBase<TViewModel, TResult> : ViewModelBase<TViewModel> where TViewModel : ViewModelBase<TViewModel, TResult>
+        public partial class ViewModelBase<TViewModel, TResult> : ViewModelBase<TViewModel> where TViewModel : ViewModelBase<TViewModel, TResult>
         {
 
             public override bool HaveReturnValue { get { return true; } }
@@ -814,9 +815,9 @@ namespace MVVMSidekick
         }
 
         [DataContract]
-        public abstract class ViewModelBase<TViewModel> : BindableBase<TViewModel>, IViewModelBase where TViewModel : ViewModelBase<TViewModel>
+        public  abstract partial class ViewModelBase<TViewModel> : BindableBase<TViewModel>, IViewModelBase where TViewModel : ViewModelBase<TViewModel>
         {
-            
+
 
 
 
@@ -1306,6 +1307,8 @@ namespace MVVMSidekick
             public string TargetViewId { get; set; }
 
             public IViewModelBase ViewModel { get; set; }
+
+            public Object TargetFrame { get; set; }
         }
 
         /// <summary>

@@ -16,7 +16,7 @@ using MVVMSidekick.EventRouter;
 using System.Collections.Specialized;
 namespace TableGameSidekick_Metro.ViewModels
 {
-    public class NewGame_Model : ViewModelBase<NewGame_Model,GameInfomation>
+    public class NewGame_Model : ViewModelBase<NewGame_Model, GameInfomation>
     {
         public NewGame_Model()
         {
@@ -107,10 +107,7 @@ namespace TableGameSidekick_Metro.ViewModels
                         var rnds = await c.GetThumbnailAsync();
                         if (rnds != null)
                         {
-
-
                             var stream = rnds.AsStreamForRead();
-
                             var bts = new byte[rnds.Size];
                             await stream.ReadAsync(bts, 0, bts.Length);
                             mayAdd.Image = new ImageData { ByteArray = bts };

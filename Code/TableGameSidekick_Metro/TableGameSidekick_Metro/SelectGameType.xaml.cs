@@ -20,7 +20,7 @@ namespace TableGameSidekick_Metro
     /// A page that displays a collection of item previews.  In the Split Application this page
     /// is used to display and select one of the available groups.
     /// </summary>
-    public sealed partial class SelectGameType : TableGameSidekick_Metro.Common.LayoutAwarePage
+    public sealed partial class SelectGameType :MVVMSidekick.Views.LayoutAwarePage
     {
         public SelectGameType()
         {

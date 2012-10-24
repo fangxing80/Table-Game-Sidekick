@@ -12,6 +12,7 @@ using TableGameSidekick_Metro.DataEntity;
 using System.Reactive.Linq;
 using System.Reactive;
 using TableGameSidekick_Metro.Storages;
+using MVVMSidekick.Views;
 namespace TableGameSidekick_Metro.ViewModels
 {
     public class Start_Model : ViewModelBase<Start_Model>
@@ -181,15 +182,15 @@ namespace TableGameSidekick_Metro.ViewModels
                   async _ =>
                   {
 
-                      var ng = await App.RootFrameNavigate<GameInfomation>(
+                      var ng = await App.MainFrame.GetFrameNavigator().FrameNavigate<GameInfomation>(
                                    Constants.Views.NewGame,
                                    new Dictionary<string, object>()
                            );
                       if (ng!=null)
                       {
-                          await App.RootFrameNavigate(
+                          await App.MainFrame.GetFrameNavigator().FrameNavigate(
                                      Constants.Views.GamePlay,
-                                    new Dictionary<string, object> { { Constants.NavigateParameterKeys.GameInfomation_ChosenGame, ng } }
+                                    new Dictionary<string, object> { { NavigateParameterKeys.GameInfomation_ChosenGame, ng } }
 
                           );
                       }
@@ -211,12 +212,12 @@ namespace TableGameSidekick_Metro.ViewModels
                 (
                     async _ =>
 
-                       await App.RootFrameNavigate(
+                       await App.MainFrame.GetFrameNavigator().FrameNavigate(
                             Constants.Views.GamePlay,
                          new Dictionary<string, Object>() 
                             {
                                 
-                                {Constants.NavigateParameterKeys.GameInfomation_ChosenGame,this.SelectedGame}
+                                {NavigateParameterKeys.GameInfomation_ChosenGame,this.SelectedGame}
                             }
                         )
                 )

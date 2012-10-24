@@ -21,7 +21,7 @@ namespace TableGameSidekick_Metro
     /// A page that displays a group title, a list of items within the group, and details for
     /// the currently selected item.
     /// </summary>
-    public sealed partial class NewGame : TableGameSidekick_Metro.Common.LayoutAwarePage
+    public sealed partial class NewGame :MVVMSidekick.Views.LayoutAwarePage
     {
         public NewGame()
         {
