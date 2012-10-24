@@ -748,11 +748,11 @@ namespace MVVMSidekick
             string[] GetFieldNames();
             object this[string name] { get; set; }
         }
-        public interface IViewModelBase : IBindableBase, INotifyPropertyChanged
+        public partial interface IViewModelBase : IBindableBase, INotifyPropertyChanged
         {
             bool IsUIBusy { get; set; }
             bool HaveReturnValue { get; }
-            void Close();
+            void Close();            
         }
 
         [DataContract]

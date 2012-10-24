@@ -45,7 +45,11 @@ namespace MVVMSidekick
             //Task<TResult> FrameNavigate<TResult>(string targetViewName, out object page, System.Collections.Generic.Dictionary<string, object> parameters = null);
         }
 
-
+        public partial interface IViewModelBase
+        {
+            IFrameNavigator Navigator { get; set; }
+        
+        }
         public abstract partial class ViewModelBase<TViewModel>
         {
             public IFrameNavigator Navigator { get; set; }
@@ -147,6 +151,7 @@ namespace MVVMSidekick
                 //this.SetBinding(IsEnabledProperty, bEnable);
 
             }
+
 
 
             public IViewModelBase DefaultViewModel
@@ -453,6 +458,7 @@ namespace MVVMSidekick
                 {
                     init(this, dic);
                 }
+                this.DefaultViewModel.Navigator = this.Frame.GetFrameNavigator();
                 object fin = null;
                 if (dic != null)
                 {
