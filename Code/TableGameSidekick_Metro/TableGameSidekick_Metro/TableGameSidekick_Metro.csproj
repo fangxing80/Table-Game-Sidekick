@@ -148,6 +148,10 @@
     </Compile>
     <Compile Include="Storages\IStorage.cs" />
     <Compile Include="Storages\Storage.cs" />
+    <Compile Include="View.xaml.cs">
+      <DependentUpon>View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\View_Model.cs" />
     <Compile Include="ViewModels\GamePlay_Model.cs" />
     <Compile Include="ViewModels\NewGame_Model.cs" />
     <Compile Include="ViewModels\SelectPlayers_Model.cs" />
@@ -225,6 +229,10 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
