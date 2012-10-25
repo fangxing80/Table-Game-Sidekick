@@ -175,29 +175,31 @@ namespace TableGameSidekick_Metro.ViewModels
 
         void ConfigCommands()
         {
+            //主界面的新游戏按钮按下后
             NewGameCommand
                 .CommandCore
                 .Subscribe
                 (
                   async _ =>
                   {
-
-                      var ng = await App.MainFrame.GetFrameNavigator().FrameNavigate<GameInfomation>(
-                                   Constants.Views.NewGame,
-                                   new Dictionary<string, object>()
+                      //第一步使用名叫NewGame的view 创建一个 newgame对象 创建后返回主界面
+                      var newGame = await Navigator.FrameNavigate<GameInfomation>(
+                                   Constants.ViewsNames.NewGame,
+                                   null
                            );
-                      if (ng!=null)
+                      //如果创建成功 就前往游戏主体View
+                      if (newGame != null)
                       {
-                          await App.MainFrame.GetFrameNavigator().FrameNavigate(
-                                     Constants.Views.GamePlay,
-                                    new Dictionary<string, object> { { NavigateParameterKeys.GameInfomation_ChosenGame, ng } }
+                          await Navigator.FrameNavigate(
+                                     Constants.ViewsNames.GamePlay,
+                                    new Dictionary<string, object> { { NavigateParameterKeys.GameInfomation_ChosenGame, newGame } }
 
                           );
                       }
-             
+                      //否则（取消的话）返回主界面
                   }
                 )
-                .RegisterDisposeToViewModel(this);
+                .RegisterDisposeToViewModel(this); //主界面被dispose时注销此事件
 
 
             this.GetValueContainer(x => x.SelectedGame)
@@ -213,7 +215,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     async _ =>
 
                        await App.MainFrame.GetFrameNavigator().FrameNavigate(
-                            Constants.Views.GamePlay,
+                            Constants.ViewsNames.GamePlay,
                          new Dictionary<string, Object>() 
                             {
                                 

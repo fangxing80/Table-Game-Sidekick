@@ -46,7 +46,7 @@ namespace TableGameSidekick_Metro.Common
 
         public Task<TResult> FrameNavigate<TResult>(string targetViewName, Dictionary<string, object> parameters = null)
         {
-            TResult result = default(TResult);
+
 
             var arg = new NavigateCommandEventArgs()
             {
@@ -55,18 +55,117 @@ namespace TableGameSidekick_Metro.Common
                 TargetFrame = m_Frame,
             };
 
-            Task<TResult> task = new Task<TResult>(() => result);
+            TResult result = default(TResult);
+
+            Task<TResult> taskR = new Task<TResult>(() => result);
             Action<LayoutAwarePage> finishNavigateAction =
                 page =>
                 {
                     result = page.GetResult<TResult>();
-                    task.Start();
+                    taskR.Start();
                 };
             arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+
+
+
             m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
 
-            return task;
+            return taskR;
 
         }
+
+
+        public Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(string targetViewName, Dictionary<string, object> parameters = null) where TViewModel : IViewModelBase
+        {
+
+            var arg = new NavigateCommandEventArgs()
+            {
+                ParameterDictionary = parameters,
+                TargetViewId = targetViewName,
+                TargetFrame = m_Frame,
+            };
+
+
+            TViewModel viewModel = default(TViewModel);
+
+   
+            Task<TViewModel> taskVm = new Task<TViewModel>(() => viewModel);
+            Action<LayoutAwarePage> navigateToAction =
+                page =>
+                {
+                    viewModel =(TViewModel) page.DefaultViewModel ;
+                    taskVm.Start();
+                };
+            arg.ParameterDictionary[NavigateParameterKeys.NavigateToCallback] = navigateToAction;
+   
+
+            
+            
+            m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+            return taskVm;
+        }
+
+        public NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(string targetViewName, Dictionary<string, object> parameters = null)
+        {
+            var arg = new NavigateCommandEventArgs()
+            {
+                ParameterDictionary = parameters,
+                TargetViewId = targetViewName,
+                TargetFrame = m_Frame,
+            };
+
+
+            TViewModel viewModel = default(TViewModel);
+            Task<TViewModel> taskVm = new Task<TViewModel>(() => viewModel);
+            Action<LayoutAwarePage> navigateToAction =
+                page =>
+                {
+                    viewModel = (TViewModel)page.DefaultViewModel;
+                    taskVm.Start();
+                };
+            arg.ParameterDictionary[NavigateParameterKeys.NavigateToCallback] = navigateToAction;
+
+
+            TResult result = default(TResult);
+            Task<TResult> taskR = new Task<TResult>(() => result);
+            Action<LayoutAwarePage> finishNavigateAction =
+                page =>
+                {
+                    result = page.GetResult<TResult>();
+                    taskR.Start();
+                };
+            arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+
+
+
+            m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+            return new NavigateResult<TViewModel, TResult> {
+                 ViewModel=taskVm ,
+                 Result=taskR            
+            };
+        }
+
+
+        public bool GoForward()
+        {
+            var can = m_Frame.CanGoForward;
+            if (can)
+            {
+                m_Frame.GoForward();
+            }
+            return can;
+        }
+
+        public bool GoBack()
+        {
+            var can = m_Frame.CanGoBack ;
+            if (can)
+            {
+                m_Frame.GoBack();
+            }
+            return can;
+        }
+
+    
     }
 }

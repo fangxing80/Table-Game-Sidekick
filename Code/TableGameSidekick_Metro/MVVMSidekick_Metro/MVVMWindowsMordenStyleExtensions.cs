@@ -41,9 +41,49 @@ namespace MVVMSidekick
             /// <returns>返回结果</returns>
             Task<TResult> FrameNavigate<TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
 
-            //Task FrameNavigate(string targetViewName, out object page, System.Collections.Generic.Dictionary<string, object> parameters = null);
-            //Task<TResult> FrameNavigate<TResult>(string targetViewName, out object page, System.Collections.Generic.Dictionary<string, object> parameters = null);
+            /// <summary>
+            /// 用async 工作流的方式浏览一个View 返回VM和
+            /// </summary>
+            /// <param name="targetViewName">View名</param>
+            /// <param name="parameters">参数</param>
+            /// <returns>返回VM</returns>
+            Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null)
+                where TViewModel : IViewModelBase;
+                
+
+
+            /// <summary>
+            /// 用async 工作流的方式浏览一个View 并且返回VM和结果
+            /// </summary>
+            /// <param name="targetViewName">View名</param>
+            /// <param name="parameters">参数</param>
+            /// <returns>返回两个Task 一个是VM一个是结果</returns>
+            NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+            /// <summary>
+            /// 前进
+            /// </summary>
+            /// <returns>是否成功</returns>
+            bool GoForward();
+
+            /// <summary>
+            /// 后退
+            /// </summary>
+            /// <returns>是否成功</returns>
+            bool GoBack();
+
+           
+          
         }
+
+        public struct NavigateResult<TViewModel, TResult>
+        {
+            public Task<TViewModel> ViewModel { get; set; }
+            public Task<TResult> Result { get; set; }
+        
+        }
+
+
 
         public partial interface IViewModelBase
         {
@@ -471,10 +511,12 @@ namespace MVVMSidekick
                         DefaultViewModel.AddDisposeAction(() =>
                         {
                             finishNavCallback(this);
-                            if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
-                            //GoBack(this, null);
+                           // if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
+                           //GoBack(this, null);
+
+                            DefaultViewModel.Navigator.GoBack();
                         }
-                            );
+                    );
 
                     }
                     fin = null;
@@ -785,6 +827,9 @@ namespace MVVMSidekick
 
 
         }
+
+
+
     }
 
 

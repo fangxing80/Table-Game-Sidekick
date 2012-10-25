@@ -67,7 +67,7 @@ namespace TableGameSidekick_Metro
 
         }
 
-        public static class Views
+        public static class ViewsNames
         {
 
             public static readonly string Start = typeof(Start).FullName;

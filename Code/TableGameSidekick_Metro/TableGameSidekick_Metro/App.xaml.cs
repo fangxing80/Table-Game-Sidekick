@@ -65,7 +65,7 @@ namespace TableGameSidekick_Metro
             MVVMSidekick.Views.LayoutAwarePage.PageInitActions = new Dictionary<string, Action<MVVMSidekick.Views.LayoutAwarePage, IDictionary<string, object>>> 
          { 
                     {
-                    Constants.Views.    Start , 
+                    Constants.ViewsNames.    Start , 
                         ( (p,pars)=>
                         {
                             var st = Constants.Storages.Instance.GameInfomationsStorage;
@@ -77,7 +77,7 @@ namespace TableGameSidekick_Metro
                         })
                     },
                     {
-                    Constants.Views.    NewGame , 
+                    Constants.ViewsNames.    NewGame , 
                         ( (p,pars)=>
                         {
                             var vm = new NewGame_Model(Constants.Storages.Instance.GameInfomationsStorage);
@@ -86,7 +86,7 @@ namespace TableGameSidekick_Metro
                         })
                     },
                     {
-                      Constants.Views.  GamePlay , 
+                      Constants.ViewsNames.  GamePlay , 
                         ( async (p,pars)=>
                         {
 
@@ -109,7 +109,7 @@ namespace TableGameSidekick_Metro
                         })
                     },
                     {
-                      Constants.Views.  SelectPlayers ,
+                      Constants.ViewsNames.  SelectPlayers ,
                         (p,pars)=>
                             {}
 

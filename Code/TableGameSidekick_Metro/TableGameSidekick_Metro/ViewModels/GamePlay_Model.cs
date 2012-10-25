@@ -21,7 +21,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public GamePlay_Model()
         {
-            
+     
 
         }
 

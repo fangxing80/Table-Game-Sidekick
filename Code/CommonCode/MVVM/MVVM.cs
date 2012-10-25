@@ -752,7 +752,8 @@ namespace MVVMSidekick
         {
             bool IsUIBusy { get; set; }
             bool HaveReturnValue { get; }
-            void Close();            
+            void Close();
+            
         }
 
         [DataContract]
@@ -813,7 +814,10 @@ namespace MVVMSidekick
 
 
         }
-
+        /// <summary>
+        /// 一个VM,带有若干界面特性
+        /// </summary>
+        /// <typeparam name="TViewModel">本身的类型</typeparam>
         [DataContract]
         public  abstract partial class ViewModelBase<TViewModel> : BindableBase<TViewModel>, IViewModelBase where TViewModel : ViewModelBase<TViewModel>
         {
@@ -821,7 +825,9 @@ namespace MVVMSidekick
 
 
 
-
+            /// <summary>
+            /// 是否有返回值
+            /// </summary>
             public virtual bool HaveReturnValue { get { return false; } }
             /// <summary>
             /// 本UI是否处于忙状态
