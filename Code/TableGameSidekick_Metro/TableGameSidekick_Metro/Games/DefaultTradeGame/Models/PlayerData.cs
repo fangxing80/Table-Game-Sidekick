@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.Common;
-using System.Collections.ObjectModel;
+
 
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 {

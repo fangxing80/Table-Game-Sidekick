@@ -1,22 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
   <TemplateData>
-    <Name>MVVMSidekick Data Model for Morden UI</Name>
+    <Name>Data Model -MVVMSidekick</Name>
     <Description>A data model template in Morden UI Application</Description>
     <Icon>MVVMSidekickDataModel.MordenUI.ico</Icon>
     <TemplateID>437e848b-ea4a-4be8-bc98-c644421fd347</TemplateID>
     <ProjectType>CSharp</ProjectType>
-    <ProjectSubType>General</ProjectSubType>
     <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
     <DefaultName>DataModel.cs</DefaultName>
+    <ShowByDefault>false</ShowByDefault>
+    <SortOrder>41</SortOrder>
+    <!--<PreviewImage>BasicPage.png</PreviewImage>-->
+    <TargetPlatformName>Windows</TargetPlatformName>
+    <RequiredPlatformVersion>8</RequiredPlatformVersion>
+    <TemplateGroupID>WinRT-Managed</TemplateGroupID>
   </TemplateData>
   <TemplateContent>
-    <References>
-      <Reference>
-        <Assembly>MVVMSidekick_Metro</Assembly>
-      </Reference>
-    </References>
 
-    <ProjectItem ReplaceParameters="true">DataModel.cs</ProjectItem>
+    <ProjectItem ReplaceParameters="true" SubType="Code"  TargetFileName="$fileinputname$.cs">DataModel.cs</ProjectItem>
+    
   </TemplateContent>
 </VSTemplate>

@@ -129,6 +129,10 @@
     <Compile Include="Games\DefaultTradeGame\Models\ResourcesEntry.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\TradeGameData_Model.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\TradeHistoryEntry.cs" />
+    <Compile Include="Games\DefaultTradeGame\Views\SubViews\SetupGame.xaml.cs">
+      <DependentUpon>SetupGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Games\DefaultTradeGame\Views\SubViews\ViewModels\SetupGame_Model.cs" />
     <Compile Include="Games\DefaultTradeGame\Views\TradeGamePage.xaml.cs">
       <DependentUpon>TradeGamePage.xaml</DependentUpon>
     </Compile>
@@ -203,6 +207,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GamePlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Games\DefaultTradeGame\Views\SubViews\SetupGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

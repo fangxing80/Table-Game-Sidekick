@@ -1,18 +1,18 @@
 ﻿<common:LayoutAwarePage   
     x:Name="pageRoot"
-    x:Class="$rootnamespace$.$safeitemrootname$"
+    x:Class="TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.SetupGame"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:$rootnamespace$"
+    xmlns:local="using:TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews"
     xmlns:common="using:MVVMSidekick.Views"
-    xmlns:commonLocal="using:$rootnamespace$.Common"
+    xmlns:commonLocal="using:TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:$rootnamespace$.ViewModels"
+    xmlns:vm="using:TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewModels"
     mc:Ignorable="d">
     <common:LayoutAwarePage.DefaultViewModel>
-        <vm:$safeitemrootname$_Model></vm:$safeitemrootname$_Model>
+        <vm:SetupGame_Model></vm:SetupGame_Model>
     </common:LayoutAwarePage.DefaultViewModel>
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->

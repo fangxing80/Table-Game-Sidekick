@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 
-$endif$using System.Text;
-
-namespace $rootnamespace$
+namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewModels
 {
 
     [DataContract]
-    public class $safeitemrootname$ : BindableBase<$safeitemrootname$>
+    public class SetupGame_Model : ViewModelBase<SetupGame_Model>
     {
         // If you have install the code sniplets, use "propvm + [tab] +[tab]" create a property。
         // 如果您已经安装了 MVVMSidekick 代码片段，请用 propvm +tab +tab 输入属性
@@ -54,3 +52,6 @@ namespace $rootnamespace$
     }
 	
 }
+
+
+

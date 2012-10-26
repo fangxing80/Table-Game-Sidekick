@@ -62,7 +62,9 @@
     <None Include="MVVMSidekickDataModel.MordenUI.ico" />
   </ItemGroup>
   <ItemGroup>
-    <VSTemplate Include="MVVMSidekickDataModel.MordenUI.vstemplate" />
+    <VSTemplate Include="MVVMSidekickDataModel.MordenUI.vstemplate">
+      <SubType>Designer</SubType>
+    </VSTemplate>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Code\TableGameSidekick_Metro\MVVMSidekick_Metro\MVVMSidekick_Metro.csproj">

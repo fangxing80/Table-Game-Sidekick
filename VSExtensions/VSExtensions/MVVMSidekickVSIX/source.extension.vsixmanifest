@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="MVVMSidekickVSIX..0f0fc305-7a90-4119-8cf3-607efd11548e" Version="1.0" Language="en-US" Publisher="Wayne Wang in MSFT" />
+    <Identity Id="MVVMSidekickVSIX..0f0fc305-7a90-4119-8cf3-607efd11548e" Version="0.90" Language="en-US" Publisher="Wayne Wang in MSFT" />
     <DisplayName>MVVMSidekickVSIX</DisplayName>
     <Description>Empty VSIX Project.</Description>
   </Metadata>
@@ -13,5 +13,7 @@
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="MVVMSidekick_Metro" Path="|MVVMSidekick_Metro|" AssemblyName="|MVVMSidekick_Metro;AssemblyName|" />
+    <Asset d:Source="Project" Type="Microsoft.VisualStudio.ItemTemplate" d:ProjectName="MVVMSidekickViewWithVM.MordenUI" d:TargetPath="|MVVMSidekickViewWithVM.MordenUI;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="MVVMSidekickDataModel.MordenUI" d:TargetPath="|MVVMSidekickDataModel.MordenUI;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
   </Assets>
 </PackageManifest>
