@@ -260,9 +260,8 @@
       <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.5-rc\lib\netcore45\System.Threading.Tasks.Dataflow.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\MVVMSidekick_Metro\MVVMSidekick_Metro.csproj">
+    <ProjectReference Include="..\..\..\MVVMSidekick\MVVMSidekick_Metro\MVVMSidekick_Metro.csproj">
       <Project>{f69407b0-9503-4242-85c4-c0b9be28a73f}</Project>
       <Name>MVVMSidekick_Metro</Name>
     </ProjectReference>

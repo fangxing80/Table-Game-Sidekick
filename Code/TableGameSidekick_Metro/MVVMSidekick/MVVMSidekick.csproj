@@ -55,12 +55,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\CommonCode\MVVM\MVVM.cs">
-      <Link>MVVM.cs</Link>
-    </Compile>
-    <Compile Include="..\..\CommonCode\MVVM\MVVMRxExtensions.cs">
-      <Link>MVVMRxExtensions.cs</Link>
-    </Compile>
+    <Compile Include="MVVM\MVVM.cs" />
+    <Compile Include="MVVM\MVVMRxExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -19,9 +19,18 @@ namespace TableGameSidekick_Metro.Common
         }
         Frame m_Frame;
         EventRouter m_EventRouter;
+        void CheckParametersNull(ref  Dictionary<string, object> parameters)
+        {
+            if (parameters==null)
+            {
+                parameters = new Dictionary<string, object>();
+            }
+        
+        }
+
         public Task FrameNavigate(string targetViewName, Dictionary<string, object> parameters = null)
         {
-
+            CheckParametersNull(ref parameters);
             var arg = new NavigateCommandEventArgs()
             {
                 ParameterDictionary = parameters,
@@ -46,7 +55,7 @@ namespace TableGameSidekick_Metro.Common
 
         public Task<TResult> FrameNavigate<TResult>(string targetViewName, Dictionary<string, object> parameters = null)
         {
-
+            CheckParametersNull(ref parameters);
 
             var arg = new NavigateCommandEventArgs()
             {
@@ -77,7 +86,7 @@ namespace TableGameSidekick_Metro.Common
 
         public Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(string targetViewName, Dictionary<string, object> parameters = null) where TViewModel : IViewModelBase
         {
-
+            CheckParametersNull(ref parameters);
             var arg = new NavigateCommandEventArgs()
             {
                 ParameterDictionary = parameters,
@@ -107,6 +116,7 @@ namespace TableGameSidekick_Metro.Common
 
         public NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(string targetViewName, Dictionary<string, object> parameters = null)
         {
+            CheckParametersNull(ref parameters);
             var arg = new NavigateCommandEventArgs()
             {
                 ParameterDictionary = parameters,
