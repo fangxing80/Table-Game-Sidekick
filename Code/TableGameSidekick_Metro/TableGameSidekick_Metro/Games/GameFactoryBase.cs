@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TableGameSidekick_Metro.Common;
+
 using TableGameSidekick_Metro.DataEntity;
 using Windows.UI.Xaml.Controls;
 

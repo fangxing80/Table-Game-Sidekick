@@ -16,38 +16,33 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
         // If you have install the code sniplets, use "propvm + [tab] +[tab]" create a property。
         // 如果您已经安装了 MVVMSidekick 代码片段，请用 propvm +tab +tab 输入属性
 
-    
-        [DataMember]
-        public string SomePropertySample
+
+        
+        public DefaultTradeGame.Models.TradeGameData_Model GameData
         {
-            get { return m_SomePropertySampleLocator(this).Value; }
-            set { m_SomePropertySampleLocator(this).SetValueAndTryNotify(value); }
+            get { return m_GameDataLocator(this).Value; }
+            set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
         }
 
-
-        #region Property string SomePropertySample Setup
-
-        protected Property<string> m_SomePropertySample =
-          new Property<string> { LocatorFunc = m_SomePropertySampleLocator };
+        #region Property DefaultTradeGame.Models.TradeGameData_Model GameData Setup
+        protected Property<DefaultTradeGame.Models.TradeGameData_Model> m_GameData =
+          new Property<DefaultTradeGame.Models.TradeGameData_Model> { LocatorFunc = m_GameDataLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<string>> m_SomePropertySampleLocator =
-            RegisterContainerLocator<string>(
-                "SomePropertySample",
+        static Func<BindableBase, ValueContainer<DefaultTradeGame.Models.TradeGameData_Model>> m_GameDataLocator =
+            RegisterContainerLocator<DefaultTradeGame.Models.TradeGameData_Model>(
+                "GameData",
                 model =>
                 {
-                    model.m_SomePropertySample =
-                        model.m_SomePropertySample
+                    model.m_GameData =
+                        model.m_GameData
                         ??
-                        new Property<string> { LocatorFunc = m_SomePropertySampleLocator };
-                    return model.m_SomePropertySample.Container =
-                        model.m_SomePropertySample.Container
+                        new Property<DefaultTradeGame.Models.TradeGameData_Model> { LocatorFunc = m_GameDataLocator };
+                    return model.m_GameData.Container =
+                        model.m_GameData.Container
                         ??
-                        new ValueContainer<string>("SomePropertySample", model);
+                        new ValueContainer<DefaultTradeGame.Models.TradeGameData_Model>("GameData", model);
                 });
-
         #endregion
-
-
 
     }
 	

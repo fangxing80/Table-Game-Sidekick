@@ -6,14 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using TableGameSidekick_Metro.DataEntity;
-using TableGameSidekick_Metro.Common;
+using System.Runtime.Serialization;
+
 
 
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 {
+    [DataContract]
     public class PlayerData : BindableBase<PlayerData>
     {
-
+        [DataMember]
         public PlayerInfomation PlayerInfomation
         {
             get { return m_PlayerInfomationLocator(this).Value; }
@@ -42,7 +44,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 
 
 
-
+        [DataMember]
         public ObservableCollection<ResourcesEntry> Resources
         {
             get { return m_ResourcesLocator(this).Value; }

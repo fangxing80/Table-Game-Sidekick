@@ -45,17 +45,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ProjectTemplates\BlankAppTemplate_MVVMSidekick.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="ProjectTemplates\GridAppTemplate_MVVMSidekick.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Code\TableGameSidekick_Metro\MVVMSidekick_Metro\MVVMSidekick_Metro.csproj">
-      <Project>{F69407B0-9503-4242-85C4-C0B9BE28A73F}</Project>
-      <Name>MVVMSidekick_Metro</Name>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-    </ProjectReference>
     <ProjectReference Include="..\MVVMSidekickDataModel.MordenUI\MVVMSidekickDataModel.MordenUI.csproj">
       <Project>{4B0791D0-B232-4309-80B3-007FC70129D1}</Project>
       <Name>MVVMSidekickDataModel.MordenUI</Name>

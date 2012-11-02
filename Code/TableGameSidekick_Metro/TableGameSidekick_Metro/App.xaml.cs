@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using MVVMSidekick.Reactive;
 using TableGameSidekick_Metro.Storages;
 using TableGameSidekick_Metro.DataEntity;
-using TableGameSidekick_Metro.Common;
+
 using TableGameSidekick_Metro.ViewModels;
 using System.Threading.Tasks;
 using MVVMSidekick.ViewModels;
@@ -32,11 +32,20 @@ namespace TableGameSidekick_Metro
     /// </summary>
     sealed partial class App : Application
     {
+
+        static Frame m_MainFrame;
         /// <summary>
         /// 本App的主Frame
         /// </summary>
-        public static Frame MainFrame{get;private set;}
-      
+        public static Frame MainFrame
+        {
+            get { return App.m_MainFrame; }
+            set { App.m_MainFrame = value; }
+        }
+        /// <summary>
+        /// 本App的主事件路由
+        /// </summary>
+        public static EventRouter MainEventRouter = EventRouter.Instance;
 
 
         /// <summary>
@@ -47,25 +56,13 @@ namespace TableGameSidekick_Metro
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            var noneedDispose = MainEventRouter.GetEventObject<NavigateCommandEventArgs>().GetRouterEventObservable()
-                .Subscribe(
-                    ep =>
+
+ 
+            MainEventRouter.InitFrameNavigator(ref  m_MainFrame);
+            MainFrame.GetFrameNavigator().PageInitActions = new Dictionary<Type, Action<MVVMSidekick.Views.LayoutAwarePage, IDictionary<string, object>>> 
+                { 
                     {
-
-                        ((Frame)ep.EventArgs.TargetFrame).Navigate(Type.GetType(ep.EventArgs.TargetViewId), ep.EventArgs.ParameterDictionary);
-                    }
-                );
-
-
-
-        }
-
-        static App()
-        {
-            MVVMSidekick.Views.LayoutAwarePage.PageInitActions = new Dictionary<string, Action<MVVMSidekick.Views.LayoutAwarePage, IDictionary<string, object>>> 
-         { 
-                    {
-                    Constants.ViewsNames.    Start , 
+                        typeof (Start) , 
                         ( (p,pars)=>
                         {
                             var st = Constants.Storages.Instance.GameInfomationsStorage;
@@ -77,7 +74,7 @@ namespace TableGameSidekick_Metro
                         })
                     },
                     {
-                    Constants.ViewsNames.    NewGame , 
+                      typeof (  NewGame ), 
                         ( (p,pars)=>
                         {
                             var vm = new NewGame_Model(Constants.Storages.Instance.GameInfomationsStorage);
@@ -86,7 +83,7 @@ namespace TableGameSidekick_Metro
                         })
                     },
                     {
-                      Constants.ViewsNames.  GamePlay , 
+                        typeof (  GamePlay) , 
                         ( async (p,pars)=>
                         {
 
@@ -109,7 +106,7 @@ namespace TableGameSidekick_Metro
                         })
                     },
                     {
-                      Constants.ViewsNames.  SelectPlayers ,
+                        typeof (SelectPlayers) ,
                         (p,pars)=>
                             {}
 
@@ -119,8 +116,10 @@ namespace TableGameSidekick_Metro
 
         }
 
+        static App()
+        {
 
-        public static EventRouter MainEventRouter = EventRouter.Instance;
+        }
 
 
         /// <summary>
@@ -145,11 +144,7 @@ namespace TableGameSidekick_Metro
             }
 
             // Create a Frame to act navigation context and navigate to the first page
-            if (MainFrame == null)
-            {
-                MainFrame = new Frame();
-                MainFrame.SetFrameNavigator(  new FrameNavigator(MainFrame, MainEventRouter));
-            }
+
 
             if (!MainFrame.Navigate(typeof(Start),
                 null
@@ -162,6 +157,7 @@ namespace TableGameSidekick_Metro
             Window.Current.Content = MainFrame;
             Window.Current.Activate();
         }
+
 
         /// <summary>
         /// Invoked when application execution is being suspended.  Application state is saved

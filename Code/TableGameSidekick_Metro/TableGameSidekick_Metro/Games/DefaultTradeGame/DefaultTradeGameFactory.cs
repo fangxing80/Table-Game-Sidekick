@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TableGameSidekick_Metro.Common;
+
 using TableGameSidekick_Metro.DataEntity;
 using TableGameSidekick_Metro.Games.DefaultTradeGame.Models;
 using Windows.UI.Xaml.Controls;
@@ -16,14 +16,14 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
         async public override Task<LayoutAwarePage> CreateGame(GameInfomation gameInfomation)
         {
            
-            TradeGameData vm;
-            var storage = new Storages.Storage<TradeGameData>(GetSaveFileName(gameInfomation));
+            TradeGameData_Model vm;
+            var storage = new Storages.Storage<TradeGameData_Model>(GetSaveFileName(gameInfomation));
 
             await storage.Refresh();
 
             if (storage.Value == null)
             {
-                storage.Value = new TradeGameData(storage, gameInfomation);
+                storage.Value = new TradeGameData_Model(storage, gameInfomation);
             }
             vm = storage.Value;
 

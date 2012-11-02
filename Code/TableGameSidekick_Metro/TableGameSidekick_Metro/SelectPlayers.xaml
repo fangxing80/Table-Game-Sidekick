@@ -1,5 +1,6 @@
 ﻿<common:LayoutAwarePage
     x:Name="pageRoot"
+    xmlns:converters="using:MVVMSidekick.ValueConverters"
     x:Class="TableGameSidekick_Metro.SelectPlayers"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     IsTabStop="false"
@@ -24,7 +25,7 @@
         -->
 
 
-        <commonLocal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
 
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->

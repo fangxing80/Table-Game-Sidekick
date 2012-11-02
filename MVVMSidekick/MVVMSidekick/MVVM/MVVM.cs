@@ -205,6 +205,7 @@ namespace MVVMSidekick
 
             #region 验证与错误相关逻辑
 
+
             /// <summary>
             /// 验证逻辑
             /// </summary>
@@ -212,7 +213,7 @@ namespace MVVMSidekick
 
 
 
-            public IDataErrorInfo DataErrorInfo
+            IDataErrorInfo IBindableBase.DataErrorInfo
             {
                 get { return this; }
 
@@ -222,8 +223,18 @@ namespace MVVMSidekick
             /// <summary>
             /// 验证错误内容
             /// </summary>
-            public abstract string Error { get; protected set; }
+            string IDataErrorInfo.Error
+            {
+                get
+                {
+                    return GetError();
+                }
 
+
+            }
+            protected abstract string GetError();
+
+            protected abstract void SetError(string value);
 
 
             /// <summary>
@@ -588,12 +599,20 @@ namespace MVVMSidekick
             /// <summary>
             /// 验证错误
             /// </summary>
-            public override string Error
+            //public override string Error
+            //{
+            //    get { return m_ErrorLocator(this).Value; }
+            //    protected set { m_ErrorLocator(this).SetValueAndTryNotify(value); }
+            //}
+            protected override string GetError()
             {
-                get { return m_ErrorLocator(this).Value; }
-                protected set { m_ErrorLocator(this).SetValueAndTryNotify(value); }
+                return m_ErrorLocator(this).Value; 
             }
 
+            protected override void SetError(string value)
+            {
+                m_ErrorLocator(this).SetValueAndTryNotify(value);
+            }
 
             #region Property string Error Setup
 
@@ -739,12 +758,12 @@ namespace MVVMSidekick
 
         }
 
-        public interface IBindableBase : INotifyPropertyChanged
+        public interface IBindableBase : INotifyPropertyChanged ,IDataErrorInfo
         {
             void AddDisposeAction(Action action);
             System.ComponentModel.IDataErrorInfo DataErrorInfo { get; }
             void Dispose();
-            string Error { get; }
+
             string[] GetFieldNames();
             object this[string name] { get; set; }
         }
@@ -753,7 +772,7 @@ namespace MVVMSidekick
             bool IsUIBusy { get; set; }
             bool HaveReturnValue { get; }
             void Close();
-            
+
         }
 
         [DataContract]
@@ -819,7 +838,7 @@ namespace MVVMSidekick
         /// </summary>
         /// <typeparam name="TViewModel">本身的类型</typeparam>
         [DataContract]
-        public  abstract partial class ViewModelBase<TViewModel> : BindableBase<TViewModel>, IViewModelBase where TViewModel : ViewModelBase<TViewModel>
+        public abstract partial class ViewModelBase<TViewModel> : BindableBase<TViewModel>, IViewModelBase where TViewModel : ViewModelBase<TViewModel>
         {
 
 
@@ -1143,6 +1162,8 @@ namespace MVVMSidekick
             public static EventRouter Instance { get; protected set; }
 
 
+
+
             /// <summary>
             /// 触发事件    
             /// </summary>
@@ -1308,9 +1329,9 @@ namespace MVVMSidekick
             }
             public Dictionary<string, object> ParameterDictionary { get; set; }
 
-            public string SourceViewId { get; set; }
+            public Type SourceViewType{ get; set; }
 
-            public string TargetViewId { get; set; }
+            public Type TargetViewType{ get; set; }
 
             public IViewModelBase ViewModel { get; set; }
 
@@ -1597,7 +1618,7 @@ namespace MVVMSidekick
 
 
 
-        public class ViewModelDataErrorInfoTextConverter : GenericValueConverter<BindableBase, string, ErrorInfoTextConverterOptions>
+        public class ViewModelDataErrorInfoTextConverter : GenericValueConverter<IBindableBase, string, ErrorInfoTextConverterOptions>
         {
             public ViewModelDataErrorInfoTextConverter()
             {

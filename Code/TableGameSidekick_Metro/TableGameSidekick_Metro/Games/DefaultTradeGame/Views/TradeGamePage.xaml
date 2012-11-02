@@ -18,7 +18,7 @@
         
     </Page.Resources>
     <common:LayoutAwarePage.DefaultViewModel >
-        <model:TradeGameData></model:TradeGameData>
+        <model:TradeGameData_Model></model:TradeGameData_Model>
     </common:LayoutAwarePage.DefaultViewModel>
         <!--
         This grid acts as a root panel for the page that defines two rows:

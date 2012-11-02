@@ -1,5 +1,6 @@
 ﻿using MVVMSidekick.ViewModels;
 using MVVMSidekick.Views;
+using MVVMSidekick.EventRouter;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,72 +16,24 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.Foundation.Collections;
+using System.Windows.Input;
+using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.UI.Xaml.Data;
+using MVVMSidekick.Reactive ;
 
 namespace MVVMSidekick
 {
     namespace ViewModels
     {
-        /// <summary>
-        /// 用于控制Frame 浏览的控制器
-        /// </summary>
-        public interface IFrameNavigator
-        {
-            /// <summary>
-            /// 用async 工作流的方式浏览一个View
-            /// </summary>
-            /// <param name="targetViewName">View名</param>
-            /// <param name="parameters">参数</param>
-            /// <returns>返回Task</returns>
-            Task FrameNavigate(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
 
-            /// <summary>
-            /// 用async 工作流的方式浏览一个View 并且返回结果
-            /// </summary>
-            /// <param name="targetViewName">View名</param>
-            /// <param name="parameters">参数</param>
-            /// <returns>返回结果</returns>
-            Task<TResult> FrameNavigate<TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
-
-            /// <summary>
-            /// 用async 工作流的方式浏览一个View 返回VM和
-            /// </summary>
-            /// <param name="targetViewName">View名</param>
-            /// <param name="parameters">参数</param>
-            /// <returns>返回VM</returns>
-            Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null)
-                where TViewModel : IViewModelBase;
-                
-
-
-            /// <summary>
-            /// 用async 工作流的方式浏览一个View 并且返回VM和结果
-            /// </summary>
-            /// <param name="targetViewName">View名</param>
-            /// <param name="parameters">参数</param>
-            /// <returns>返回两个Task 一个是VM一个是结果</returns>
-            NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
-
-            /// <summary>
-            /// 前进
-            /// </summary>
-            /// <returns>是否成功</returns>
-            bool GoForward();
-
-            /// <summary>
-            /// 后退
-            /// </summary>
-            /// <returns>是否成功</returns>
-            bool GoBack();
-
-           
-          
-        }
 
         public struct NavigateResult<TViewModel, TResult>
         {
             public Task<TViewModel> ViewModel { get; set; }
             public Task<TResult> Result { get; set; }
-        
+
         }
 
 
@@ -88,7 +41,7 @@ namespace MVVMSidekick
         public partial interface IViewModelBase
         {
             IFrameNavigator Navigator { get; set; }
-        
+
         }
         public abstract partial class ViewModelBase<TViewModel>
         {
@@ -104,6 +57,7 @@ namespace MVVMSidekick
             public static readonly string GameInfomation_ChosenGame = "GameInfomation_ChosenGame";
             public static readonly string NavigateToCallback = "NavigateToCallback";
             public static readonly string FinishedCallback = "FinishedCallback";
+            public static readonly string AppliactionActiveArgs = "AppliactionActiveArgs";
 
         }
 
@@ -139,8 +93,6 @@ namespace MVVMSidekick
 
             private List<Control> _layoutAwareControls;
 
-            public static Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>>
-                PageInitActions = new Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>>();
             /// <summary>
             /// Initializes a new instance of the <see cref="LayoutAwarePage"/> class.
             /// </summary>
@@ -483,7 +435,7 @@ namespace MVVMSidekick
 
 
                     // Pass the navigation parameter to the new page
-                    this.LoadState(e.Parameter, dic);
+                    //  this.LoadState(e.Parameter, dic);
                 }
                 else
                 {
@@ -494,7 +446,7 @@ namespace MVVMSidekick
                 }
 
                 Action<LayoutAwarePage, IDictionary<string, object>> init = null;
-                if (PageInitActions.TryGetValue(this.GetType().FullName, out init))
+                if (Frame.GetFrameNavigator().PageInitActions .TryGetValue(this.GetType(), out init))
                 {
                     init(this, dic);
                 }
@@ -511,8 +463,8 @@ namespace MVVMSidekick
                         DefaultViewModel.AddDisposeAction(() =>
                         {
                             finishNavCallback(this);
-                           // if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
-                           //GoBack(this, null);
+                            // if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
+                            //GoBack(this, null);
 
                             DefaultViewModel.Navigator.GoBack();
                         }
@@ -595,7 +547,7 @@ namespace MVVMSidekick
 
         }
 
-        internal sealed class SuspensionManager
+        public class SuspensionManager
         {
             private static Dictionary<string, object> _sessionState = new Dictionary<string, object>();
             private static List<Type> _knownTypes = new List<Type>();
@@ -804,11 +756,300 @@ namespace MVVMSidekick
                 frameState["Navigation"] = frame.GetNavigationState();
             }
         }
+        /// <summary>
+        /// 用于控制Frame 浏览的控制器
+        /// </summary>
+        public interface IFrameNavigator
+        {
+            ///// <summary>
+            ///// 用async 工作流的方式浏览一个View
+            ///// </summary>
+            ///// <param name="targetViewName">View名</param>
+            ///// <param name="parameters">参数</param>
+            ///// <returns>返回Task</returns>
+            //Task FrameNavigate(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+            ///// <summary>
+            ///// 用async 工作流的方式浏览一个View 并且返回结果
+            ///// </summary>
+            ///// <param name="targetViewName">View名</param>
+            ///// <param name="parameters">参数</param>
+            ///// <returns>返回结果</returns>
+            //Task<TResult> FrameNavigate<TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+            ///// <summary>
+            ///// 用async 工作流的方式浏览一个View 返回VM和
+            ///// </summary>
+            ///// <param name="targetViewName">View名</param>
+            ///// <param name="parameters">参数</param>
+            ///// <returns>返回VM</returns>
+            //Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null)
+            //    where TViewModel : IViewModelBase;
 
 
+
+            ///// <summary>
+            ///// 用async 工作流的方式浏览一个View 并且返回VM和结果
+            ///// </summary>
+            ///// <param name="targetViewName">View名</param>
+            ///// <param name="parameters">参数</param>
+            ///// <returns>返回两个Task 一个是VM一个是结果</returns>
+            //NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+            /// <summary>
+            /// 页面初始化时注入逻辑
+            /// </summary>
+            Dictionary<Type, Action<LayoutAwarePage, IDictionary<string, object>>> PageInitActions
+            { get; set; }
+
+            /// <summary>
+            /// 前进
+            /// </summary>
+            /// <returns>是否成功</returns>
+            bool GoForward();
+
+            /// <summary>
+            /// 后退
+            /// </summary>
+            /// <returns>是否成功</returns>
+            bool GoBack();
+
+
+
+
+
+            /// <summary>
+            /// 用async 工作流的方式浏览一个View
+            /// </summary>
+            /// <param name="targetViewType">View类型</param>
+            /// <param name="parameters">参数</param>
+            /// <returns>返回Task</returns>
+            Task FrameNavigate(Type targetViewType, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+            /// <summary>
+            /// 用async 工作流的方式浏览一个View 并且返回结果
+            /// </summary>
+            /// <param name="targetViewType">View类型</param>
+            /// <param name="parameters">参数</param>
+            /// <returns>返回结果</returns>
+            Task<TResult> FrameNavigate<TResult>(Type targetViewType, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+            /// <summary>
+            /// 用async 工作流的方式浏览一个View 返回VM和
+            /// </summary>
+            /// <param name="targetViewType">View类型</param>
+            /// <param name="parameters">参数</param>
+            /// <returns>返回VM</returns>
+            Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(Type targetViewType, System.Collections.Generic.Dictionary<string, object> parameters = null)
+                where TViewModel : IViewModelBase;
+
+
+
+            /// <summary>
+            /// 用async 工作流的方式浏览一个View 并且返回VM和结果
+            /// </summary>
+            /// <param name="targetViewType">View类型</param>
+            /// <param name="parameters">参数</param>
+            /// <returns>返回两个Task 一个是VM一个是结果</returns>
+            NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(Type targetViewType, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+
+
+        }
+        public class FrameNavigator : IFrameNavigator
+        {
+            public FrameNavigator(Frame frame, EventRouter.EventRouter eventRouter)
+            {
+                m_Frame = frame;
+                m_EventRouter = eventRouter;
+            }
+            Frame m_Frame;
+            EventRouter.EventRouter m_EventRouter;
+            void CheckParametersNull(ref  Dictionary<string, object> parameters)
+            {
+                if (parameters == null)
+                {
+                    parameters = new Dictionary<string, object>();
+                }
+
+            }
+
+            public Task FrameNavigate(Type targetViewType, Dictionary<string, object> parameters = null)
+            {
+                CheckParametersNull(ref parameters);
+                var arg = CreateArgs(targetViewType, parameters);
+
+                Task task = new Task(() => { });
+                Action<LayoutAwarePage> finishNavigateAction =
+                    page =>
+                    {
+
+                        task.Start();
+                    };
+                arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+                m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+
+                return task;
+
+            }
+
+
+            public Task<TResult> FrameNavigate<TResult>(Type targetViewType, Dictionary<string, object> parameters = null)
+            {
+                CheckParametersNull(ref parameters);
+
+                var arg = CreateArgs(targetViewType, parameters);
+
+                TResult result = default(TResult);
+
+                Task<TResult> taskR = new Task<TResult>(() => result);
+                Action<LayoutAwarePage> finishNavigateAction =
+                    page =>
+                    {
+                        result = page.GetResult<TResult>();
+                        taskR.Start();
+                    };
+                arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+
+
+
+                m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+
+                return taskR;
+
+            }
+
+
+            public Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(Type targetViewType, Dictionary<string, object> parameters = null) where TViewModel : IViewModelBase
+            {
+                CheckParametersNull(ref parameters);
+
+                var arg = CreateArgs(targetViewType, parameters);
+
+
+                TViewModel viewModel = default(TViewModel);
+
+
+                Task<TViewModel> taskVm = new Task<TViewModel>(() => viewModel);
+                Action<LayoutAwarePage> navigateToAction =
+                    page =>
+                    {
+                        viewModel = (TViewModel)page.DefaultViewModel;
+                        taskVm.Start();
+                    };
+                arg.ParameterDictionary[NavigateParameterKeys.NavigateToCallback] = navigateToAction;
+
+
+
+
+                m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+                return taskVm;
+            }
+
+            private NavigateCommandEventArgs CreateArgs(Type type, Dictionary<string, object> parameters)
+            {
+                var arg = new NavigateCommandEventArgs()
+                {
+                    ParameterDictionary = parameters,
+                    TargetViewType = type,
+                    TargetFrame = m_Frame,
+                };
+                return arg;
+            }
+
+            public NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(Type targetViewType, Dictionary<string, object> parameters = null)
+            {
+                CheckParametersNull(ref parameters);
+                var arg = CreateArgs(targetViewType, parameters);
+
+
+                TViewModel viewModel = default(TViewModel);
+                Task<TViewModel> taskVm = new Task<TViewModel>(() => viewModel);
+                Action<LayoutAwarePage> navigateToAction =
+                    page =>
+                    {
+                        viewModel = (TViewModel)page.DefaultViewModel;
+                        taskVm.Start();
+                    };
+                arg.ParameterDictionary[NavigateParameterKeys.NavigateToCallback] = navigateToAction;
+
+
+                TResult result = default(TResult);
+                Task<TResult> taskR = new Task<TResult>(() => result);
+                Action<LayoutAwarePage> finishNavigateAction =
+                    page =>
+                    {
+                        result = page.GetResult<TResult>();
+                        taskR.Start();
+                    };
+                arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+
+
+
+                m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+                return new NavigateResult<TViewModel, TResult>
+                {
+                    ViewModel = taskVm,
+                    Result = taskR
+                };
+            }
+
+
+
+
+            public bool GoForward()
+            {
+                var can = m_Frame.CanGoForward;
+                if (can)
+                {
+                    m_Frame.GoForward();
+                }
+                return can;
+            }
+
+            public bool GoBack()
+            {
+                var can = m_Frame.CanGoBack;
+                if (can)
+                {
+                    m_Frame.GoBack();
+                }
+                return can;
+            }
+
+
+
+
+
+
+            public Dictionary<Type, Action<LayoutAwarePage, IDictionary<string, object>>> PageInitActions
+            {
+                get;
+                set;
+            }
+        }
 
         public static class NavigationHelper
         {
+
+            public static void InitFrameNavigator(this EventRouter.EventRouter router, ref   Frame frame)
+            {
+                if (frame == null)
+                {
+                    frame = new Frame();
+                    frame.SetFrameNavigator(new FrameNavigator(frame, router));
+                }
+                var noneedDispose = router.GetEventObject<NavigateCommandEventArgs>().GetRouterEventObservable()
+                .Subscribe(
+                   ep =>
+                   {
+
+                       ((Frame)ep.EventArgs.TargetFrame).Navigate(ep.EventArgs.TargetViewType, ep.EventArgs.ParameterDictionary);
+                   }
+                );
+
+
+            }
 
 
             public static IFrameNavigator GetFrameNavigator(this Frame obj)
@@ -832,5 +1073,351 @@ namespace MVVMSidekick
 
     }
 
+    namespace Commands
+    {
+        //Code Sample
+        //<Button>
+        //    <common:CommandBinder.CommandBinder>
+        //        <common:CommandBinder 
+        //            Parameter="{Binding ElementName=textBox}" 
+        //            Command="{StaticResource command}"  
+        //            EventName="Click"  />
+        //    </common:CommandBinder.CommandBinder>            
+        //</Button>
 
+        public class CommandBinderParameter
+        {
+            public DependencyObject SourceObject { get; set; }
+            public Object Paremeter { get; set; }
+            public string EventName { get; set; }
+            public object EventArgs { get; set; }
+
+        }
+        public class CommandBinder : DependencyObject
+        {
+
+
+            public ICommand Command
+            {
+                get { return (ICommand)GetValue(CommandProperty); }
+                set { SetValue(CommandProperty, value); }
+            }
+
+            // Using a DependencyProperty as the backing store for Command.  This enables animation, styling, binding, etc...
+            public static readonly DependencyProperty CommandProperty =
+                DependencyProperty.Register("Command", typeof(ICommand), typeof(CommandBinder), new PropertyMetadata(null));
+
+
+
+
+            public Object Parameter
+            {
+                get { return (Object)GetValue(ParameterProperty); }
+                set { SetValue(ParameterProperty, value); }
+            }
+
+            // Using a DependencyProperty as the backing store for Parameter.  This enables animation, styling, binding, etc...
+            public static readonly DependencyProperty ParameterProperty =
+                DependencyProperty.Register("Parameter", typeof(Object), typeof(CommandBinder), new PropertyMetadata(null));
+
+
+
+            public string EventName
+            {
+                get { return (string)GetValue(EventNameProperty); }
+                set { SetValue(EventNameProperty, value); }
+            }
+
+            // Using a DependencyProperty as the backing store for EventName.  This enables animation, styling, binding, etc...
+            public static readonly DependencyProperty EventNameProperty =
+                DependencyProperty.Register("EventName", typeof(string), typeof(CommandBinder), new PropertyMetadata(""));
+
+
+            static Dictionary<Type, Dictionary<string, EventInfo>> TypeEventDic
+                = new Dictionary<Type, Dictionary<string, EventInfo>>();
+
+
+            public static CommandBinder GetCommandBinder(DependencyObject obj)
+            {
+                return (CommandBinder)obj.GetValue(CommandBinderProperty);
+            }
+
+            public static void SetCommandBinder(DependencyObject obj, CommandBinder value)
+            {
+                obj.SetValue(CommandBinderProperty, value);
+            }
+
+            // Using a DependencyProperty as the backing store for CommandBinder.  This enables animation, styling, binding, etc...
+
+
+            public static readonly DependencyProperty CommandBinderProperty =
+                DependencyProperty.RegisterAttached("CommandBinder", typeof(CommandBinder), typeof(DependencyObject), new PropertyMetadata(
+                    null,
+                        (d, v) =>
+                        {
+
+                            TryBind(d);
+                        }
+                    ));
+
+
+            public static void TryBind(DependencyObject d)
+            {
+                var t = d.GetType();
+                var cb = (CommandBinder)d.GetValue(CommandBinderProperty);
+                while (t != null)
+                {
+                    Dictionary<string, EventInfo> es;
+                    if (!TypeEventDic.TryGetValue(t, out es))
+                    {
+                        es = t.GetRuntimeEvents()
+                            .ToDictionary(x => x.Name, x => x);
+                        TypeEventDic[t] = es;
+                    }
+                    EventInfo eventInfo;
+                    if (es.TryGetValue(cb.EventName, out eventInfo))
+                    {
+                        var r = new RoutedEventHandler(
+                            (o, e) =>
+                                (
+                                    (ICommand)cb.GetValue(CommandProperty))
+                                        .Execute(
+                                           new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d }
+                                        )
+                                );
+
+                        WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>
+                            (e => (EventRegistrationToken)eventInfo.AddMethod.Invoke(d, new object[] { e }),
+                              et => eventInfo.RemoveMethod.Invoke(d, new object[] { et }),
+                              r);
+
+
+
+                        ////eventInfo.AddEventHandler(
+                        ////    d,
+
+                        ////    );
+                        return;
+                    }
+                    t = t.GetTypeInfo().BaseType;
+                }
+
+
+
+            }
+        }
+
+    }
+
+    namespace Common
+    {
+        [DataContract]
+        public class ObservableDictionary<K, V> : IObservableMap<K, V>
+        {
+
+            public ObservableDictionary(IDictionary<K, V> coreDic)
+            {
+                _dictionary = coreDic;
+            }
+            private class ObservableDictionaryChangedEventArgs : IMapChangedEventArgs<K>
+            {
+                public ObservableDictionaryChangedEventArgs(CollectionChange change, K key)
+                {
+                    this.CollectionChange = change;
+                    this.Key = key;
+                }
+
+                public CollectionChange CollectionChange { get; private set; }
+                public K Key { get; private set; }
+            }
+
+
+            private IDictionary<K, V> _dictionary = new Dictionary<K, V>();
+            [DataMember]
+            public IDictionary<K, V> Dictionary
+            {
+                get { return _dictionary; }
+                set { _dictionary = value; }
+            }
+            public event MapChangedEventHandler<K, V> MapChanged;
+
+            private void InvokeMapChanged(CollectionChange change, K key)
+            {
+                var eventHandler = MapChanged;
+                if (eventHandler != null)
+                {
+                    eventHandler(this, new ObservableDictionaryChangedEventArgs(CollectionChange.ItemInserted, key));
+                }
+            }
+
+            public void Add(K key, V value)
+            {
+                this._dictionary.Add(key, value);
+                this.InvokeMapChanged(CollectionChange.ItemInserted, key);
+            }
+
+            public void Add(KeyValuePair<K, V> item)
+            {
+                this.Add(item.Key, item.Value);
+            }
+
+            public bool Remove(K key)
+            {
+                if (this._dictionary.Remove(key))
+                {
+                    this.InvokeMapChanged(CollectionChange.ItemRemoved, key);
+                    return true;
+                }
+                return false;
+            }
+
+            public bool Remove(KeyValuePair<K, V> item)
+            {
+                V currentValue;
+                if (this._dictionary.TryGetValue(item.Key, out currentValue) &&
+                    Object.Equals(item.Value, currentValue) && this._dictionary.Remove(item.Key))
+                {
+                    this.InvokeMapChanged(CollectionChange.ItemRemoved, item.Key);
+                    return true;
+                }
+                return false;
+            }
+
+            public V this[K key]
+            {
+                get
+                {
+                    return this._dictionary[key];
+                }
+                set
+                {
+                    this._dictionary[key] = value;
+                    this.InvokeMapChanged(CollectionChange.ItemChanged, key);
+                }
+            }
+
+            public void Clear()
+            {
+                var priorKeys = this._dictionary.Keys.ToArray();
+                this._dictionary.Clear();
+                foreach (var key in priorKeys)
+                {
+                    this.InvokeMapChanged(CollectionChange.ItemRemoved, key);
+                }
+            }
+
+            public ICollection<K> Keys
+            {
+                get { return this._dictionary.Keys; }
+            }
+
+            public bool ContainsKey(K key)
+            {
+                return this._dictionary.ContainsKey(key);
+            }
+
+            public bool TryGetValue(K key, out V value)
+            {
+                return this._dictionary.TryGetValue(key, out value);
+            }
+
+            public ICollection<V> Values
+            {
+                get { return this._dictionary.Values; }
+            }
+
+            public bool Contains(KeyValuePair<K, V> item)
+            {
+                return this._dictionary.Contains(item);
+            }
+
+            public int Count
+            {
+                get { return this._dictionary.Count; }
+            }
+
+            public bool IsReadOnly
+            {
+                get { return false; }
+            }
+
+            public IEnumerator<KeyValuePair<K, V>> GetEnumerator()
+            {
+                return this._dictionary.GetEnumerator();
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return this._dictionary.GetEnumerator();
+            }
+
+            public void CopyTo(KeyValuePair<K, V>[] array, int arrayIndex)
+            {
+                int arraySize = array.Length;
+                foreach (var pair in this._dictionary)
+                {
+                    if (arrayIndex >= arraySize) break;
+                    array[arrayIndex++] = pair;
+                }
+            }
+        }
+
+    }
+
+
+    namespace ValueConverters
+    {
+        /// <summary>
+        /// Value converter that translates true to false and vice versa.
+        /// </summary>
+        public sealed class BooleanNegationConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, string language)
+            {
+                return !(value is bool && (bool)value);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, string language)
+            {
+                return !(value is bool && (bool)value);
+            }
+        }
+
+        /// <summary>
+        /// Value converter that translates true to <see cref="Visibility.Visible"/> and false to
+        /// <see cref="Visibility.Collapsed"/>.
+        /// </summary>
+        public sealed class BooleanNotConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, string language)
+            {
+                return !(bool)value;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, string language)
+            {
+                return !(bool)value;
+            }
+
+            public static BooleanNotConverter Instance = new BooleanNotConverter();
+        }
+
+        /// <summary>
+        /// Value converter that translates true to <see cref="Visibility.Visible"/> and false to
+        /// <see cref="Visibility.Collapsed"/>.
+        /// </summary>
+        public sealed class BooleanToVisibilityConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, string language)
+            {
+                return (value is bool && (bool)value) ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, string language)
+            {
+                return value is Visibility && (Visibility)value == Visibility.Visible;
+            }
+        }
+
+    }
 }

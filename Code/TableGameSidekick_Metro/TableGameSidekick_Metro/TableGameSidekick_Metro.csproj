@@ -104,15 +104,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\BooleanNegationConverter.cs" />
-    <Compile Include="Common\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Common\CommandBinder.cs" />
-    <Compile Include="Common\BooleanNotConverter.cs" />
-    <Compile Include="Common\FrameNavigator.cs" />
-    <Compile Include="Common\LayoutAwarePage.cs" />
-    <Compile Include="Common\ObservableDictionary.cs" />
-    <Compile Include="Common\RichTextColumns.cs" />
-    <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\CalcNumberPad.xaml.cs">
       <DependentUpon>CalcNumberPad.xaml</DependentUpon>
@@ -129,9 +120,17 @@
     <Compile Include="Games\DefaultTradeGame\Models\ResourcesEntry.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\TradeGameData_Model.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\TradeHistoryEntry.cs" />
+    <Compile Include="Games\DefaultTradeGame\Views\SubViews\Exchange.xaml.cs">
+      <DependentUpon>Exchange.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Games\DefaultTradeGame\Views\SubViews\GameMain.xaml.cs">
+      <DependentUpon>GameMain.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Games\DefaultTradeGame\Views\SubViews\SetupGame.xaml.cs">
       <DependentUpon>SetupGame.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Games\DefaultTradeGame\Views\SubViews\ViewModels\Exchange_Model.cs" />
+    <Compile Include="Games\DefaultTradeGame\Views\SubViews\ViewModels\GameMain_Model.cs" />
     <Compile Include="Games\DefaultTradeGame\Views\SubViews\ViewModels\SetupGame_Model.cs" />
     <Compile Include="Games\DefaultTradeGame\Views\TradeGamePage.xaml.cs">
       <DependentUpon>TradeGamePage.xaml</DependentUpon>
@@ -190,7 +189,6 @@
     <Content Include="Assets\SmallLogo.png" />
     <Content Include="Assets\SplashScreen.png" />
     <Content Include="Assets\StoreLogo.png" />
-    <Compile Include="Common\RandomAccessStreamReferenceBitmapConverter.cs" />
     <Content Include="Common\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -207,6 +205,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GamePlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Games\DefaultTradeGame\Views\SubViews\Exchange.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Games\DefaultTradeGame\Views\SubViews\GameMain.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

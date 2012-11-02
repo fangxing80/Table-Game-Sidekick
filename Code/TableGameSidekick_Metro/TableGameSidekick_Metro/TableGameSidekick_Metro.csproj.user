@@ -4,8 +4,8 @@
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <UseSimulator>True</UseSimulator>
-    <RemoteDebugMachine>192.168.1.101</RemoteDebugMachine>
+    <UseSimulator>False</UseSimulator>
+    <RemoteDebugMachine>192.168.0.80</RemoteDebugMachine>
     <UseAuthentication>True</UseAuthentication>
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
   </PropertyGroup>

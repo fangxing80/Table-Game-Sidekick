@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Input;
-using TableGameSidekick_Metro.Common;
+
 using System.Reactive.Concurrency;
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 

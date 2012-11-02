@@ -6,11 +6,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Common="using:MVVMSidekick.Views"
     xmlns:CommonLocal="using:TableGameSidekick_Metro.Common"
+    
+    xmlns:converters="using:MVVMSidekick.ValueConverters"
     x:Class="TableGameSidekick_Metro.Controls.CalcNumberPad"
 Canvas.ZIndex="100"
     mc:Ignorable="d"  Grid.RowSpan="100" Grid.ColumnSpan="100" HorizontalAlignment="Stretch"  VerticalContentAlignment="Stretch">
     <UserControl.Resources>
-        <CommonLocal:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="PadButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource ButtonBackgroundThemeBrush}"/>
             <Setter Property="Foreground" Value="{StaticResource ButtonForegroundThemeBrush}"/>

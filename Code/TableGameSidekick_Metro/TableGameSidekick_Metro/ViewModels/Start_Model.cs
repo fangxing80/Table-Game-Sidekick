@@ -184,14 +184,14 @@ namespace TableGameSidekick_Metro.ViewModels
                   {
                       //第一步使用名叫NewGame的view 创建一个 newgame对象 创建后返回主界面
                       var newGame = await Navigator.FrameNavigate<GameInfomation>(
-                                   Constants.ViewsNames.NewGame,
+                                   typeof(NewGame),
                                    null
                            );
                       //如果创建成功 就前往游戏主体View
                       if (newGame != null)
                       {
                           await Navigator.FrameNavigate(
-                                     Constants.ViewsNames.GamePlay,
+                                     typeof(GamePlay),
                                     new Dictionary<string, object> { { NavigateParameterKeys.GameInfomation_ChosenGame, newGame } }
 
                           );
@@ -215,7 +215,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     async _ =>
 
                        await App.MainFrame.GetFrameNavigator().FrameNavigate(
-                            Constants.ViewsNames.GamePlay,
+                            typeof(GamePlay),
                          new Dictionary<string, Object>() 
                             {
                                 

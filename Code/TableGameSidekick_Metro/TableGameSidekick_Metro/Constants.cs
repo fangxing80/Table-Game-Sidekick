@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using MVVMSidekick.Reactive;
 using TableGameSidekick_Metro.Storages;
 using TableGameSidekick_Metro.DataEntity;
-using TableGameSidekick_Metro.Common;
+
 using TableGameSidekick_Metro.ViewModels;
 using Windows.Storage;
 using TableGameSidekick_Metro.Games;
