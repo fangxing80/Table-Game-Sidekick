@@ -62,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="MVVM.snippet" />
-    <None Include="MVVMSidekickVSIX.vsix" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
