@@ -58,8 +58,17 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                         }
                     
                     }
-                ); 
+                );
 
+            BackwardCommand
+                .CommandCore
+                .Subscribe(
+                    _ =>
+                    { 
+                    
+                    
+                    }
+                );
         }
 
 
