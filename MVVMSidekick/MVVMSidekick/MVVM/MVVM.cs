@@ -220,10 +220,10 @@ namespace MVVMSidekick
             }
 
 
-            protected  bool CheckError(Func<Boolean> test, string errorMessage)
+            protected bool CheckError(Func<Boolean> test, string errorMessage)
             {
 
-                var rval=test();
+                var rval = test();
                 if (rval)
                 {
                     SetError(errorMessage);
@@ -532,6 +532,90 @@ namespace MVVMSidekick
 
             public TProperty OldValue { get; private set; }
         }
+        /// <summary>
+        /// 一个可绑定的Tuple实现
+        /// </summary>
+        /// <typeparam name="TItem1">第一个元素的类型</typeparam>
+        /// <typeparam name="TItem2">第二个元素的类型</typeparam>
+        [DataContract]
+        public class BindableTuple<TItem1, TItem2> : BindableBase<BindableTuple<TItem1, TItem2>>
+        {
+            public BindableTuple(TItem1 item1, TItem2 item2)
+            {
+                Item1 = item1;
+                Item2 = item2;
+            }
+            /// <summary>
+            /// 第一个元素
+            /// </summary>
+            public TItem1 Item1
+            {
+                get { return m_Item1Locator(this).Value; }
+                set { m_Item1Locator(this).SetValueAndTryNotify(value); }
+            }
+
+            #region Property TItem1 Item1 Setup
+            protected Property<TItem1> m_Item1 =
+              new Property<TItem1> { LocatorFunc = m_Item1Locator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+            static Func<BindableBase, ValueContainer<TItem1>> m_Item1Locator =
+                RegisterContainerLocator<TItem1>(
+                    "Item1",
+                    model =>
+                    {
+                        model.m_Item1 =
+                            model.m_Item1
+                            ??
+                            new Property<TItem1> { LocatorFunc = m_Item1Locator };
+                        return model.m_Item1.Container =
+                            model.m_Item1.Container
+                            ??
+                            new ValueContainer<TItem1>("Item1", model);
+                    });
+            #endregion
+
+            /// <summary>
+            /// 第二个元素
+            /// </summary>
+            public TItem2 Item2
+            {
+                get { return m_Item2Locator(this).Value; }
+                set { m_Item2Locator(this).SetValueAndTryNotify(value); }
+            }
+
+            #region Property TItem2 Item2 Setup
+            protected Property<TItem2> m_Item2 =
+              new Property<TItem2> { LocatorFunc = m_Item2Locator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+            static Func<BindableBase, ValueContainer<TItem2>> m_Item2Locator =
+                RegisterContainerLocator<TItem2>(
+                    "Item2",
+                    model =>
+                    {
+                        model.m_Item2 =
+                            model.m_Item2
+                            ??
+                            new Property<TItem2> { LocatorFunc = m_Item2Locator };
+                        return model.m_Item2.Container =
+                            model.m_Item2.Container
+                            ??
+                            new ValueContainer<TItem2>("Item2", model);
+                    });
+            #endregion
+
+
+        }
+        /// <summary>
+        /// 帮助快速创建BindableTuple的帮助类
+        /// </summary>
+        public static class BindableTuple
+        {
+            public static BindableTuple<TItem1, TItem2> Create<TItem1, TItem2>(TItem1 item1, TItem2 item2)
+            {
+                return new BindableTuple<TItem1, TItem2>(item1, item2);
+            }
+
+        }
 
 
         /// <summary>
@@ -542,7 +626,7 @@ namespace MVVMSidekick
         public abstract class BindableBase<TBindable> : BindableBase where TBindable : BindableBase<TBindable>
         {
 
-            
+
 
 
             /// <summary>
@@ -622,7 +706,7 @@ namespace MVVMSidekick
             //}
             protected override string GetError()
             {
-                return m_ErrorLocator(this).Value; 
+                return m_ErrorLocator(this).Value;
             }
 
             protected override void SetError(string value)
@@ -630,7 +714,7 @@ namespace MVVMSidekick
                 m_ErrorLocator(this).SetValueAndTryNotify(value);
             }
 
-         
+
 
 
             #region Property string Error Setup
@@ -777,7 +861,7 @@ namespace MVVMSidekick
 
         }
 
-        public interface IBindableBase : INotifyPropertyChanged ,IDataErrorInfo
+        public interface IBindableBase : INotifyPropertyChanged, IDataErrorInfo
         {
             void AddDisposeAction(Action action);
             System.ComponentModel.IDataErrorInfo DataErrorInfo { get; }
@@ -1348,9 +1432,9 @@ namespace MVVMSidekick
             }
             public Dictionary<string, object> ParameterDictionary { get; set; }
 
-            public Type SourceViewType{ get; set; }
+            public Type SourceViewType { get; set; }
 
-            public Type TargetViewType{ get; set; }
+            public Type TargetViewType { get; set; }
 
             public IViewModelBase ViewModel { get; set; }
 

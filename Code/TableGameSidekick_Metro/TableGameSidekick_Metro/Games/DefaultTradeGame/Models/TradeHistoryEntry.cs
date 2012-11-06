@@ -11,6 +11,6 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
     [DataContract]
     public class TradeHistoryEntry : BindableBase<TradeHistoryEntry>
     {
-
+        
     }
 }

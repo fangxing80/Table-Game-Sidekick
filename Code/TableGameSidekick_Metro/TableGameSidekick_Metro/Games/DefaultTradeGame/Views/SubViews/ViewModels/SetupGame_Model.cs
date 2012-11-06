@@ -29,6 +29,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
         void ConfigCommands()
         {
+            //点击创建记录按钮，增加一条记录
             AddResourceCommand
                 .CommandCore
                 .Subscribe
@@ -45,13 +46,16 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
                     }
                 );
-
+            //点击创建记录按钮，增加一条记录
             RemoveResourceCommand
                 .CommandCore
                 .Subscribe(
                     _ =>
-                    { 
-                    
+                    {
+                        if (CurrentSelectedResourceConfig.Item2!=null&&CurrentSelectedResourceConfig.Item1 !=-1)
+                        {
+                            ResourceConfigs.RemoveAt(CurrentSelectedResourceConfig.Item1);
+                        }
                     
                     }
                 ); 
@@ -85,6 +89,34 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                 });
         #endregion
 
+
+
+        
+        public BindableTuple<int,ResourceConfig>  CurrentSelectedResourceConfig
+        {
+            get { return m_CurrentSelectedResourceConfigLocator(this).Value; }
+            set { m_CurrentSelectedResourceConfigLocator(this).SetValueAndTryNotify(value); }
+        }
+
+        #region Property BindableTuple<int,ResourceConfig>  CurrentSelectedResourceConfig Setup
+        protected Property<BindableTuple<int,ResourceConfig> > m_CurrentSelectedResourceConfig =
+          new Property<BindableTuple<int,ResourceConfig> > { LocatorFunc = m_CurrentSelectedResourceConfigLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<BindableBase, ValueContainer<BindableTuple<int,ResourceConfig> >> m_CurrentSelectedResourceConfigLocator =
+            RegisterContainerLocator<BindableTuple<int,ResourceConfig> >(
+                "CurrentSelectedResourceConfig",
+                model =>
+                {
+                    model.m_CurrentSelectedResourceConfig =
+                        model.m_CurrentSelectedResourceConfig
+                        ??
+                        new Property<BindableTuple<int,ResourceConfig> > { LocatorFunc = m_CurrentSelectedResourceConfigLocator };
+                    return model.m_CurrentSelectedResourceConfig.Container =
+                        model.m_CurrentSelectedResourceConfig.Container
+                        ??
+                        new ValueContainer<BindableTuple<int,ResourceConfig> >("CurrentSelectedResourceConfig", model,new BindableTuple<int,ResourceConfig> (-1,null));
+                });
+        #endregion
 
         public TradeGameData_Model GameData
         {

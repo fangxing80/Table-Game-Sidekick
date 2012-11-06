@@ -304,6 +304,23 @@
             </summary>
             <typeparam name="TProperty">变化属性的类型</typeparam>
         </member>
+        <member name="T:MVVMSidekick.ViewModels.BindableTuple`2">
+            <summary>
+            一个可绑定的Tuple实现
+            </summary>
+            <typeparam name="TItem1">第一个元素的类型</typeparam>
+            <typeparam name="TItem2">第二个元素的类型</typeparam>
+        </member>
+        <member name="P:MVVMSidekick.ViewModels.BindableTuple`2.Item1">
+            <summary>
+            第一个元素
+            </summary>
+        </member>
+        <member name="P:MVVMSidekick.ViewModels.BindableTuple`2.Item2">
+            <summary>
+            第二个元素
+            </summary>
+        </member>
         <member name="T:MVVMSidekick.ViewModels.CommandModel`2">
             <summary>
             用于封装ICommand的ViewModel。一般包括一个Command实例和对应此实例的一组资源
