@@ -20,7 +20,7 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public ImageData()
         {
-
+            
 
         }
 
@@ -126,6 +126,8 @@ namespace TableGameSidekick_Metro.DataEntity
         #endregion
 
 
+        
+       
 
     }
 }

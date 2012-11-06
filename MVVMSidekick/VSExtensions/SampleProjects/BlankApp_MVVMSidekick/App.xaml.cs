@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
+using MVVMSidekick.Views;
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
 namespace BlankApp_MVVMSidekick
@@ -47,9 +47,19 @@ namespace BlankApp_MVVMSidekick
         /// </summary>
         public App()
         {
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            MVVMSidekick.Views.LayoutAwarePage.PageInitActions
+
+
+            MainFrame = Window.Current.Content as Frame;
+
+            MainEventRouter.InitFrameNavigator(ref m_MainFrame);
+
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+
+            MainFrame.GetFrameNavigator ().PageInitActions
                 .Add(
                     typeof(MainPage),
                     (p, dic) =>
@@ -73,25 +83,15 @@ namespace BlankApp_MVVMSidekick
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-            MainFrame = rootFrame;
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (rootFrame == null)
+
+            if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
-                // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
-
-                if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
-
-                // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
+                //TODO: Load state from previously suspended application
             }
 
-            if (rootFrame.Content == null)
+            // Place the frame in the current Window
+            Window.Current.Content = MainFrame;
+            if (MainFrame.Content == null)
             {
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
@@ -103,7 +103,7 @@ namespace BlankApp_MVVMSidekick
                         args.Arguments
                     }
                 };
-                if (!rootFrame.Navigate(typeof(MainPage), par))
+                if (!MainFrame.Navigate(typeof(MainPage), par))
                 {
                     throw new Exception("Failed to create initial page");
                 }

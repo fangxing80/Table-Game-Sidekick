@@ -177,6 +177,10 @@ namespace TableGameSidekick_Metro.ViewModels
                 .Subscribe(
                      async e =>
                      {
+                         if (m_Storage.Value ==null)
+                         {
+                             m_Storage.Value = new Dictionary<Guid, GameInfomation>();
+                         }
                          m_Storage.Value[NewGameInfomation.Id] = NewGameInfomation;
                          await m_Storage.Save();
                          this.Result = NewGameInfomation;

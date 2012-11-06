@@ -537,55 +537,6 @@
             是否能执行的值产生变化的事件
             </summary>
         </member>
-        <member name="T:MVVMSidekick.ViewModels.IFrameNavigator">
-            <summary>
-            用于控制Frame 浏览的控制器
-            </summary>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.IFrameNavigator.GoForward">
-            <summary>
-            前进
-            </summary>
-            <returns>是否成功</returns>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.IFrameNavigator.GoBack">
-            <summary>
-            后退
-            </summary>
-            <returns>是否成功</returns>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.IFrameNavigator.FrameNavigate(System.Type,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            用async 工作流的方式浏览一个View
-            </summary>
-            <param name="targetViewType">View类型</param>
-            <param name="parameters">参数</param>
-            <returns>返回Task</returns>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.IFrameNavigator.FrameNavigate``1(System.Type,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            用async 工作流的方式浏览一个View 并且返回结果
-            </summary>
-            <param name="targetViewType">View类型</param>
-            <param name="parameters">参数</param>
-            <returns>返回结果</returns>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.IFrameNavigator.FrameNavigateAndGetViewModel``1(System.Type,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            用async 工作流的方式浏览一个View 返回VM和
-            </summary>
-            <param name="targetViewType">View类型</param>
-            <param name="parameters">参数</param>
-            <returns>返回VM</returns>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.IFrameNavigator.FrameNavigateAndGetViewModel``2(System.Type,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            用async 工作流的方式浏览一个View 并且返回VM和结果
-            </summary>
-            <param name="targetViewType">View类型</param>
-            <param name="parameters">参数</param>
-            <returns>返回两个Task 一个是VM一个是结果</returns>
-        </member>
         <member name="T:MVVMSidekick.Views.LayoutAwarePage">
             <summary>
             Typical implementation of Page that provides several important conveniences:
@@ -821,6 +772,11 @@
             List of custom types provided to the <see cref="T:System.Runtime.Serialization.DataContractSerializer"/> when
             reading and writing session state.  Initially empty, additional types may be
             added to customize the serialization process.
+            </summary>
+        </member>
+        <member name="T:MVVMSidekick.Views.FrameNavigator">
+            <summary>
+            用于控制Frame 浏览的控制器
             </summary>
         </member>
         <member name="T:MVVMSidekick.ValueConverters.BooleanNegationConverter">

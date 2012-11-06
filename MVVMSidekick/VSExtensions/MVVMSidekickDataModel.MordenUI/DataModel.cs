@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 
-$endif$using System.Text;
-
 namespace $rootnamespace$
 {
 

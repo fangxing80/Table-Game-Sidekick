@@ -135,11 +135,19 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rem copy "$(ProjectDir)$(OutDir)MVVMSidekick_Metro.*" "$(SolutionDir)SampleProjects\BlankApp_MVVMSidekick\Assembly"
+    <PostBuildEvent>cd $(ProjectDir)
 
-rem copy "$(ProjectDir)$(OutDir)MVVMSidekick_Metro.*" "$(SolutionDir)SampleProjects\GridApp_MVVMSidekick\Assembly"
+copy "$(ProjectDir)$(OutDir)*.*" "..\VSExtensions\ProjectTemplates\BlankAppTemplate_MVVMSidekick\Assembly"
 
-rem copy "$(ProjectDir)$(OutDir)MVVMSidekick_Metro.*" "$(SolutionDir)SampleProjects\SplitApp_MVVMSidekick\Assembly"</PostBuildEvent>
+copy "$(ProjectDir)$(OutDir)*.*" "..\VSExtensions\SampleProjects\BlankApp_MVVMSidekick\Assembly"
+
+
+
+copy "$(ProjectDir)$(OutDir)*.*" ..\VSExtensions\SampleProjects\GridApp_MVVMSidekick\Assembly"
+
+copy "$(ProjectDir)$(OutDir)*.*" ..\VSExtensions\ProjectTemplates\GridAppTemplate_MVVMSidekick\Assembly"
+
+rem copy "$(ProjectDir)$(OutDir)*.*" "..\VSExtensions\SampleProjects\SplitApp_MVVMSidekick\Assembly"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -136,7 +136,7 @@ namespace TableGameSidekick_Metro.DataEntity
                 return model.m_StartTime.Container =
                     model.m_StartTime.Container
                     ??
-                    new ValueContainer<DateTime>("StartTime", model);
+                    new ValueContainer<DateTime>("StartTime", model, DateTime.Now);
             });
 
         #endregion
@@ -175,7 +175,7 @@ namespace TableGameSidekick_Metro.DataEntity
                 return model.m_LastEditTime.Container =
                     model.m_LastEditTime.Container
                     ??
-                    new ValueContainer<DateTime>("LastEditTime", model);
+                    new ValueContainer<DateTime>("LastEditTime", model,DateTime.Now  );
             });
 
         #endregion

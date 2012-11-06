@@ -36,10 +36,13 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+            
             <Button x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
-            <TextBlock x:Name="pageTitle" Grid.Column="1" Text="{StaticResource AppName}" Style="{StaticResource PageHeaderTextStyle}"/>
+            <TextBlock x:Name="pageTitle" Grid.Column="1" Style="{StaticResource PageHeaderTextStyle}" Text="游戏设置"/>
+            
         </Grid>
-
+        <ListView Grid.Row="1" Background="#ff444444" Margin="40"></ListView>
+        
         <VisualStateManager.VisualStateGroups>
 
             <!-- Visual states reflect the application's view state -->
@@ -70,4 +73,15 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>
+    
+    <common:LayoutAwarePage.BottomAppBar>
+        <AppBar  IsSticky="True"  IsEnabled="True" IsOpen="True">
+
+            <StackPanel Margin="100,0,0,0">
+                <Button   Command="{Binding NewGameCommand}" >
+                    <TextBlock Text="{Binding NewGameCommand.Resource}"></TextBlock>
+                </Button>
+            </StackPanel>
+        </AppBar>
+    </common:LayoutAwarePage.BottomAppBar>
 </common:LayoutAwarePage>

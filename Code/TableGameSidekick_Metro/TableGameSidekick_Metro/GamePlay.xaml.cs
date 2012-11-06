@@ -177,7 +177,7 @@ namespace TableGameSidekick_Metro
         {
             get { return (LayoutAwarePage)GetValue(GamePageProperty); }
             set { SetValue(GamePageProperty, value);
-            m_GameFrame.Content = value;
+            GameFrame.Content = value;
             }
         }
 

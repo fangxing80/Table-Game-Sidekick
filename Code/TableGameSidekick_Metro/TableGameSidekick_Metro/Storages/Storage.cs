@@ -170,11 +170,11 @@ namespace TableGameSidekick_Metro.Storages
 
                 var vc = m_ValueLocator(this);
                 var v = vc.Value;
-                if (v == null || v.Equals(default(T)))
-                {
+                //if (v == null || v.Equals(default(T)))
+                //{
 
-                    vc.Value = v = new T();
-                }
+                //    vc.Value = v = new T();
+                //}
 
                 return v;
 

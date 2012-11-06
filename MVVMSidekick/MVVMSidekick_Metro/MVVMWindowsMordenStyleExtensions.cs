@@ -21,8 +21,9 @@ using System.Windows.Input;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml.Data;
-using MVVMSidekick.Reactive ;
-
+using MVVMSidekick.Reactive;
+using System.Reactive.Linq;
+using System.Reactive;
 namespace MVVMSidekick
 {
     namespace ViewModels
@@ -40,12 +41,12 @@ namespace MVVMSidekick
 
         public partial interface IViewModelBase
         {
-            IFrameNavigator Navigator { get; set; }
+            FrameNavigator Navigator { get; set; }
 
         }
         public abstract partial class ViewModelBase<TViewModel>
         {
-            public IFrameNavigator Navigator { get; set; }
+            public FrameNavigator Navigator { get; set; }
         }
     }
 
@@ -442,11 +443,11 @@ namespace MVVMSidekick
                     // Pass the navigation parameter and preserved page state to the page, using
                     // the same strategy for loading suspended state and recreating pages discarded
                     // from cache
-                    this.LoadState(e.Parameter, (Dictionary<String, Object>)frameState[this._pageKey]);
+                   // this.LoadState(e.Parameter, (Dictionary<String, Object>)frameState[this._pageKey]);
                 }
 
                 Action<LayoutAwarePage, IDictionary<string, object>> init = null;
-                if (Frame.GetFrameNavigator().PageInitActions .TryGetValue(this.GetType(), out init))
+                if (Frame.GetFrameNavigator().PageInitActions.TryGetValue(this.GetType(), out init))
                 {
                     init(this, dic);
                 }
@@ -490,10 +491,10 @@ namespace MVVMSidekick
             /// property provides the group to be displayed.</param>
             protected override void OnNavigatedFrom(NavigationEventArgs e)
             {
-                var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
+                //var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
                 var pageState = new Dictionary<string, object> { { "", DefaultViewModel } };
                 this.SaveState(pageState);
-                frameState[_pageKey] = pageState;
+                //frameState[_pageKey] = pageState;
             }
 
             /// <summary>
@@ -756,115 +757,124 @@ namespace MVVMSidekick
                 frameState["Navigation"] = frame.GetNavigationState();
             }
         }
+        ///// <summary>
+        ///// 用于控制Frame 浏览的控制器
+        ///// </summary>
+        //public interface IFrameNavigator
+        //{
+        //    ///// <summary>
+        //    ///// 用async 工作流的方式浏览一个View
+        //    ///// </summary>
+        //    ///// <param name="targetViewName">View名</param>
+        //    ///// <param name="parameters">参数</param>
+        //    ///// <returns>返回Task</returns>
+        //    //Task FrameNavigate(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+        //    ///// <summary>
+        //    ///// 用async 工作流的方式浏览一个View 并且返回结果
+        //    ///// </summary>
+        //    ///// <param name="targetViewName">View名</param>
+        //    ///// <param name="parameters">参数</param>
+        //    ///// <returns>返回结果</returns>
+        //    //Task<TResult> FrameNavigate<TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+        //    ///// <summary>
+        //    ///// 用async 工作流的方式浏览一个View 返回VM和
+        //    ///// </summary>
+        //    ///// <param name="targetViewName">View名</param>
+        //    ///// <param name="parameters">参数</param>
+        //    ///// <returns>返回VM</returns>
+        //    //Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null)
+        //    //    where TViewModel : IViewModelBase;
+
+
+
+        //    ///// <summary>
+        //    ///// 用async 工作流的方式浏览一个View 并且返回VM和结果
+        //    ///// </summary>
+        //    ///// <param name="targetViewName">View名</param>
+        //    ///// <param name="parameters">参数</param>
+        //    ///// <returns>返回两个Task 一个是VM一个是结果</returns>
+        //    //NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+        //    /// <summary>
+        //    /// 页面初始化时注入逻辑
+        //    /// </summary>
+        //    Dictionary<Type, Action<LayoutAwarePage, IDictionary<string, object>>> PageInitActions
+        //    { get; set; }
+
+        //    /// <summary>
+        //    /// 前进
+        //    /// </summary>
+        //    /// <returns>是否成功</returns>
+        //    bool GoForward();
+
+        //    /// <summary>
+        //    /// 后退
+        //    /// </summary>
+        //    /// <returns>是否成功</returns>
+        //    bool GoBack();
+
+        //    #region ViewAccessor
+
+
+
+        //    /// <summary>
+        //    /// 用async 工作流的方式浏览一个View
+        //    /// </summary>
+        //    /// <param name="targetViewType">View类型</param>
+        //    /// <param name="parameters">参数</param>
+        //    /// <returns>返回Task</returns>
+        //    Task FrameNavigate(Type targetViewType, IViewModelBase sourceVm, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+        //    /// <summary>
+        //    /// 用async 工作流的方式浏览一个View 并且返回结果
+        //    /// </summary>
+        //    /// <param name="targetViewType">View类型</param>
+        //    /// <param name="parameters">参数</param>
+        //    /// <returns>返回结果</returns>
+        //    Task<TResult> FrameNavigate<TResult>(Type targetViewType, IViewModelBase sourceVm, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+        //    /// <summary>
+        //    /// 用async 工作流的方式浏览一个View 返回VM和
+        //    /// </summary>
+        //    /// <param name="targetViewType">View类型</param>
+        //    /// <param name="parameters">参数</param>
+        //    /// <returns>返回VM</returns>
+        //    Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(Type targetViewType, IViewModelBase sourceVm, System.Collections.Generic.Dictionary<string, object> parameters = null)
+        //        where TViewModel : IViewModelBase;
+
+
+
+        //    /// <summary>
+        //    /// 用async 工作流的方式浏览一个View 并且返回VM和结果
+        //    /// </summary>
+        //    /// <param name="targetViewType">View类型</param>
+        //    /// <param name="parameters">参数</param>
+        //    /// <returns>返回两个Task 一个是VM一个是结果</returns>
+        //    NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(Type targetViewType, IViewModelBase sourceVm, System.Collections.Generic.Dictionary<string, object> parameters = null);
+
+        //    #endregion
+
+
+        //}
+
         /// <summary>
         /// 用于控制Frame 浏览的控制器
         /// </summary>
-        public interface IFrameNavigator
-        {
-            ///// <summary>
-            ///// 用async 工作流的方式浏览一个View
-            ///// </summary>
-            ///// <param name="targetViewName">View名</param>
-            ///// <param name="parameters">参数</param>
-            ///// <returns>返回Task</returns>
-            //Task FrameNavigate(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
-
-            ///// <summary>
-            ///// 用async 工作流的方式浏览一个View 并且返回结果
-            ///// </summary>
-            ///// <param name="targetViewName">View名</param>
-            ///// <param name="parameters">参数</param>
-            ///// <returns>返回结果</returns>
-            //Task<TResult> FrameNavigate<TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
-
-            ///// <summary>
-            ///// 用async 工作流的方式浏览一个View 返回VM和
-            ///// </summary>
-            ///// <param name="targetViewName">View名</param>
-            ///// <param name="parameters">参数</param>
-            ///// <returns>返回VM</returns>
-            //Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null)
-            //    where TViewModel : IViewModelBase;
-
-
-
-            ///// <summary>
-            ///// 用async 工作流的方式浏览一个View 并且返回VM和结果
-            ///// </summary>
-            ///// <param name="targetViewName">View名</param>
-            ///// <param name="parameters">参数</param>
-            ///// <returns>返回两个Task 一个是VM一个是结果</returns>
-            //NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(string targetViewName, System.Collections.Generic.Dictionary<string, object> parameters = null);
-
-            /// <summary>
-            /// 页面初始化时注入逻辑
-            /// </summary>
-            Dictionary<Type, Action<LayoutAwarePage, IDictionary<string, object>>> PageInitActions
-            { get; set; }
-
-            /// <summary>
-            /// 前进
-            /// </summary>
-            /// <returns>是否成功</returns>
-            bool GoForward();
-
-            /// <summary>
-            /// 后退
-            /// </summary>
-            /// <returns>是否成功</returns>
-            bool GoBack();
-
-
-
-
-
-            /// <summary>
-            /// 用async 工作流的方式浏览一个View
-            /// </summary>
-            /// <param name="targetViewType">View类型</param>
-            /// <param name="parameters">参数</param>
-            /// <returns>返回Task</returns>
-            Task FrameNavigate(Type targetViewType, System.Collections.Generic.Dictionary<string, object> parameters = null);
-
-            /// <summary>
-            /// 用async 工作流的方式浏览一个View 并且返回结果
-            /// </summary>
-            /// <param name="targetViewType">View类型</param>
-            /// <param name="parameters">参数</param>
-            /// <returns>返回结果</returns>
-            Task<TResult> FrameNavigate<TResult>(Type targetViewType, System.Collections.Generic.Dictionary<string, object> parameters = null);
-
-            /// <summary>
-            /// 用async 工作流的方式浏览一个View 返回VM和
-            /// </summary>
-            /// <param name="targetViewType">View类型</param>
-            /// <param name="parameters">参数</param>
-            /// <returns>返回VM</returns>
-            Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(Type targetViewType, System.Collections.Generic.Dictionary<string, object> parameters = null)
-                where TViewModel : IViewModelBase;
-
-
-
-            /// <summary>
-            /// 用async 工作流的方式浏览一个View 并且返回VM和结果
-            /// </summary>
-            /// <param name="targetViewType">View类型</param>
-            /// <param name="parameters">参数</param>
-            /// <returns>返回两个Task 一个是VM一个是结果</returns>
-            NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(Type targetViewType, System.Collections.Generic.Dictionary<string, object> parameters = null);
-
-
-
-        }
-        public class FrameNavigator : IFrameNavigator
+        public class FrameNavigator
         {
             public FrameNavigator(Frame frame, EventRouter.EventRouter eventRouter)
             {
                 m_Frame = frame;
                 m_EventRouter = eventRouter;
+                this.PageInitActions = new Dictionary<Type, Action<LayoutAwarePage, IDictionary<string, object>>>();
             }
+
+
             Frame m_Frame;
             EventRouter.EventRouter m_EventRouter;
+
             void CheckParametersNull(ref  Dictionary<string, object> parameters)
             {
                 if (parameters == null)
@@ -874,10 +884,10 @@ namespace MVVMSidekick
 
             }
 
-            public Task FrameNavigate(Type targetViewType, Dictionary<string, object> parameters = null)
+            public Task FrameNavigate(Type targetViewType, IViewModelBase sourceVm, Dictionary<string, object> parameters = null)
             {
                 CheckParametersNull(ref parameters);
-                var arg = CreateArgs(targetViewType, parameters);
+                var arg = CreateArgs(targetViewType, sourceVm, parameters);
 
                 Task task = new Task(() => { });
                 Action<LayoutAwarePage> finishNavigateAction =
@@ -894,11 +904,11 @@ namespace MVVMSidekick
             }
 
 
-            public Task<TResult> FrameNavigate<TResult>(Type targetViewType, Dictionary<string, object> parameters = null)
+            public Task<TResult> FrameNavigate<TResult>(Type targetViewType, IViewModelBase sourceVm, Dictionary<string, object> parameters = null)
             {
                 CheckParametersNull(ref parameters);
 
-                var arg = CreateArgs(targetViewType, parameters);
+                var arg = CreateArgs(targetViewType, sourceVm, parameters);
 
                 TResult result = default(TResult);
 
@@ -920,11 +930,11 @@ namespace MVVMSidekick
             }
 
 
-            public Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(Type targetViewType, Dictionary<string, object> parameters = null) where TViewModel : IViewModelBase
+            public Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(Type targetViewType, IViewModelBase sourceVm, Dictionary<string, object> parameters = null) where TViewModel : IViewModelBase
             {
                 CheckParametersNull(ref parameters);
 
-                var arg = CreateArgs(targetViewType, parameters);
+                var arg = CreateArgs(targetViewType, sourceVm, parameters);
 
 
                 TViewModel viewModel = default(TViewModel);
@@ -946,21 +956,11 @@ namespace MVVMSidekick
                 return taskVm;
             }
 
-            private NavigateCommandEventArgs CreateArgs(Type type, Dictionary<string, object> parameters)
-            {
-                var arg = new NavigateCommandEventArgs()
-                {
-                    ParameterDictionary = parameters,
-                    TargetViewType = type,
-                    TargetFrame = m_Frame,
-                };
-                return arg;
-            }
 
-            public NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(Type targetViewType, Dictionary<string, object> parameters = null)
+            public NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(Type targetViewType, IViewModelBase sourceVm, Dictionary<string, object> parameters = null)
             {
                 CheckParametersNull(ref parameters);
-                var arg = CreateArgs(targetViewType, parameters);
+                var arg = CreateArgs(targetViewType, sourceVm, parameters);
 
 
                 TViewModel viewModel = default(TViewModel);
@@ -994,6 +994,142 @@ namespace MVVMSidekick
                 };
             }
 
+
+            //public Task FrameNavigate(string targetViewName, IViewModelBase sourceVm, Dictionary<string, object> parameters = null)
+            //{
+            //    CheckParametersNull(ref parameters);
+            //    var arg = CreateArgs(targetViewName, sourceVm, parameters);
+
+            //    Task task = new Task(() => { });
+            //    Action<LayoutAwarePage> finishNavigateAction =
+            //        page =>
+            //        {
+
+            //            task.Start();
+            //        };
+            //    arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+            //    m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+
+            //    return task;
+
+            //}
+
+
+            //public Task<TResult> FrameNavigate<TResult>(string targetViewName, IViewModelBase sourceVm, Dictionary<string, object> parameters = null)
+            //{
+            //    CheckParametersNull(ref parameters);
+
+            //    var arg = CreateArgs(targetViewName, sourceVm, parameters);
+
+            //    TResult result = default(TResult);
+
+            //    Task<TResult> taskR = new Task<TResult>(() => result);
+            //    Action<LayoutAwarePage> finishNavigateAction =
+            //        page =>
+            //        {
+            //            result = page.GetResult<TResult>();
+            //            taskR.Start();
+            //        };
+            //    arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+
+
+
+            //    m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+
+            //    return taskR;
+
+            //}
+
+
+            //public Task<TViewModel> FrameNavigateAndGetViewModel<TViewModel>(string targetViewName, IViewModelBase sourceVm, Dictionary<string, object> parameters = null) where TViewModel : IViewModelBase
+            //{
+            //    CheckParametersNull(ref parameters);
+
+            //    var arg = CreateArgs(targetViewName, sourceVm, parameters);
+
+
+            //    TViewModel viewModel = default(TViewModel);
+
+
+            //    Task<TViewModel> taskVm = new Task<TViewModel>(() => viewModel);
+            //    Action<LayoutAwarePage> navigateToAction =
+            //        page =>
+            //        {
+            //            viewModel = (TViewModel)page.DefaultViewModel;
+            //            taskVm.Start();
+            //        };
+            //    arg.ParameterDictionary[NavigateParameterKeys.NavigateToCallback] = navigateToAction;
+
+
+
+
+            //    m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+            //    return taskVm;
+            //}
+
+
+            //public NavigateResult<TViewModel, TResult> FrameNavigateAndGetViewModel<TViewModel, TResult>(string targetViewName, IViewModelBase sourceVm, Dictionary<string, object> parameters = null)
+            //{
+            //    CheckParametersNull(ref parameters);
+            //    var arg = CreateArgs(targetViewName, sourceVm, parameters);
+
+
+            //    TViewModel viewModel = default(TViewModel);
+            //    Task<TViewModel> taskVm = new Task<TViewModel>(() => viewModel);
+            //    Action<LayoutAwarePage> navigateToAction =
+            //        page =>
+            //        {
+            //            viewModel = (TViewModel)page.DefaultViewModel;
+            //            taskVm.Start();
+            //        };
+            //    arg.ParameterDictionary[NavigateParameterKeys.NavigateToCallback] = navigateToAction;
+
+
+            //    TResult result = default(TResult);
+            //    Task<TResult> taskR = new Task<TResult>(() => result);
+            //    Action<LayoutAwarePage> finishNavigateAction =
+            //        page =>
+            //        {
+            //            result = page.GetResult<TResult>();
+            //            taskR.Start();
+            //        };
+            //    arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
+
+
+
+            //    m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+            //    return new NavigateResult<TViewModel, TResult>
+            //    {
+            //        ViewModel = taskVm,
+            //        Result = taskR
+            //    };
+            //}
+
+
+
+
+            //private NavigateCommandEventArgs CreateArgs(string viewName, IViewModelBase sourceVm, Dictionary<string, object> parameters)
+            //{
+            //    var arg = new NavigateCommandEventArgs()
+            //    {
+            //        ParameterDictionary = parameters,
+            //        TargetViewType =  ,
+            //        TargetFrame = m_Frame,
+            //        ViewModel = sourceVm
+            //    };
+            //    return arg;
+            //}
+            private NavigateCommandEventArgs CreateArgs(Type viewType, IViewModelBase sourceVm, Dictionary<string, object> parameters)
+            {
+                var arg = new NavigateCommandEventArgs()
+                {
+                    ParameterDictionary = parameters,
+                    TargetViewType = viewType,
+                    TargetFrame = m_Frame,
+                    ViewModel = sourceVm
+                };
+                return arg;
+            }
 
 
 
@@ -1034,12 +1170,31 @@ namespace MVVMSidekick
 
             public static void InitFrameNavigator(this EventRouter.EventRouter router, ref   Frame frame)
             {
+                FrameNavigator fn;
                 if (frame == null)
                 {
                     frame = new Frame();
-                    frame.SetFrameNavigator(new FrameNavigator(frame, router));
                 }
+
+                if ((fn = frame.GetFrameNavigator()) == null)
+                {
+                    fn = new FrameNavigator(frame, router);
+                    frame.SetFrameNavigator(fn);
+
+                }
+
+
                 var noneedDispose = router.GetEventObject<NavigateCommandEventArgs>().GetRouterEventObservable()
+                   .Where(
+                   a =>
+                   {
+                       var vm = a.Sender as ViewModels.IViewModelBase;
+                       if (vm == null)
+                       {
+                           return false;
+                       }
+                       return vm.Navigator == fn;
+                   })
                 .Subscribe(
                    ep =>
                    {
@@ -1052,19 +1207,19 @@ namespace MVVMSidekick
             }
 
 
-            public static IFrameNavigator GetFrameNavigator(this Frame obj)
+            public static FrameNavigator GetFrameNavigator(this Frame obj)
             {
-                return (IFrameNavigator)obj.GetValue(FrameNavigatorProperty);
+                return (FrameNavigator)obj.GetValue(FrameNavigatorProperty);
             }
 
-            public static void SetFrameNavigator(this Frame obj, IFrameNavigator value)
+            public static void SetFrameNavigator(this Frame obj, FrameNavigator value)
             {
                 obj.SetValue(FrameNavigatorProperty, value);
             }
 
             // Using a DependencyProperty as the backing store for FrameNavigator.  This enables animation, styling, binding, etc...
             public static readonly DependencyProperty FrameNavigatorProperty =
-                DependencyProperty.RegisterAttached("FrameNavigator", typeof(IFrameNavigator), typeof(Frame), new PropertyMetadata(null));
+                DependencyProperty.RegisterAttached("FrameNavigator", typeof(FrameNavigator), typeof(Frame), new PropertyMetadata(null));
 
 
         }
@@ -1099,8 +1254,10 @@ namespace MVVMSidekick
 
             public ICommand Command
             {
-                get { return (ICommand)GetValue(CommandProperty); }
-                set { SetValue(CommandProperty, value); }
+                get {
+                    return (ICommand)GetValue(CommandProperty); }
+                set { 
+                    SetValue(CommandProperty, value); }
             }
 
             // Using a DependencyProperty as the backing store for Command.  This enables animation, styling, binding, etc...
@@ -1179,11 +1336,13 @@ namespace MVVMSidekick
                     {
                         var r = new RoutedEventHandler(
                             (o, e) =>
-                                (
-                                    (ICommand)cb.GetValue(CommandProperty))
+                                {
+                                    ((ICommand)cb.GetValue(CommandProperty))
                                         .Execute(
-                                           new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d }
-                                        )
+                                            new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d }
+                                            );
+
+                                }
                                 );
 
                         WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>

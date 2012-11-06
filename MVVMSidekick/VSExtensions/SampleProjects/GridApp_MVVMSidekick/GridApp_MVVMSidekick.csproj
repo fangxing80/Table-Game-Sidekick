@@ -132,6 +132,11 @@
     <Content Include="Assembly\MVVMSidekick_Metro.dll" />
     <Content Include="Assembly\MVVMSidekick_Metro.pdb" />
     <Content Include="Assembly\MVVMSidekick_Metro.XML" />
+    <Content Include="Assembly\System.Reactive.Core.dll" />
+    <Content Include="Assembly\System.Reactive.Interfaces.dll" />
+    <Content Include="Assembly\System.Reactive.Linq.dll" />
+    <Content Include="Assembly\System.Reactive.PlatformServices.dll" />
+    <Content Include="Assembly\System.Threading.Tasks.Dataflow.dll" />
     <Content Include="Assets\Logo.png" />
     <Content Include="Assets\SmallLogo.png" />
     <Content Include="Assets\SplashScreen.png" />

@@ -187,10 +187,14 @@ namespace TableGameSidekick_Metro.ViewModels
             await m_PlayersStorage.Refresh();
             this.SavedPlayers.Clear();
 
-            foreach (var item in m_PlayersStorage.Value)
+            if (m_PlayersStorage.Value !=null)
             {
-                SavedPlayers.Add(item);
-                await Task.Delay(100);
+                foreach (var item in m_PlayersStorage.Value)
+                {
+                    SavedPlayers.Add(item);
+                    await Task.Delay(100);
+                }
+
             }
 
 

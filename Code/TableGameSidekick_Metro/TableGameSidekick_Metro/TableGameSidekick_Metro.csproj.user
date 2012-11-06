@@ -8,5 +8,6 @@
     <RemoteDebugMachine>192.168.0.80</RemoteDebugMachine>
     <UseAuthentication>True</UseAuthentication>
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
+    <AllowLocalNetworkLoopback>False</AllowLocalNetworkLoopback>
   </PropertyGroup>
 </Project>

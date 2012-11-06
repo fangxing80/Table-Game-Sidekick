@@ -35,7 +35,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition  Width="140"/>
         </Grid.ColumnDefinitions>
-        <Frame Grid.Column="1" Grid.Row="1" Background="White"  Name="m_GameFrame"></Frame>
+        <Frame Grid.Column="1" Grid.Row="1" Background="White" x:FieldModifier="public" Name="GameFrame"></Frame>
        
     </Grid>
 </common:LayoutAwarePage>

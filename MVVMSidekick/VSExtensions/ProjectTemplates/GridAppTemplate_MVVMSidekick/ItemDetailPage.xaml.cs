@@ -1,4 +1,5 @@
-﻿using MVVMSidekick.Views;
+﻿using $safeprojectname$.Data;
+using MVVMSidekick.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,16 +14,17 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+// The Item Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234232
 
-
-namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews
+namespace $safeprojectname$
 {
     /// <summary>
-    /// A basic page that provides characteristics common to most applications.
+    /// A page that displays details for a single item within a group while allowing gestures to
+    /// flip through other items belonging to the same group.
     /// </summary>
-    public sealed partial class GameMain : LayoutAwarePage
+    public sealed partial class ItemDetailPage : LayoutAwarePage
     {
-        public GameMain()
+        public ItemDetailPage()
         {
             this.InitializeComponent();
         }
@@ -38,6 +40,17 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews
         /// session.  This will be null the first time a page is visited.</param>
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
+            // Allow saved page state to override the initial item to display
+            //if (pageState != null && pageState.ContainsKey("SelectedItem"))
+            //{
+            //    navigationParameter = pageState["SelectedItem"];
+            //}
+
+            // TODO: Create an appropriate data model for your problem domain to replace the sample data
+            //var item = SampleDataSource.GetItem((String)navigationParameter);
+            //this.DefaultViewModel["Group"] = item.Group;
+            //this.DefaultViewModel["Items"] = item.Group.Items;
+            //this.flipView.SelectedItem = item;
         }
 
         /// <summary>
@@ -48,6 +61,13 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews
         /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
         protected override void SaveState(Dictionary<String, Object> pageState)
         {
+            var selectedItem = (SampleDataItem)this.flipView.SelectedItem;
+            pageState["SelectedItem"] = selectedItem.UniqueId;
+        }
+
+        private void GoBack(object sender, RoutedEventArgs e)
+        {
+            Frame.GoBack();
         }
     }
 }

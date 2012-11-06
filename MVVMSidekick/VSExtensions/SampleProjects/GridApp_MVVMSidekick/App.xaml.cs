@@ -55,8 +55,13 @@ namespace GridApp_MVVMSidekick
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            Frame rootFrame = Window.Current.Content as Frame;
 
-            MVVMSidekick.Views.LayoutAwarePage.PageInitActions.Add
+            MainEventRouter.InitFrameNavigator(ref m_MainFrame);
+
+            MVVMSidekick.Views.SuspensionManager.RegisterFrame(MainFrame, "AppFrame");
+
+            MainFrame.GetFrameNavigator().PageInitActions.Add
             (
                 typeof(GroupedItemsPage),
                 (p, dic) =>
@@ -66,7 +71,7 @@ namespace GridApp_MVVMSidekick
                 }
             );
 
-            MVVMSidekick.Views.LayoutAwarePage.PageInitActions.Add
+            MainFrame.GetFrameNavigator().PageInitActions.Add
             (
                 typeof(ItemDetailPage),
                 (p, dic) =>
@@ -79,7 +84,7 @@ namespace GridApp_MVVMSidekick
                     ((ItemDetailPage)p).flipView.SelectedItem = item;
                 }
             );
-            MVVMSidekick.Views.LayoutAwarePage.PageInitActions.Add
+            MainFrame.GetFrameNavigator().PageInitActions.Add
             (
                 typeof(GroupDetailPage),
                 (p, dic) =>
@@ -92,11 +97,7 @@ namespace GridApp_MVVMSidekick
                 }
             );
 
-            Frame rootFrame = Window.Current.Content as Frame;
 
-            MainEventRouter.InitFrameNavigator(ref m_MainFrame);
-
-            MVVMSidekick.Views.SuspensionManager.RegisterFrame(MainFrame, "AppFrame");
 
         }
 
@@ -160,7 +161,7 @@ namespace GridApp_MVVMSidekick
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            await SuspensionManager.SaveAsync();
+           // await SuspensionManager.SaveAsync();
             deferral.Complete();
         }
     }

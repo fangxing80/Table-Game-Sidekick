@@ -220,6 +220,19 @@ namespace MVVMSidekick
             }
 
 
+            protected  bool CheckError(Func<Boolean> test, string errorMessage)
+            {
+
+                var rval=test();
+                if (rval)
+                {
+                    SetError(errorMessage);
+                }
+                return rval;
+
+            }
+
+
             /// <summary>
             /// 验证错误内容
             /// </summary>
@@ -529,6 +542,9 @@ namespace MVVMSidekick
         public abstract class BindableBase<TBindable> : BindableBase where TBindable : BindableBase<TBindable>
         {
 
+            
+
+
             /// <summary>
             /// 每个属性类型独占的一个专门的类型缓存。
             /// </summary>
@@ -613,6 +629,9 @@ namespace MVVMSidekick
             {
                 m_ErrorLocator(this).SetValueAndTryNotify(value);
             }
+
+         
+
 
             #region Property string Error Setup
 

@@ -67,13 +67,22 @@ namespace TableGameSidekick_Metro
 
         }
 
+
+        public static class ViewTypes
+        {
+            public static readonly Type Start = typeof(Start);
+            public static readonly Type NewGame = typeof(NewGame);
+            public static readonly Type GamePlay = typeof(GamePlay);
+            public static readonly Type SelectPlayers = typeof(SelectPlayers);
+        
+        }
         public static class ViewsNames
         {
 
-            public static readonly string Start = typeof(Start).FullName;
-            public static readonly string NewGame = typeof(NewGame).FullName;
-            public static readonly string GamePlay = typeof(GamePlay).FullName;
-            public static readonly string SelectPlayers = typeof(SelectPlayers).FullName;
+            //public static readonly string Start = typeof(Start).FullName;
+            //public static readonly string NewGame = typeof(NewGame).FullName;
+            //public static readonly string GamePlay = typeof(GamePlay).FullName;
+            //public static readonly string SelectPlayers = typeof(SelectPlayers).FullName;
 
             public static Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>>
             SaveStateActions = new Dictionary<string, Action<LayoutAwarePage, IDictionary<string, object>>>
@@ -82,16 +91,7 @@ namespace TableGameSidekick_Metro
             };
 
 
-                
-            //static Dictionary<string, Lazy<Page>> viewCache
-            //    = new Dictionary<string, Lazy<Page>> 
-            //    { 
-            //        {MainPage , new Lazy<Page>( ()=>new MainPage ()) },
-            //        {Start,new Lazy<Page>( ()=>new Start () { ViewModel = new ViewModels.Start_Model ()}   )  },
-            //        {NewGame ,new Lazy<Page>( ()=>new NewGame  ()) },
-            //        { GamePlay ,new Lazy<Page>( ()=>new GamePlay ())},
-            //    };
-
+              
 
             //public static Page GetViewFromCache(string name)
             //{

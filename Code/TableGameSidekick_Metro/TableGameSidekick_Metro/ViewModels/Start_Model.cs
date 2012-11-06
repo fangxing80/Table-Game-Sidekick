@@ -53,14 +53,44 @@ namespace TableGameSidekick_Metro.ViewModels
         private async void RefreshDataFromStorages()
         {
             await m_GameInfoStorage.Refresh();
-            this.Games = new ObservableCollection<GameInfomation>(
-                m_GameInfoStorage.Value.OrderByDescending(g => g.Value.LastEditTime)
-                .Select(x => x.Value));
+            if (m_GameInfoStorage.Value != null)
+            {
+                this.Games = new ObservableCollection<GameInfomation>(
+                    m_GameInfoStorage.Value.OrderByDescending(g => g.Value.LastEditTime)
+                    .Select(x => x.Value));
+            }
+
 
         }
 
 
 
+
+        public String P1
+        {
+            get { return m_P1Locator(this).Value; }
+            set { m_P1Locator(this).SetValueAndTryNotify(value); }
+        }
+
+        #region Property String P1 Setup
+        protected Property<String> m_P1 =
+          new Property<String> { LocatorFunc = m_P1Locator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<BindableBase, ValueContainer<String>> m_P1Locator =
+            RegisterContainerLocator<String>(
+                "P1",
+                model =>
+                {
+                    model.m_P1 =
+                        model.m_P1
+                        ??
+                        new Property<String> { LocatorFunc = m_P1Locator };
+                    return model.m_P1.Container =
+                        model.m_P1.Container
+                        ??
+                        new ValueContainer<String>("P1", model);
+                });
+        #endregion
 
 
 
@@ -184,14 +214,16 @@ namespace TableGameSidekick_Metro.ViewModels
                   {
                       //第一步使用名叫NewGame的view 创建一个 newgame对象 创建后返回主界面
                       var newGame = await Navigator.FrameNavigate<GameInfomation>(
-                                   typeof(NewGame),
+                                  TableGameSidekick_Metro.Constants.ViewTypes.NewGame,
+                                   this,
                                    null
                            );
                       //如果创建成功 就前往游戏主体View
                       if (newGame != null)
                       {
                           await Navigator.FrameNavigate(
-                                     typeof(GamePlay),
+                                     TableGameSidekick_Metro.Constants.ViewTypes.GamePlay,
+                                     this,
                                     new Dictionary<string, object> { { NavigateParameterKeys.GameInfomation_ChosenGame, newGame } }
 
                           );
@@ -215,7 +247,8 @@ namespace TableGameSidekick_Metro.ViewModels
                     async _ =>
 
                        await App.MainFrame.GetFrameNavigator().FrameNavigate(
-                            typeof(GamePlay),
+                            TableGameSidekick_Metro.Constants.ViewTypes.GamePlay,
+                            this,
                          new Dictionary<string, Object>() 
                             {
                                 
