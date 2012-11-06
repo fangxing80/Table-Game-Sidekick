@@ -13,7 +13,7 @@ namespace TableGameSidekick_Metro.Games
 {
     public abstract class GameFactoryBase
     {
-        public abstract Task<LayoutAwarePage> CreateGame(GameInfomation gameInfomation ,Frame targetFrame);
+        public abstract Task<LayoutAwarePage> CreateGameAndNavigateTo(GameInfomation gameInfomation ,Frame targetFrame);
 
         protected static string GetSaveFileName(GameInfomation gameInfomation)
         {

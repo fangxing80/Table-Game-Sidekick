@@ -13,8 +13,9 @@ using System.IO;
 using Windows.ApplicationModel.Contacts.Provider;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using TableGameSidekick_Metro.Storages;
+
 using Windows.ApplicationModel.Contacts;
+using MVVMSidekick.Storages;
 
 namespace TableGameSidekick_Metro.ViewModels
 {

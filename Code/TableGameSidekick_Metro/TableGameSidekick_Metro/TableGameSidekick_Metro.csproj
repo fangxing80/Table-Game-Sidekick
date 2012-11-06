@@ -119,11 +119,12 @@
     <Compile Include="Games\DefaultTradeGame\Models\PlayerData.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\ResourceConfig.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\ResourcesEntry.cs" />
+    <Compile Include="Games\DefaultTradeGame\Models\TradeGameData.cs" />
     <Compile Include="Games\DefaultTradeGame\Views\SubViews\ScoreBoard.xaml.cs">
       <DependentUpon>ScoreBoard.xaml</DependentUpon>
     </Compile>
     <Compile Include="Games\DefaultTradeGame\Views\SubViews\ViewModels\ScoreBoard_Model.cs" />
-    <Compile Include="Games\DefaultTradeGame\Views\ViewModels\TradeGameData_Model.cs" />
+    <Compile Include="Games\DefaultTradeGame\Views\ViewModels\TradeGamePage_Model.cs" />
     <Compile Include="Games\DefaultTradeGame\Models\TradeHistoryEntry.cs" />
     <Compile Include="Games\DefaultTradeGame\Views\SubViews\Exchange.xaml.cs">
       <DependentUpon>Exchange.xaml</DependentUpon>
@@ -150,8 +151,6 @@
     <Compile Include="Start.xaml.cs">
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Storages\IStorage.cs" />
-    <Compile Include="Storages\Storage.cs" />
     <Compile Include="View.xaml.cs">
       <DependentUpon>View.xaml</DependentUpon>
     </Compile>
@@ -271,6 +270,9 @@
       <Project>{f69407b0-9503-4242-85c4-c0b9be28a73f}</Project>
       <Name>MVVMSidekick_Metro</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Storages\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>

@@ -13,31 +13,32 @@ using TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews;
 using TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewModels;
 using MVVMSidekick.EventRouter;
 using TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels;
+using MVVMSidekick.Storages;
+using TableGameSidekick_Metro.Games.DefaultTradeGame.Views;
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame
 {
     public class DefaultTradeGameFactory : GameFactoryBase
     {
-        async public override Task<LayoutAwarePage> CreateGame(GameInfomation gameInfomation, Frame targetFrame)
+        async public override Task<LayoutAwarePage> CreateGameAndNavigateTo(GameInfomation gameInfomation, Frame targetFrame)
         {
 
-            TradeGameData_Model.ExchangeViewType = typeof(Exchange);
-            TradeGameData_Model.SetupGameViewType = typeof(SetupGame);
-            TradeGameData_Model vm;
-            var storage = new Storages.Storage<TradeGameData_Model>(GetSaveFileName(gameInfomation));
+            TradeGamePage_Model.ExchangeViewType = typeof(Exchange);
+            TradeGamePage_Model.SetupGameViewType = typeof(SetupGame);
+            TradeGamePage_Model.ScoreBoardViewType=typeof (ScoreBoard );
+            TradeGamePage_Model.TradeGamePageViewType=typeof (TradeGamePage );
+            TradeGamePage_Model vm;
+            var storage = new Storage<TradeGameData>(GetSaveFileName(gameInfomation));
 
             await storage.Refresh();
 
-            if (storage.Value == null)
-            {
-                storage.Value = new TradeGameData_Model(storage, gameInfomation);
-            }
-            vm = storage.Value;
-            
-            
+
+            vm = new TradeGamePage_Model(storage, gameInfomation);
+
+
             EventRouter.Instance.InitFrameNavigator(ref targetFrame);
 
             var navigator = vm.Navigator = targetFrame.GetFrameNavigator();
-            
+
             navigator.PageInitActions
                 = new Dictionary<Type, Action<LayoutAwarePage, IDictionary<string, object>>> 
                 {
@@ -45,7 +46,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
                         typeof (SetupGame),
                         (p,dic)=>
                             {
-                                var svm = new SetupGame_Model(vm);
+                                var svm = new SetupGame_Model(vm.GameData);
                                 p.DefaultViewModel = svm;
                             }
 
@@ -55,7 +56,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
                         typeof (Exchange),
                         (p,dic)=>
                             {
-                                var svm = new SetupGame_Model(vm);
+                                var svm = new SetupGame_Model(vm.GameData);
                                 p.DefaultViewModel = svm;
                             
                             }
@@ -66,8 +67,19 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
                         typeof (ScoreBoard),
                         (p,dic)=>
                             {
-                                var svm = new ScoreBoard_Model(vm);
+                                var svm = new ScoreBoard_Model(vm.GameData);
                                 p.DefaultViewModel = svm;
+                            
+                            }
+
+                    },
+
+                    {
+                        typeof (TradeGamePage),
+                        (p,dic)=>
+                            {
+                               
+                                p.DefaultViewModel = vm;
                             
                             }
 
@@ -75,10 +87,11 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
                 };
 
 
+            await navigator.FrameNavigate(Views.ViewModels.TradeGamePage_Model.TradeGamePageViewType,vm,null); 
 
+            //   var rval = new DefaultTradeGame.Views.TradeGamePage() { DefaultViewModel = vm };
 
-            var rval = new DefaultTradeGame.Views.TradeGamePage() { DefaultViewModel = vm };
-            return rval;
+            return targetFrame.Content  as LayoutAwarePage ;
 
         }
 

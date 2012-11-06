@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels;
+using TableGameSidekick_Metro.Games.DefaultTradeGame.Models;
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewModels
 {
 
@@ -21,39 +22,37 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
             
         }
 
-        public Exchange_Model(TradeGameData_Model gameDataModel)
+        public Exchange_Model(TradeGameData gameDataModel)
         {
             GameData = gameDataModel;
         }
 
 
-        public TradeGameData_Model GameData
+        public TradeGameData GameData
         {
             get { return m_GameDataLocator(this).Value; }
-            protected set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
+            set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
         }
 
-        #region Property TradeGameData_Model GameData Setup
-        protected Property<TradeGameData_Model> m_GameData =
-          new Property<TradeGameData_Model> { LocatorFunc = m_GameDataLocator };
+        #region Property TradeGameData GameData Setup
+        protected Property<TradeGameData> m_GameData =
+          new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<TradeGameData_Model>> m_GameDataLocator =
-            RegisterContainerLocator<TradeGameData_Model>(
+        static Func<BindableBase, ValueContainer<TradeGameData>> m_GameDataLocator =
+            RegisterContainerLocator<TradeGameData>(
                 "GameData",
                 model =>
                 {
                     model.m_GameData =
                         model.m_GameData
                         ??
-                        new Property<TradeGameData_Model> { LocatorFunc = m_GameDataLocator };
+                        new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
                     return model.m_GameData.Container =
                         model.m_GameData.Container
                         ??
-                        new ValueContainer<TradeGameData_Model>("GameData", model);
+                        new ValueContainer<TradeGameData>("GameData", model);
                 });
         #endregion
-
-
 
     }
 

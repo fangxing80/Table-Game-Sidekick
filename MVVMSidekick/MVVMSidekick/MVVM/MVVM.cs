@@ -55,6 +55,19 @@ namespace System.ComponentModel
 
 namespace MVVMSidekick
 {
+
+    namespace Storages
+    {
+
+        public interface IStorage<T>
+        {
+
+            System.Threading.Tasks.Task Refresh();
+            System.Threading.Tasks.Task Save();
+            T Value { get; set; }
+        }
+    }
+
     namespace ViewModels
     {
         using MVVMSidekick.Commands;

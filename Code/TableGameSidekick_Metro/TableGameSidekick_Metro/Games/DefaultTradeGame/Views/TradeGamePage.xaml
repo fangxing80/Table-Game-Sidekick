@@ -12,7 +12,7 @@
     
     mc:Ignorable="d" >
     <common:LayoutAwarePage.DefaultViewModel>
-        <model:TradeGameData_Model/>
+        <model:TradeGamePage_Model/>
     </common:LayoutAwarePage.DefaultViewModel>
 
     <common:LayoutAwarePage.Resources>

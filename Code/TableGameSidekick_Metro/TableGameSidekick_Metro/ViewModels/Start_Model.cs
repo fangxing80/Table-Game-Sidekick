@@ -11,8 +11,9 @@ using MVVMSidekick.ViewModels;
 using TableGameSidekick_Metro.DataEntity;
 using System.Reactive.Linq;
 using System.Reactive;
-using TableGameSidekick_Metro.Storages;
+
 using MVVMSidekick.Views;
+using MVVMSidekick.Storages;
 namespace TableGameSidekick_Metro.ViewModels
 {
     public class Start_Model : ViewModelBase<Start_Model>
@@ -41,7 +42,7 @@ namespace TableGameSidekick_Metro.ViewModels
             };
         }
 
-        public Start_Model(Storages.IStorage<Dictionary<Guid, GameInfomation>> gameInfoStorage)
+        public Start_Model(IStorage<Dictionary<Guid, GameInfomation>> gameInfoStorage)
         {
             // TODO: Complete member initialization
             this.m_GameInfoStorage = gameInfoStorage;

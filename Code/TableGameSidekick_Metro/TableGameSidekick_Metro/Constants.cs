@@ -15,7 +15,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using MVVMSidekick.Reactive;
-using TableGameSidekick_Metro.Storages;
 using TableGameSidekick_Metro.DataEntity;
 
 using TableGameSidekick_Metro.ViewModels;
@@ -23,6 +22,7 @@ using Windows.Storage;
 using TableGameSidekick_Metro.Games;
 using MVVMSidekick.ViewModels;
 using MVVMSidekick.Views;
+using MVVMSidekick.Storages;
 namespace TableGameSidekick_Metro
 {
     static class Constants

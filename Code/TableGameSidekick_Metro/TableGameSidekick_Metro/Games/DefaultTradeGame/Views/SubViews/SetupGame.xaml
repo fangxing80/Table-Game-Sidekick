@@ -41,8 +41,8 @@
             <TextBlock x:Name="pageTitle" Grid.Column="1" Style="{StaticResource PageHeaderTextStyle}" Text="游戏设置"/>
             
         </Grid>
-        <ListView Grid.Row="1" Background="#ff444444" Margin="40"></ListView>
-        
+        <ListView Grid.Row="1" Background="#ff444444" Margin="40" CanReorderItems="True" ItemsSource="{Binding DefaultViewModel.ResourceConfigs, ElementName=pageRoot}" SelectedItem="{Binding DefaultViewModel.CurrentSelectedResourceConfig.Item2, ElementName=pageRoot, Mode=TwoWay}" SelectedIndex="{Binding DefaultViewModel.CurrentSelectedResourceConfig.Item1, ElementName=pageRoot, Mode=TwoWay}"/>
+
         <VisualStateManager.VisualStateGroups>
 
             <!-- Visual states reflect the application's view state -->
@@ -74,14 +74,30 @@
         </VisualStateManager.VisualStateGroups>
     </Grid>
     
-    <common:LayoutAwarePage.BottomAppBar>
+    <common:LayoutAwarePage.BottomAppBar >
         <AppBar  IsSticky="True"  IsEnabled="True" IsOpen="True">
-
-            <StackPanel Margin="100,0,0,0">
-                <Button   Command="{Binding NewGameCommand}" >
-                    <TextBlock Text="{Binding NewGameCommand.Resource}"></TextBlock>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="0" Orientation="Horizontal" Background="red" HorizontalAlignment="Left">
+                    <Button   Command="{Binding AddResourceCommand }" >
+                        <TextBlock Text="{Binding AddResourceCommand.Resource}"></TextBlock>
+                </Button>
+                    <Button   Command="{Binding RemoveResourceCommand }" >
+                    <TextBlock Text="{Binding RemoveResourceCommand.Resource }"></TextBlock>
                 </Button>
             </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0" Background="green" Orientation="Horizontal" HorizontalAlignment="Right"  >
+                    <Button   Command="{Binding BackwardCommand}" >
+                        <TextBlock Text="{Binding BackwardCommand.Resource }"></TextBlock>
+                    </Button>
+                    <Button   Command="{Binding StartGameCommmand}" >
+                        <TextBlock Text="{Binding StartGameCommmand.Resource }"></TextBlock>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </AppBar>
     </common:LayoutAwarePage.BottomAppBar>
 </common:LayoutAwarePage>

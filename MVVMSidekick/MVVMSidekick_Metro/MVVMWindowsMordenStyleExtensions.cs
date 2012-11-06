@@ -26,6 +26,169 @@ using System.Reactive.Linq;
 using System.Reactive;
 namespace MVVMSidekick
 {
+    namespace Storages
+    {
+        public class Storage<T> : BindableBase<Storage<T>>, Storages.IStorage<T> where T : new()
+        {
+            public Storage(string fileName = null, StorageFolder folder = null, Type[] knownTypes = null)
+            {
+                knownTypes = knownTypes ?? new Type[0];
+                m_BusyWait = new System.Threading.AutoResetEvent(true)
+                    .RegisterDisposeToViewModel(this);
+                m_Folder = folder ?? Windows.Storage.ApplicationData.Current.LocalFolder;
+                m_FileName = fileName ?? typeof(T).FullName;
+                m_Ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(T), knownTypes);
+
+            }
+
+            protected string m_FileName;
+            private System.Runtime.Serialization.Json.DataContractJsonSerializer m_Ser;
+
+
+
+            StorageFolder m_Folder;
+
+            protected System.Threading.AutoResetEvent m_BusyWait;
+
+            protected IDisposable CreateBusyLock()
+            {
+                m_BusyWait.WaitOne();
+
+                var dis = System.Reactive.Disposables.Disposable.Create(() => m_BusyWait.Set());
+
+                return dis;
+            }
+
+
+            public virtual async Task Save()
+            {
+                using (CreateBusyLock())
+                {
+                    var folder = m_Folder;
+                    var file = await GetFileIfExists(folder);
+
+
+                    if (file == null)
+                    {
+                        file = await folder.CreateFileAsync(m_FileName);
+                    }
+
+                    var ms = new MemoryStream();
+                    m_Ser.WriteObject(ms, this.Value);
+                    ms.Position = 0;
+                    await Windows.Storage.FileIO.WriteBytesAsync(file, ms.ToArray());
+
+
+
+
+                }
+
+            }
+
+            private async Task<Windows.Storage.StorageFile> GetFileIfExists(Windows.Storage.StorageFolder folder)
+            {
+
+                try
+                {
+                    return await m_Folder.GetFileAsync(m_FileName);
+                }
+                catch (FileNotFoundException)
+                {
+
+                    return null;
+                }
+            }
+
+            public async Task Refresh()
+            {
+                using (CreateBusyLock())
+                {
+                    var folder = m_Folder;
+                    var file = await GetFileIfExists(folder);
+                    if (file != null)
+                    {
+                        using (var stream = await file.OpenSequentialReadAsync())
+                        {
+                            var ms = new MemoryStream();
+                            await stream.AsStreamForRead().CopyToAsync(ms);
+                            ms.Position = 0;
+
+                            try
+                            {
+                                var lst = m_Ser.ReadObject(ms);
+
+                                this.Value = (T)(lst);
+                            }
+                            catch (System.Runtime.Serialization.SerializationException)
+                            {
+
+
+                            }
+
+
+
+                        }
+
+                    }
+
+
+
+                }
+
+            }
+
+
+
+
+            public T Value
+            {
+                get
+                {
+
+                    var vc = m_ValueLocator(this);
+                    var v = vc.Value;
+                    //if (v == null || v.Equals(default(T)))
+                    //{
+
+                    //    vc.Value = v = new T();
+                    //}
+
+                    return v;
+
+                }
+                set { m_ValueLocator(this).SetValueAndTryNotify(value); }
+            }
+
+
+            #region Property T Value Setup
+
+            protected Property<T> m_Value =
+              new Property<T> { LocatorFunc = m_ValueLocator };
+            [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+            static Func<BindableBase, ValueContainer<T>> m_ValueLocator =
+                RegisterContainerLocator<T>(
+                "Value",
+                model =>
+                {
+                    model.m_Value =
+                        model.m_Value
+                        ??
+                        new Property<T> { LocatorFunc = m_ValueLocator };
+                    return model.m_Value.Container =
+                        model.m_Value.Container
+                        ??
+                        new ValueContainer<T>("Value", model);
+                });
+
+            #endregion
+
+
+        }
+
+
+    
+    }
+
     namespace ViewModels
     {
 
@@ -1121,6 +1284,10 @@ namespace MVVMSidekick
             //}
             private NavigateCommandEventArgs CreateArgs(Type viewType, IViewModelBase sourceVm, Dictionary<string, object> parameters)
             {
+                if (sourceVm==null)
+                {
+                    throw new ArgumentNullException("sourceVm cannot be null");
+                }
                 var arg = new NavigateCommandEventArgs()
                 {
                     ParameterDictionary = parameters,

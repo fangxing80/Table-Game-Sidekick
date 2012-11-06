@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using MVVMSidekick.ViewModels;
 using TableGameSidekick_Metro.DataEntity;
 using System.Runtime.Serialization;
-using TableGameSidekick_Metro.Storages;
 using MVVMSidekick.Reactive;
 using MVVMSidekick.Commands;
 using System.Reactive;
 using System.Reactive.Linq;
+using MVVMSidekick.Storages;
 namespace TableGameSidekick_Metro.ViewModels
 {
     [DataContract]

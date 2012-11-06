@@ -11,9 +11,10 @@ using System.Reactive.Linq;
 using System.Collections.ObjectModel;
 using System.IO;
 using Windows.Storage;
-using TableGameSidekick_Metro.Storages;
+
 using MVVMSidekick.EventRouter;
 using System.Collections.Specialized;
+using MVVMSidekick.Storages;
 namespace TableGameSidekick_Metro.ViewModels
 {
     public class NewGame_Model : ViewModelBase<NewGame_Model, GameInfomation>

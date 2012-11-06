@@ -2,109 +2,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using System.Reactive.Linq;
-using TableGameSidekick_Metro.DataEntity;
-using TableGameSidekick_Metro.ViewModels;
 using System.Collections.ObjectModel;
-using TableGameSidekick_Metro.Storages;
-using MVVMSidekick.Common;
-using MVVMSidekick.Reactive;
-using TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews;
-using TableGameSidekick_Metro.Games.DefaultTradeGame.Models;
-namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
+using System.Runtime.Serialization;
+
+using System.Text;
+
+namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 {
 
-
     [DataContract]
-    public class TradeGameData_Model : ViewModelBase<TradeGameData_Model>
+    public class TradeGameData : BindableBase<TradeGameData>
     {
-        public static Type ExchangeViewType;
-        //public static Type GameMainViewType;
-        public static Type SetupGameViewType;
+        // If you have install the code sniplets, use "propvm + [tab] +[tab]" create a property。
+        // 如果您已经安装了 MVVMSidekick 代码片段，请用 propvm +tab +tab 输入属性
 
-
-        public TradeGameData_Model()
-        {
-
-
-
-        }
-
-        public TradeGameData_Model(IStorage<TradeGameData_Model> storage, GameInfomation gameInfomation)
-        {
-            m_GameInfomation = gameInfomation;
-            m_Storage = storage;
-
-            foreach (var player in gameInfomation.Players)
-            {
-                PlayersData.Add(new PlayerData { PlayerInfomation = player, Resources = new ObservableCollection<ResourcesEntry>() });
-            }
-
-
-            base.ValidateModel =
-            ea =>
-            {
-                SetError(null);
-                var sumdic =
-                    PlayersData.SelectMany(x => x.Resources)
-                    .Concat(BankersStash)
-                    .GroupBy(itm => itm.ResourceName, itm => itm.Amount)
-                    .ToDictionary(g => g.Key, g => g.Sum());
-
-                foreach (var item in ResouceLimitations)
-                {
-                    double actualSum;
-                    if (sumdic.TryGetValue(item.ResourceName, out actualSum))
-                    {
-                        if (Math.Abs(actualSum - item.Amount) > 1)
-                        {
-                            SetError("Resource " + item.ResourceName + " overflowed the limitation");
-                        }
-                        return;
-                    }
-                    else
-                    {
-                        SetError("Resource " + item.ResourceName + " not prepared to anyone");
-                    }
-                }
-
-            };
-
-            OnLoadCommand.CommandCore
-                .Subscribe
-                (
-                    async e =>
-                    {
-                        if (!this.IsStarted)
-                        {
-                            var setupOk = await Navigator.FrameNavigate<bool>(
-                                SetupGameViewType,
-                                this
-                                );
-
-                            if (setupOk)
-                            {
-                                this.IsStarted = true;                                
-                            }
-                            await storage.Save();
-
-                        }
-
-                    }
-
-                );
-        }
-        GameInfomation m_GameInfomation;
-
-        IStorage<TradeGameData_Model> m_Storage;
+    
 
 
         /// <summary>
         /// 庄家资源
         /// </summary>
+        [DataMember ]
         public ObservableCollection<ResourcesEntry> BankersStash
         {
             get { return m_BankersStashLocator(this).Value; }
@@ -132,7 +52,10 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         #endregion
 
 
-
+        /// <summary>
+        /// 各种资源最大数目限制
+        /// </summary>
+         [DataMember ]
         public ObservableCollection<ResourcesEntry> ResouceLimitations
         {
             get { return m_ResouceLimitationsLocator(this).Value; }
@@ -163,6 +86,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         /// <summary>
         /// 玩家资源
         /// </summary>
+        [DataMember ]
         public ObservableCollection<PlayerData> PlayersData
         {
             get { return m_PlayersDataLocator(this).Value; }
@@ -189,8 +113,10 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
                 });
         #endregion
 
-
-
+        /// <summary>
+        /// 游戏是否已经启动
+        /// </summary>
+        [DataMember ]
         public bool IsStarted
         {
             get { return m_IsStartedLocator(this).Value; }
@@ -220,18 +146,6 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
 
 
 
-        public  CommandModel<ReactiveCommand, String> OnLoadCommand
-        {
-            get { return m_OnLoadCommand.WithViewModel(null); }
-            protected set { m_OnLoadCommand = value; }
-        }
-
-        #region OnLoadCommand Configuration
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-         CommandModel<ReactiveCommand, String> m_OnLoadCommand
-              = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
-        #endregion
-
-
     }
+	
 }

@@ -321,11 +321,6 @@
             第二个元素
             </summary>
         </member>
-        <member name="T:MVVMSidekick.ViewModels.BindableTuple">
-            <summary>
-            帮助快速创建BindableTuple的帮助类
-            </summary>
-        </member>
         <member name="T:MVVMSidekick.ViewModels.CommandModel`2">
             <summary>
             用于封装ICommand的ViewModel。一般包括一个Command实例和对应此实例的一组资源

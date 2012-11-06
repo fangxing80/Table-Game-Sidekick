@@ -15,9 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using MVVMSidekick.Reactive;
-using TableGameSidekick_Metro.Storages;
 using TableGameSidekick_Metro.DataEntity;
-
 using TableGameSidekick_Metro.ViewModels;
 using System.Threading.Tasks;
 using MVVMSidekick.ViewModels;
@@ -86,11 +84,11 @@ namespace TableGameSidekick_Metro
                         typeof (  GamePlay) , 
                         ( async (p,pars)=>
                         {
-
+                            var gplayp = p as GamePlay;
                             var gi=pars[NavigateParameterKeys.GameInfomation_ChosenGame] as GameInfomation;
                             var gameKey=gi.GameType == GameType.Advanced ? gi.AdvanceGameKey :gi.GameType.ToString ();
                             var fac = Constants.Games.Factories[gameKey] as GameFactoryBase;
-                            var game = await fac.CreateGame(gi,((GamePlay )p).GameFrame );
+                            var game = await fac.CreateGameAndNavigateTo(gi, gplayp.GameFrame);
                             p.DefaultViewModel = new GamePlay_Model()
                             {
                                 GameData  = (BindableBase)game.DefaultViewModel,
@@ -99,8 +97,8 @@ namespace TableGameSidekick_Metro
 
 
 
-                            var gplayp = p as GamePlay;
-                            gplayp.GamePage = game;
+                           
+                            
 
 
                         })
