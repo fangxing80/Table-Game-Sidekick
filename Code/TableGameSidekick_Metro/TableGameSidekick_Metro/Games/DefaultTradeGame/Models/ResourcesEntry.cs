@@ -12,7 +12,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
     [DataContract]
     public class ResourcesEntry : BindableBase<ResourcesEntry>
     {
-        
+        [DataMember]
         public string ResourceName
         {
             get { return m_ResourceNameLocator(this).Value; }
@@ -40,7 +40,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         #endregion
 
 
-        
+        [DataMember]
         public ImageData Image
         {
             get { return m_ImageLocator(this).Value; }
@@ -68,7 +68,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         #endregion
 
 
-        
+        [DataMember]
         public Double Amount
         {
             get { return m_AmountLocator(this).Value; }

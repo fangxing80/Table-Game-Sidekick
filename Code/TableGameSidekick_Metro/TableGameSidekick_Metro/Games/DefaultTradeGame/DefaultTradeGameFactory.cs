@@ -19,13 +19,20 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
 {
     public class DefaultTradeGameFactory : GameFactoryBase
     {
+
+        static DefaultTradeGameFactory()
+        {
+            TradeGamePage_Model.ExchangeViewType = typeof(Exchange);
+            TradeGamePage_Model.SetupGameViewType = typeof(SetupGame);
+            TradeGamePage_Model.ScoreBoardViewType = typeof(ScoreBoard);
+            TradeGamePage_Model.TradeGamePageViewType = typeof(TradeGamePage);
+
+        }
+
         async public override Task<LayoutAwarePage> CreateGameAndNavigateTo(GameInfomation gameInfomation, Frame targetFrame)
         {
 
-            TradeGamePage_Model.ExchangeViewType = typeof(Exchange);
-            TradeGamePage_Model.SetupGameViewType = typeof(SetupGame);
-            TradeGamePage_Model.ScoreBoardViewType=typeof (ScoreBoard );
-            TradeGamePage_Model.TradeGamePageViewType=typeof (TradeGamePage );
+
             TradeGamePage_Model vm;
             var storage = new Storage<TradeGameData>(GetSaveFileName(gameInfomation));
 
@@ -87,11 +94,11 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
                 };
 
 
-            await navigator.FrameNavigate(Views.ViewModels.TradeGamePage_Model.TradeGamePageViewType,vm,null); 
+            await navigator.FrameNavigate(Views.ViewModels.TradeGamePage_Model.TradeGamePageViewType, vm, null);
 
             //   var rval = new DefaultTradeGame.Views.TradeGamePage() { DefaultViewModel = vm };
 
-            return targetFrame.Content  as LayoutAwarePage ;
+            return targetFrame.Content as LayoutAwarePage;
 
         }
 

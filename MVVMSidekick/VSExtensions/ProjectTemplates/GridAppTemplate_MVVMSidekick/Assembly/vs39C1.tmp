@@ -21,11 +21,6 @@
             ViewModel 基类。用在所有不需要明确子类型属性定义的情形。
             </summary>
         </member>
-        <member name="F:MVVMSidekick.ViewModels.BindableBase.disposedFlag">
-            <summary>
-             0 for not disposed, 1 for disposed
-            </summary>
-        </member>
         <member name="M:MVVMSidekick.ViewModels.BindableBase.GetFieldNames">
             <summary>
             取得本VM实例已经定义的所有字段名。其中包括静态声明的和动态添加的。

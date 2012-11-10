@@ -126,16 +126,6 @@ namespace TableGameSidekick_Metro
         }
 
         /// <summary>
-        /// Invoked when the page's back button is pressed.
-        /// </summary>
-        /// <param name="sender">The back button instance.</param>
-        /// <param name="e">Event data that describes how the back button was clicked.</param>
-        protected override void GoBack(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        /// <summary>
         /// Invoked to determine the name of the visual state that corresponds to an application
         /// view state.
         /// </summary>

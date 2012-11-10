@@ -18,11 +18,15 @@ namespace TableGameSidekick_Metro.DataEntity
     public class ImageData : BindableBase<ImageData>
     {
 
+        
+
+
         public ImageData()
         {
             
 
         }
+
 
         private async void SetBitmap(byte[] bytes)
         {

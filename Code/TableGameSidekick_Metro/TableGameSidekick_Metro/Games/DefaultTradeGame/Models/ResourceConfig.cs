@@ -1,7 +1,9 @@
 ﻿using MVVMSidekick.ViewModels;
+using MVVMSidekick.Reactive;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
@@ -23,10 +25,36 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
             ValidateModel =
                 _ =>
                 {
+
                     if (CheckError(() => TotalAmount < 0, "ERROR_TotalAmount_LESS_THAN_ZERO")) return;
                     if (CheckError(() => EachPlayerAmount < 0, "ERROR_EachPlayerAmount_LESS_THAN_ZERO")) return;
-                    if (CheckError(() => EachPlayerAmount * Players > TotalAmount, "ERROR_EACH_PLAYER_AMOUNT_OVERFLOW")) return;
+
+
+                    if (HasLimitition)
+                    {
+                        if (CheckError(() => EachPlayerAmount * Players > TotalAmount, "ERROR_EACH_PLAYER_AMOUNT_OVERFLOW")) return;
+                    }
+
                 };
+
+
+            this.GetValueContainer(X => X.TotalAmount)
+
+                .GetValueChangeObservable()
+                .Select(x => null as object)
+                .Merge (
+                    this
+                    .GetValueContainer(x => x.HasLimitition)
+                    .GetValueChangeObservable ()
+                    .Select(x => null as object))              
+                .Subscribe(
+                    x =>
+                    {
+
+                        this.MaxPerPlayer = (this.HasLimitition) ? TotalAmount / players : 1000000;
+                    }
+                )
+                .RegisterDisposeToViewModel(this);
 
         }
 
@@ -198,6 +226,68 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
                         new ValueContainer<double>("EachPlayerAmount", model);
                 });
         #endregion
+
+
+
+        public bool HasLimitition
+        {
+            get { return m_HasLimititionLocator(this).Value; }
+            set { m_HasLimititionLocator(this).SetValueAndTryNotify(value); }
+        }
+
+        #region Property bool HasLimitition Setup
+        protected Property<bool> m_HasLimitition =
+          new Property<bool> { LocatorFunc = m_HasLimititionLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<BindableBase, ValueContainer<bool>> m_HasLimititionLocator =
+            RegisterContainerLocator<bool>(
+                "HasLimitition",
+                model =>
+                {
+                    model.m_HasLimitition =
+                        model.m_HasLimitition
+                        ??
+                        new Property<bool> { LocatorFunc = m_HasLimititionLocator };
+                    return model.m_HasLimitition.Container =
+                        model.m_HasLimitition.Container
+                        ??
+                        new ValueContainer<bool>("HasLimitition", model);
+                });
+        #endregion
+
+
+        
+       
+
+
+
+        public double MaxPerPlayer
+        {
+            get { return m_MaxPerPlayerLocator(this).Value; }
+            set { m_MaxPerPlayerLocator(this).SetValueAndTryNotify(value); }
+        }
+
+        #region Property double MaxPerPlayer Setup
+        protected Property<double> m_MaxPerPlayer =
+          new Property<double> { LocatorFunc = m_MaxPerPlayerLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<BindableBase, ValueContainer<double>> m_MaxPerPlayerLocator =
+            RegisterContainerLocator<double>(
+                "MaxPerPlayer",
+                model =>
+                {
+                    model.m_MaxPerPlayer =
+                        model.m_MaxPerPlayer
+                        ??
+                        new Property<double> { LocatorFunc = m_MaxPerPlayerLocator };
+                    return model.m_MaxPerPlayer.Container =
+                        model.m_MaxPerPlayer.Container
+                        ??
+                        new ValueContainer<double>("MaxPerPlayer", model);
+                });
+        #endregion
+
+
 
     }
 

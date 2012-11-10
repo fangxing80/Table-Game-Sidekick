@@ -19,7 +19,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
 {
 
 
-    [DataContract]
+
     public class TradeGamePage_Model : ViewModelBase<TradeGamePage_Model>
     {
         public static Type ExchangeViewType;
@@ -36,42 +36,26 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         }
 
 
-        public TradeGameData GameData
-        {
-            get { return m_GameDataLocator(this).Value; }
-            set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
-        }
 
-        #region Property TradeGameData GameData Setup
-        protected Property<TradeGameData> m_GameData =
-          new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<TradeGameData>> m_GameDataLocator =
-            RegisterContainerLocator<TradeGameData>(
-                "GameData",
-                model =>
-                {
-                    model.m_GameData =
-                        model.m_GameData
-                        ??
-                        new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
-                    return model.m_GameData.Container =
-                        model.m_GameData.Container
-                        ??
-                        new ValueContainer<TradeGameData>("GameData", model);
-                });
-        #endregion
 
 
         public TradeGamePage_Model(IStorage<TradeGameData> storage, GameInfomation gameInfomation)
         {
             m_GameInfomation = gameInfomation;
             m_Storage = storage;
-            GameData = storage.Value ?? new TradeGameData();
-            foreach (var player in gameInfomation.Players)
+
+
+            if (storage.Value == null)
             {
-                GameData.PlayersData.Add(new PlayerData { PlayerInfomation = player, Resources = new ObservableCollection<ResourcesEntry>() });
+                m_Storage.Value = GameData = new TradeGameData();
+
+                foreach (var player in gameInfomation.Players)
+                {
+                    GameData.PlayersData.Add(new PlayerData { PlayerInfomation = player, Resources = new ObservableCollection<ResourcesEntry>() });
+                }
+
             }
+
 
 
             base.ValidateModel =
@@ -79,10 +63,23 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
             {
                 SetError(null);
                 var sumdic =
-                    GameData.PlayersData.SelectMany(x => x.Resources)
+                    GameData.PlayersData.SelectMany(x =>
+                        {
+                            return x.Resources;
+                        })
                     .Concat(GameData.BankersStash)
-                    .GroupBy(itm => itm.ResourceName, itm => itm.Amount)
-                    .ToDictionary(g => g.Key, g => g.Sum());
+                    .GroupBy(itm =>
+                        {
+                            return itm.ResourceName;
+                        },
+                        itm =>
+                        {
+                            return itm.Amount;
+                        })
+                    .ToDictionary(g =>
+                        {
+                            return g.Key;
+                        }, g => g.Sum());
 
                 foreach (var item in GameData.ResouceLimitations)
                 {
@@ -114,15 +111,16 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
 
                             if (!this.GameData.IsStarted)
                             {
-                                var setupOk = await Navigator.FrameNavigate<bool>(
+                                var data = await Navigator.FrameNavigate<TradeGameData>(
                                     SetupGameViewType,
                                     this
                                     );
 
-                                if (setupOk)
-                                {
-                                    this.GameData.IsStarted = true;
-                                }
+                                //if (setupOk)
+                                //{
+                                //    this.GameData.IsStarted = true;
+                                //}
+                                storage.Value = this.GameData;
                                 await storage.Save();
 
                             }
@@ -139,7 +137,31 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         IStorage<TradeGameData> m_Storage;
 
 
+        public TradeGameData GameData
+        {
+            get { return m_GameDataLocator(this).Value; }
+            set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
+        }
 
+        #region Property TradeGameData GameData Setup
+        protected Property<TradeGameData> m_GameData =
+          new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        static Func<BindableBase, ValueContainer<TradeGameData>> m_GameDataLocator =
+            RegisterContainerLocator<TradeGameData>(
+                "GameData",
+                model =>
+                {
+                    model.m_GameData =
+                        model.m_GameData
+                        ??
+                        new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
+                    return model.m_GameData.Container =
+                        model.m_GameData.Container
+                        ??
+                        new ValueContainer<TradeGameData>("GameData", model);
+                });
+        #endregion
         public CommandModel<ReactiveCommand, String> OnLoadCommand
         {
             get { return m_OnLoadCommand.WithViewModel(this); }

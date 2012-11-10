@@ -10,13 +10,126 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewModels"
-    mc:Ignorable="d">
+    xmlns:data="using:TableGameSidekick_Metro.Games.DefaultTradeGame.Models"
+    mc:Ignorable="d" >
     <common:LayoutAwarePage.DefaultViewModel>
-        <vm:SetupGame_Model></vm:SetupGame_Model>
+        <vm:SetupGame_Model/>
     </common:LayoutAwarePage.DefaultViewModel>
+    
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
-        <x:String x:Key="AppName">My Application</x:String>
+        <Style x:Key="CheckBoxStyle1" TargetType="CheckBox" >
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource CheckBoxContentForegroundThemeBrush}"/>
+            <Setter Property="Padding" Value="2,3,0,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+            <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="NormalRectangle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxPointerOverBackgroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke" Storyboard.TargetName="NormalRectangle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxPointerOverBorderThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="CheckGlyph">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxPointerOverForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="IndeterminateGlyph">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxPointerOverForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="NormalRectangle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxPressedBackgroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke" Storyboard.TargetName="NormalRectangle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxPressedBorderThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="CheckGlyph">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxPressedForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="IndeterminateGlyph">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxPressedForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="NormalRectangle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxDisabledBackgroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke" Storyboard.TargetName="NormalRectangle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxDisabledBorderThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="CheckGlyph">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxDisabledForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="IndeterminateGlyph">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxDisabledForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxContentDisabledForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="CheckGlyph"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked"/>
+                                    <VisualState x:Name="Indeterminate">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="IndeterminateGlyph"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FocusStates">
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FocusVisualWhite"/>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FocusVisualBlack"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unfocused"/>
+                                    <VisualState x:Name="PointerFocused"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="27"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid VerticalAlignment="Bottom">
+                                    <Rectangle x:Name="NormalRectangle" Fill="{StaticResource CheckBoxBackgroundThemeBrush}" Height="21" Stroke="{StaticResource CheckBoxBorderThemeBrush}" StrokeThickness="{StaticResource CheckBoxBorderThemeThickness}" UseLayoutRounding="False" Width="21"/>
+                                    <Path x:Name="CheckGlyph" Data="F1 M 0,58 L 2,56 L 6,60 L 13,51 L 15,53 L 6,64 z" Fill="{StaticResource CheckBoxForegroundThemeBrush}" FlowDirection="LeftToRight" Height="14" Opacity="0" Stretch="Fill" Width="16"/>
+                                    <Rectangle x:Name="IndeterminateGlyph" Fill="{StaticResource CheckBoxForegroundThemeBrush}" Height="9" Opacity="0" UseLayoutRounding="False" Width="9"/>
+                                    <Rectangle x:Name="FocusVisualWhite" Height="27" Opacity="0" StrokeDashOffset="0.5" StrokeEndLineCap="Square" Stroke="{StaticResource FocusVisualWhiteStrokeThemeBrush}" StrokeDashArray="1,1" Width="27"/>
+                                    <Rectangle x:Name="FocusVisualBlack" Height="27" Opacity="0" StrokeDashOffset="1.5" StrokeEndLineCap="Square" Stroke="{StaticResource FocusVisualBlackStrokeThemeBrush}" StrokeDashArray="1,1" Width="27"/>
+                                </Grid>
+                                <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" Grid.Column="1" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
     <!--
@@ -36,12 +149,38 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
-            <Button x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
             <TextBlock x:Name="pageTitle" Grid.Column="1" Style="{StaticResource PageHeaderTextStyle}" Text="游戏设置"/>
             
         </Grid>
-        <ListView Grid.Row="1" Background="#ff444444" Margin="40" CanReorderItems="True" ItemsSource="{Binding DefaultViewModel.ResourceConfigs, ElementName=pageRoot}" SelectedItem="{Binding DefaultViewModel.CurrentSelectedResourceConfig.Item2, ElementName=pageRoot, Mode=TwoWay}" SelectedIndex="{Binding DefaultViewModel.CurrentSelectedResourceConfig.Item1, ElementName=pageRoot, Mode=TwoWay}"/>
+        <ListView Name="MainListView" Background="#ff444444" Margin="42,0,38,98" CanReorderItems="True" ItemsSource="{Binding DefaultViewModel.ResourceConfigs, ElementName=pageRoot}" SelectedItem="{Binding DefaultViewModel.CurrentSelectedResourceConfig.Item2, ElementName=pageRoot, Mode=TwoWay}" SelectedIndex="{Binding DefaultViewModel.CurrentSelectedResourceConfig.Item1, ElementName=pageRoot, Mode=TwoWay}" ItemsPanel="{StaticResource WarpGridItemsPanel}" Grid.Row="1">
+        
+            <ListView.ItemTemplate>
+                <DataTemplate >
+                    <Grid Background="#ff777777" Height="130" Width="382"  >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1.4*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <TextBox Text ="{Binding ResourceName}"  FontSize="30" Grid.ColumnSpan="2"  />
+                        <CheckBox x:Name="checkBox" Grid.Row="1"  HorizontalAlignment="Right" Margin="0,0,0,6" IsChecked="{Binding HasLimitition,Mode=TwoWay}"  >
+                        	<CheckBox.Resources>
+                        		
+                        	</CheckBox.Resources>
+                        	<CheckBox.Style>
+                        		<StaticResource ResourceKey="CheckBoxStyle1"/>
+                        	</CheckBox.Style> <TextBlock Text="总上限：" FontSize="20" HorizontalAlignment="Right"/></CheckBox>
+                        <TextBlock Text="每玩家：" FontSize="20" Grid.Row="2" HorizontalAlignment="Right"/>
+                        <TextBox Foreground="#ffffffff" FontSize="20" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" TextAlignment="Left" Background="Transparent"  BorderThickness="0,0,0,3" IsEnabled="{Binding IsChecked, ElementName=checkBox}" Text="{Binding TotalAmount, Mode=TwoWay}"  />
+                        <Slider  FontSize="20" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" Maximum="{Binding MaxPerPlayer}" Value="{Binding EachPlayerAmount}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
         <VisualStateManager.VisualStateGroups>
 
@@ -51,20 +190,11 @@
                 <VisualState x:Name="Filled"/>
 
                 <!-- The entire page respects the narrower 100-pixel margin convention for portrait -->
-                <VisualState x:Name="FullScreenPortrait">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PortraitBackButtonStyle}"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
+                <VisualState x:Name="FullScreenPortrait"/>
 
                 <!-- The back button and title have different styles when snapped -->
                 <VisualState x:Name="Snapped">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedBackButtonStyle}"/>
-                        </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle" Storyboard.TargetProperty="Style">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedPageHeaderTextStyle}"/>
                         </ObjectAnimationUsingKeyFrames>

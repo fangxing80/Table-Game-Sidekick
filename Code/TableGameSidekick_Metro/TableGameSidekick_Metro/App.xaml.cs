@@ -91,7 +91,7 @@ namespace TableGameSidekick_Metro
                             var game = await fac.CreateGameAndNavigateTo(gi, gplayp.GameFrame);
                             p.DefaultViewModel = new GamePlay_Model()
                             {
-                                GameData  = (BindableBase)game.DefaultViewModel,
+                                GameModel  = (BindableBase)game.DefaultViewModel,
                                 CurrentGameInfomation = gi,                                
                             };
 

@@ -20,14 +20,67 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
         // 如果您已经安装了 MVVMSidekick 代码片段，请用 propvm +tab +tab 输入属性
         public SetupGame_Model()
         {
+            ResourceConfigs.Add(new ResourceConfig(4) { EachPlayerAmount = 15, ResourceName = "Gold", TotalAmount = 1000 });
+            //ResourceConfigs.Add(new ResourceConfig(4) { EachPlayerAmount = 15, ResourceName = "Copper", TotalAmount = 1000 });
+
         }
 
         public SetupGame_Model(TradeGameData gameDataModel)
         {
             GameData = gameDataModel;
+            ConfigProperties();
             ConfigCommands();
-        }
 
+            //结算~
+            this.AddDisposeAction(
+
+                () =>
+                {
+                    gameDataModel.ResouceLimitations =
+                        new ObservableCollection<ResourcesEntry>(
+                            this.ResourceConfigs
+                            .Select(
+                              rc =>
+                              {
+                                  return new ResourcesEntry { Amount = rc.HasLimitition ? double.MaxValue : rc.TotalAmount, ResourceName = rc.ResourceName };
+                              }));
+
+
+                    foreach (var item in gameDataModel.PlayersData)
+                    {
+                        item.Resources =
+                            new ObservableCollection<ResourcesEntry>(
+                                ResourceConfigs
+                                    .Select(rc =>
+                                    {
+                                        return new ResourcesEntry { Amount = rc.EachPlayerAmount, ResourceName = rc.ResourceName };
+                                    })
+                            );
+                    }
+
+                    gameDataModel.BankersStash =
+                        new ObservableCollection<ResourcesEntry>(
+                                ResourceConfigs
+                                    .Select(rc =>
+                                    {
+                                        return new ResourcesEntry { Amount = rc.HasLimitition ? (rc.TotalAmount - rc.EachPlayerAmount * rc.Players) : (double.MaxValue), ResourceName = rc.ResourceName };
+                                    })
+                            );
+
+
+
+
+                }
+
+
+            );
+
+        }
+        void ConfigProperties()
+        {
+
+
+        }
         void ConfigCommands()
         {
             //点击创建记录按钮，增加一条记录
@@ -40,8 +93,14 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                         ResourceConfigs.Add(
                             new ResourceConfig(GameData.PlayersData.Count)
                             {
-                                ResourceName = "Resource",
+                                ResourceName = "Resource" + ResourceConfigs.Count.ToString(),
                                 ImageKey = "Image",
+                                HasLimitition = false,
+                                TotalAmount = 0,
+                                MaxPerPlayer = 1000000,
+                                EachPlayerAmount =100000,
+
+
                             }
                         );
 
@@ -79,26 +138,42 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                     {
 
                         //this.Navigator.GoBack();
-                        this.Close ();
+
+                        this.Close();
+
                         //离开页面
                     }
    ).RegisterDisposeToViewModel(this);
 
 
-            this.GetValueContainer<string>("Error")
-                .GetValueChangeObservable()
-                .Where(ve => string.IsNullOrEmpty(ve.EventArgs))  //只有在没有任何错误的情况下可以触发事件
+            this.StartGameCommmand
+                .CommandCore
                 .Subscribe(
-                    ve =>
-                    {
+                 async ve =>
+                 {
+                     if (!IsUIBusy)
+                     {
+                         IsUIBusy = true;
 
-                        //确定输入合法则开始游戏
-                        GameData.IsStarted = true;
-                        //离开页面
-                        this.Dispose();
+                         if (this.ResourceConfigs.All(x => (x as IBindableBase).Error == null))
+                         {
+                             //确定输入合法则开始游戏
+                             GameData.IsStarted = true;
+                         }
+                         else
+                         {
+                             var d = new Windows.UI.Popups.MessageDialog("Input Inlegal");
+                             await d.ShowAsync();
 
-                    }
-            ).RegisterDisposeToViewModel(this);
+
+                         }
+                         IsUIBusy = false;
+                     }
+
+                     //离开页面
+                     this.Close();
+                 }
+                 ).RegisterDisposeToViewModel(this);
         }
 
 
@@ -157,7 +232,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                 });
         #endregion
 
-        
+
         public TradeGameData GameData
         {
             get { return m_GameDataLocator(this).Value; }
@@ -231,7 +306,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
         #region StartGameCommmand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         CommandModel<ReactiveCommand, String> m_StartGameCommmand
-            = new ReactiveCommand(canExecute: false).CreateCommandModel("StartGameCommmand");
+            = new ReactiveCommand(canExecute: true).CreateCommandModel("StartGameCommmand");
         #endregion
 
 

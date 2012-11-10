@@ -9,6 +9,7 @@
     xmlns:common="using:MVVMSidekick.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:TableGameSidekick_Metro.ViewModels"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -18,7 +19,9 @@
             x:Name="itemsViewSource"
             Source="{Binding Items}"/>
     </Page.Resources>
-
+    <common:LayoutAwarePage.DefaultViewModel >
+        <vm:GamePlay_Model/>
+    </common:LayoutAwarePage.DefaultViewModel>
     <!--
         This grid acts as a root panel for the page that defines two rows:
         * Row 0 contains the back button and page title
@@ -35,6 +38,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition  Width="140"/>
         </Grid.ColumnDefinitions>
+        <Button x:Name="backButton" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}" Command="{Binding DefaultViewModel.BackToMainCommand, ElementName=pageRoot, Mode=OneWay}"/>
         <Frame Grid.Column="1" Grid.Row="1" Background="White" x:FieldModifier="public" Name="GameFrame"></Frame>
        
     </Grid>

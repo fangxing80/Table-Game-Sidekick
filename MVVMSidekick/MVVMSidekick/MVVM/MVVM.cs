@@ -88,6 +88,11 @@ namespace MVVMSidekick
             : IDisposable, INotifyPropertyChanged, IDataErrorInfo, IBindableBase
         {
 
+            /// <summary>
+            ///  0 for not disposed, 1 for disposed
+            /// </summary>
+            private int disposedFlag = 0;
+
             #region 索引与字段名
             /// <summary>
             /// 取得本VM实例已经定义的所有字段名。其中包括静态声明的和动态添加的。
@@ -137,39 +142,48 @@ namespace MVVMSidekick
                 AddDisposeAction(() => item.Dispose());
             }
 
-
+            ~BindableBase()
+            {
+                Dispose();
+            }
 
             /// <summary>
             /// 销毁，尝试运行所有注册的销毁操作
             /// </summary>
             public void Dispose()
             {
-
-                var lst = Interlocked.Exchange(ref _disposeActions, null);
-                if (lst != null)
+                if (Interlocked.Exchange(ref disposedFlag, 1) == 0)
                 {
-                    var exlst =
-                        lst.Select
-                        (
-                          action =>
-                          {
 
-                              if (action != null)
-                                  try
-                                  {
-                                      action();
-                                  }
-                                  catch (Exception ex)
-                                  {
 
-                                      return ex;
-                                  }
-                              return null;
-                          }
-                        )
-                        .ToList();
+                    var lst = Interlocked.Exchange(ref _disposeActions, null);
+                    if (lst != null)
+                    {
+                        var exlst =
+                            lst.Select
+                            (
+                              action =>
+                              {
 
-                    OnDisposeExceptions(exlst);
+                                  if (action != null)
+                                      try
+                                      {
+                                          action();
+                                      }
+                                      catch (Exception ex)
+                                      {
+
+                                          return ex;
+                                      }
+                                  return null;
+                              }
+                            )
+                            .ToList();
+
+                        OnDisposeExceptions(exlst);
+                    }
+
+                    GC.SuppressFinalize(this);
                 }
 
 
@@ -896,7 +910,7 @@ namespace MVVMSidekick
         {
 
         }
-        [DataContract]
+   
         public partial class ViewModelBase<TViewModel, TResult> : ViewModelBase<TViewModel> where TViewModel : ViewModelBase<TViewModel, TResult>
         {
 
@@ -953,7 +967,7 @@ namespace MVVMSidekick
         /// 一个VM,带有若干界面特性
         /// </summary>
         /// <typeparam name="TViewModel">本身的类型</typeparam>
-        [DataContract]
+ 
         public abstract partial class ViewModelBase<TViewModel> : BindableBase<TViewModel>, IViewModelBase where TViewModel : ViewModelBase<TViewModel>
         {
 

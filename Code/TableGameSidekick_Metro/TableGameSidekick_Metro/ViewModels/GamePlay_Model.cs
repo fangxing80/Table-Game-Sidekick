@@ -13,16 +13,16 @@ using System.Reactive.Linq;
 using MVVMSidekick.Storages;
 namespace TableGameSidekick_Metro.ViewModels
 {
-    [DataContract]
+
     public class GamePlay_Model : ViewModelBase<GamePlay_Model>
     {
-        protected IStorage<GamePlay_Model> m_StorageFactory;
+
 
 
         public GamePlay_Model()
         {
-     
 
+            ConfigCommands();
         }
 
         protected virtual async Task ConfigCommands()
@@ -31,18 +31,14 @@ namespace TableGameSidekick_Metro.ViewModels
             GetValueContainer(x => x.CurrentGameInfomation)
                 .GetValueChangeObservable()
                 .Select(x => x.EventArgs != null)
-                .Subscribe(SaveDataCommand.CommandCore.CanExecuteObserver);
+                .Subscribe(BackToMainCommand.CommandCore.CanExecuteObserver);
 
-            SaveDataCommand.CommandCore.Subscribe
+            BackToMainCommand.CommandCore.Subscribe
                 (
-
-                    async e =>
+                    e =>
                     {
-                        m_StorageFactory.Value = this;
-                        await m_StorageFactory.Save();
-
+                        this.Close();
                     }
-
                 );
 
 
@@ -61,7 +57,7 @@ namespace TableGameSidekick_Metro.ViewModels
             }
         }
 
-    
+
         public GameInfomation CurrentGameInfomation
         {
             get { return m_CurrentGameInfomationLocator(this).Value; }
@@ -93,46 +89,50 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
-    
-        public BindableBase GameData
+
+
+        public BindableBase GameModel
         {
-            get { return m_GameDataLocator(this).Value; }
-            set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
+            get { return m_GameModelLocator(this).Value; }
+            set { m_GameModelLocator(this).SetValueAndTryNotify(value); }
         }
 
-        #region Property ViewModelBase GameData Setup
-        protected Property<BindableBase> m_GameData =
-          new Property<BindableBase> { LocatorFunc = m_GameDataLocator };
+        #region Property BindableBase GameModel Setup
+        protected Property<BindableBase> m_GameModel =
+          new Property<BindableBase> { LocatorFunc = m_GameModelLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<BindableBase>> m_GameDataLocator =
+        static Func<BindableBase, ValueContainer<BindableBase>> m_GameModelLocator =
             RegisterContainerLocator<BindableBase>(
-                "GameData",
+                "GameModel",
                 model =>
                 {
-                    model.m_GameData =
-                        model.m_GameData
+                    model.m_GameModel =
+                        model.m_GameModel
                         ??
-                        new Property<BindableBase> { LocatorFunc = m_GameDataLocator };
-                    return model.m_GameData.Container =
-                        model.m_GameData.Container
+                        new Property<BindableBase> { LocatorFunc = m_GameModelLocator };
+                    return model.m_GameModel.Container =
+                        model.m_GameModel.Container
                         ??
-                        new ValueContainer<BindableBase>("GameData", model);
+                        new ValueContainer<BindableBase>("GameModel", model);
                 });
         #endregion
 
 
 
-        public CommandModel<ReactiveCommand, String> SaveDataCommand
+
+
+        public CommandModel<ReactiveCommand, String> BackToMainCommand
         {
-            get { return m_SaveDataCommand.WithViewModel(this); }
-            protected set { m_SaveDataCommand = value; }
+            get { return m_BackToMainCommand.WithViewModel(this); }
+            protected set { m_BackToMainCommand = value; }
         }
 
-        #region SaveDataCommand Configuration
+        #region BackToMainCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_SaveDataCommand
+        CommandModel<ReactiveCommand, String> m_BackToMainCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
+
 
 
 

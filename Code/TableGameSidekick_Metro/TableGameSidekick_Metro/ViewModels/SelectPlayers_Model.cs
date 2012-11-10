@@ -27,8 +27,6 @@ namespace TableGameSidekick_Metro.ViewModels
             m_PlayersStorage = new Storage<List<PlayerInfomation>>();
             m_PlayersStorage.Value = new List<PlayerInfomation>();
             {
-                //new  PlayerInfomation { GetFieldNames() }
-
             };
             this.PresavedImagePaths = new ObservableCollection<string>(Constants.PresavedPics);
         }
@@ -40,8 +38,6 @@ namespace TableGameSidekick_Metro.ViewModels
             m_PlayersStorage = playersStorage;
             this.PresavedImagePaths = new ObservableCollection<string>(imageFiles);
             ConfigModel();
-
-
             ConfigCommands();
 
         }
@@ -188,7 +184,7 @@ namespace TableGameSidekick_Metro.ViewModels
             await m_PlayersStorage.Refresh();
             this.SavedPlayers.Clear();
 
-            if (m_PlayersStorage.Value !=null)
+            if (m_PlayersStorage.Value != null)
             {
                 foreach (var item in m_PlayersStorage.Value)
                 {
