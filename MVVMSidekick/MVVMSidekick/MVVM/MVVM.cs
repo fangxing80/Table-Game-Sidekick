@@ -312,7 +312,7 @@ namespace MVVMSidekick
             /// <param name="item">IDisposable实例</param>
             /// <param name="vm">VM实例</param>
             /// <returns></returns>
-            public static T RegisterDisposeToViewModel<T>(this T item, BindableBase vm) where T : IDisposable
+            public static T DisposeWith<T>(this T item, BindableBase vm) where T : IDisposable
             {
                 vm.AddDisposable(item);
                 return item;

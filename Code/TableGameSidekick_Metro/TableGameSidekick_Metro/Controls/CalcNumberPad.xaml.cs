@@ -203,7 +203,7 @@ namespace TableGameSidekick_Metro.Controls
                      }
                 )
                 .Subscribe()
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
 
 
         }
@@ -225,7 +225,7 @@ namespace TableGameSidekick_Metro.Controls
                         ActualInputChars.Add(input[0]);
                     }
 
-                ).RegisterDisposeToViewModel(this);
+                ).DisposeWith(this);
 
             btnClick.Where(x => x.Length != 1)
                 .Subscribe
@@ -266,7 +266,7 @@ namespace TableGameSidekick_Metro.Controls
                         }
                     }
 
-                ).RegisterDisposeToViewModel(this);
+                ).DisposeWith(this);
             #endregion
 
             #region 绑定到 Textbox上的命令
@@ -282,7 +282,7 @@ namespace TableGameSidekick_Metro.Controls
                       ShowCommand(fel as TextBox);
 
                   }
-                ).RegisterDisposeToViewModel(this);
+                ).DisposeWith(this);
             #endregion
         }
 

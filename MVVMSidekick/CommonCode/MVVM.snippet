@@ -113,18 +113,20 @@
         </Literal>
       </Declarations>
       <Code Language="csharp" >
-        <![CDATA[
-
-        public CommandModel<$commandType$, $resourceType$> $commandName$
+        <![CDATA[        public CommandModel<$commandType$, $resourceType$> Command$commandName$
         {
-            get { return _$commandName$.WithViewModel(this); }
-            protected set { _$commandName$ = value; }
-        }       
-        
-        #region $commandName$ Configuration
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<$commandType$, $resourceType$> _$commandName$
-            = new $commandType$(canExecute: true).CreateCommandModel(default($resourceType$));
+            get { return _Command$commandName$Locator(this).Value; }
+            set { _Command$commandName$Locator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property CommandModel<$commandType$, $resourceType$> Command$commandName$ Setup        
+        protected Property<CommandModel<$commandType$, $resourceType$>> _Command$commandName$ = new Property<CommandModel<$commandType$, $resourceType$>>{ LocatorFunc = _Command$commandName$Locator};
+        static Func<BindableBase,ValueContainer<CommandModel<$commandType$, $resourceType$>>> _Command$commandName$Locator= RegisterContainerLocator<CommandModel<$commandType$, $resourceType$>>("Command$commandName$", model =>model.Initialize("Command$commandName$",ref model._Command$commandName$, ref _Command$commandName$Locator,_Command$commandName$DefaultValueFactory));         
+        static Func<BindableBase,CommandModel<$commandType$, $resourceType$>> _Command$commandName$DefaultValueFactory =
+            model => {
+                var cmd=new ReactiveCommand(canExecute: true) { ViewModel = model }; //New Command Core
+                //cmd.Subscribe (_=>{ } ).RegisterDisposeToViewModel(model); //Config it if needed
+                return cmd.CreateCommandModel("$commandName$"); 
+            };
         #endregion
 ]]>
       </Code>

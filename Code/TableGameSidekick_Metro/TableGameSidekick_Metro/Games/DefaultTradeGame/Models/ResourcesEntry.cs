@@ -1,4 +1,5 @@
-﻿using MVVMSidekick.ViewModels;
+﻿using MVVMSidekick.Reactive;
+using MVVMSidekick.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,6 +95,24 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
                         new ValueContainer<Double>("Amount", model);
                 });
         #endregion
+
+        
+        public CommandModel<ReactiveCommand, String> CommandSomeCommand
+        {
+            get { return _CommandSomeCommandLocator(this).Value; }
+            set { _CommandSomeCommandLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property CommandModel<ReactiveCommand, String> CommandSomeCommand Setup
+        protected Property<CommandModel<ReactiveCommand, String>> _CommandSomeCommand = new Property<CommandModel<ReactiveCommand, String>> { LocatorFunc = _CommandSomeCommandLocator };
+        static Func<BindableBase, ValueContainer<CommandModel<ReactiveCommand, String>>> _CommandSomeCommandLocator = RegisterContainerLocator<CommandModel<ReactiveCommand, String>>("CommandSomeCommand", model => model.Initialize("CommandSomeCommand", ref model._CommandSomeCommand, ref _CommandSomeCommandLocator, _CommandSomeCommandDefaultValueFactory));
+        static Func<BindableBase, CommandModel<ReactiveCommand, String>> _CommandSomeCommandDefaultValueFactory =
+            model => {
+                var cmd=new ReactiveCommand(canExecute: true) { ViewModel = model }; //New Command Core
+                cmd.Subscribe(_ => { }).DisposeWith(model); //Config it if needed
+                return cmd.CreateCommandModel("SomeCommand"); 
+            };
+        #endregion
+
 
 
 

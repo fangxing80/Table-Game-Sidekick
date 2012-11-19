@@ -73,7 +73,7 @@ namespace TableGameSidekick_Metro.ViewModels
                      }
                      )
                 )
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
 
 
             _SelectedItemsLocator(this)
@@ -83,7 +83,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 )
                 .Subscribe(this.DeleteSelectedSavedPlayerCommand
                                 .CommandCore.CanExecuteObserver)
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
             DeleteSelectedSavedPlayerCommand.CommandCore
                 .Subscribe
                 (
@@ -97,7 +97,7 @@ namespace TableGameSidekick_Metro.ViewModels
                        await _PlayersStorage.Save();
                    }
                 )
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
 
             _SelectedItemsLocator(this)
                 .GetValueChangeEventArgObservable()
@@ -178,7 +178,7 @@ namespace TableGameSidekick_Metro.ViewModels
                  }
 
              )
-             .RegisterDisposeToViewModel(this);
+             .DisposeWith(this);
 
 
             await _PlayersStorage.Refresh();

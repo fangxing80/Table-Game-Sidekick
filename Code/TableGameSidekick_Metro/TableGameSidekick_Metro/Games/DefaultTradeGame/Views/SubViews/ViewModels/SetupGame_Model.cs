@@ -105,7 +105,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                         );
 
                     }
-                ).RegisterDisposeToViewModel(this);
+                ).DisposeWith(this);
             //点击创建记录按钮，增加一条记录
 
             CurrentSelectedResourceConfig.GetValueContainer(x => x.Item2)
@@ -117,7 +117,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                 .Subscribe(
                     RemoveResourceCommand.CommandCore.CanExecuteObserver
                 )
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
             RemoveResourceCommand
                 .CommandCore
                 .Subscribe(
@@ -129,7 +129,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                         }
 
                     }
-            ).RegisterDisposeToViewModel(this);
+            ).DisposeWith(this);
 
             BackwardCommand
                 .CommandCore
@@ -143,7 +143,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
                         //离开页面
                     }
-   ).RegisterDisposeToViewModel(this);
+   ).DisposeWith(this);
 
 
             this.StartGameCommmand
@@ -173,7 +173,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                      //离开页面
                      this.Close();
                  }
-                 ).RegisterDisposeToViewModel(this);
+                 ).DisposeWith(this);
         }
 
 

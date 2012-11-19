@@ -180,7 +180,7 @@
             为ViewModel增加的一些关于Dispose的快捷方法
             </summary>
         </member>
-        <member name="M:MVVMSidekick.ViewModels.BindableBaseExtensions.DisposeWith``1(``0,MVVMSidekick.ViewModels.BindableBase)">
+        <member name="M:MVVMSidekick.ViewModels.BindableBaseExtensions.RegisterDisposeToViewModel``1(``0,MVVMSidekick.ViewModels.BindableBase)">
             <summary>
             将IDisposable 对象注册到VM中的销毁对象列表。
             </summary>

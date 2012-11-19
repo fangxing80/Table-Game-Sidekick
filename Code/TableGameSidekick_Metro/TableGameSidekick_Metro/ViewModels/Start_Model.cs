@@ -30,7 +30,7 @@ namespace TableGameSidekick_Metro.ViewModels
         private void ConfigProperties()
         {
             _CancellationTokenSource = new CancellationTokenSource();
-            _CancellationTokenSource.RegisterDisposeToViewModel(this);
+            _CancellationTokenSource.DisposeWith(this);
 
 
             this.Games = new ObservableCollection<GameInfomation>
@@ -93,41 +93,52 @@ namespace TableGameSidekick_Metro.ViewModels
                 });
         #endregion
 
-
-
+        
         public ObservableCollection<GameInfomation> Games
         {
             get { return _GamesLocator(this).Value; }
             set { _GamesLocator(this).SetValueAndTryNotify(value); }
         }
-
-
         #region Property ObservableCollection<GameInfomation> Games Setup
-
-        protected Property<ObservableCollection<GameInfomation>> _Games =
-          new Property<ObservableCollection<GameInfomation>> { LocatorFunc = _GamesLocator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<GameInfomation>>> _GamesLocator =
-            RegisterContainerLocator<ObservableCollection<GameInfomation>>(
-            "Games",
-            model =>
-            {
-                model._Games =
-                    model._Games
-                    ??
-                    new Property<ObservableCollection<GameInfomation>> { LocatorFunc = _GamesLocator };
-                return model._Games.Container =
-                    model._Games.Container
-                    ??
-                    new ValueContainer<ObservableCollection<GameInfomation>>("Games", model);
-            });
-
+        protected Property<ObservableCollection<GameInfomation>> _Games = new Property<ObservableCollection<GameInfomation>> { LocatorFunc = _GamesLocator };
+        static Func<BindableBase, ValueContainer<ObservableCollection<GameInfomation>>> _GamesLocator = RegisterContainerLocator<ObservableCollection<GameInfomation>>("Games", model => model.Initialize("Games", ref model._Games, ref _GamesLocator, _GamesDefaultValueFactory));
+        static Func<ObservableCollection<GameInfomation>> _GamesDefaultValueFactory = null;
         #endregion
 
 
+        
 
 
 
+
+
+        
+
+        public CommandModel<ReactiveCommand, String> SomeCommand
+        {
+            get { return _SomeCommand.WithViewModel(this); }
+            protected set { _SomeCommand = value; }
+        }       
+        
+        #region SomeCommand Configuration
+        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
+        CommandModel<ReactiveCommand, String> _SomeCommand
+            = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
+        #endregion
+        
+        
+         public CommandModel<ReactiveCommand, String> CommandSomeCommand
+        {
+            get { return _CommandSomeCommandLocator(this).Value; }
+            set { _CommandSomeCommandLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property CommandModel<ReactiveCommand, String> CommandSomeCommand Setup        
+        protected Property<CommandModel<ReactiveCommand, String>> _CommandSomeCommand = new Property<CommandModel<ReactiveCommand, String>>{ LocatorFunc = _CommandSomeCommandLocator};
+        static Func<BindableBase,ValueContainer<CommandModel<ReactiveCommand, String>>> _CommandSomeCommandLocator= RegisterContainerLocator<CommandModel<ReactiveCommand, String>>("CommandSomeCommand", model =>model.Initialize("CommandSomeCommand",ref model._CommandSomeCommand, ref _CommandSomeCommandLocator,_CommandSomeCommandDefaultValueFactory));
+        static Func<BindableBase, CommandModel<ReactiveCommand, String>> _CommandSomeCommandDefaultValueFactory =
+            model => new ReactiveCommand(canExecute: true) { ViewModel = model }.CreateCommandModel("SomeCommand")
+            ;
+        #endregion
 
 
 
@@ -232,14 +243,14 @@ namespace TableGameSidekick_Metro.ViewModels
                       //否则（取消的话）返回主界面
                   }
                 )
-                .RegisterDisposeToViewModel(this); //主界面被dispose时注销此事件
+                .DisposeWith(this); //主界面被dispose时注销此事件
 
 
             this.GetValueContainer(x => x.SelectedGame)
                 .GetValueChangeObservable()
                 .Select(e => e.EventArgs != null)
                 .Subscribe(_ContinueCommand.CommandCore.CanExecuteObserver)
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
 
 
             ContinueCommand.CommandCore
@@ -257,7 +268,7 @@ namespace TableGameSidekick_Metro.ViewModels
                             }
                         )
                 )
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
 
 
         }

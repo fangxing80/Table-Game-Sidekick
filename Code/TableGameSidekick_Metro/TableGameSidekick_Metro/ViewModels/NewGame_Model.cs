@@ -69,7 +69,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     }
 
                 )
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
 
             #endregion
 
@@ -119,7 +119,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
                 }
             )
-            .RegisterDisposeToViewModel(this);
+            .DisposeWith(this);
             #endregion
 
             #region 设置删除已选玩家 Command
@@ -131,7 +131,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     DeleteSelectedPlayersCommand
                     .CommandCore
                     .CanExecuteObserver)
-                .RegisterDisposeToViewModel(this); ;
+                .DisposeWith(this); ;
 
             DeleteSelectedPlayersCommand.CommandCore
                 .Subscribe(
@@ -172,7 +172,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 (
                     SaveGameInfoAndStartCommand.CommandCore.CanExecuteObserver
                 )
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
 
             SaveGameInfoAndStartCommand.CommandCore
                 .Subscribe(
@@ -188,7 +188,7 @@ namespace TableGameSidekick_Metro.ViewModels
                          this.Close();
                      }
                 )
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
             #endregion
         }
 

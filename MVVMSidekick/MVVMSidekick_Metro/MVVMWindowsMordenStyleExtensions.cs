@@ -34,7 +34,7 @@ namespace MVVMSidekick
             {
                 knownTypes = knownTypes ?? new Type[0];
                 _BusyWait = new System.Threading.AutoResetEvent(true)
-                    .RegisterDisposeToViewModel(this);
+                    .DisposeWith(this);
                 _Folder = folder ?? Windows.Storage.ApplicationData.Current.LocalFolder;
                 _FileName = fileName ?? typeof(T).FullName;
                 _Ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(T), knownTypes);

@@ -54,7 +54,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
                         this.MaxPerPlayer = (this.HasLimitition) ? TotalAmount / players : 1000000;
                     }
                 )
-                .RegisterDisposeToViewModel(this);
+                .DisposeWith(this);
 
         }
 
