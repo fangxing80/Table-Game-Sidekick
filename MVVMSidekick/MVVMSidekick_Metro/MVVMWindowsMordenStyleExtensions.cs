@@ -33,28 +33,28 @@ namespace MVVMSidekick
             public Storage(string fileName = null, StorageFolder folder = null, Type[] knownTypes = null)
             {
                 knownTypes = knownTypes ?? new Type[0];
-                m_BusyWait = new System.Threading.AutoResetEvent(true)
+                _BusyWait = new System.Threading.AutoResetEvent(true)
                     .RegisterDisposeToViewModel(this);
-                m_Folder = folder ?? Windows.Storage.ApplicationData.Current.LocalFolder;
-                m_FileName = fileName ?? typeof(T).FullName;
-                m_Ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(T), knownTypes);
+                _Folder = folder ?? Windows.Storage.ApplicationData.Current.LocalFolder;
+                _FileName = fileName ?? typeof(T).FullName;
+                _Ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(T), knownTypes);
 
             }
 
-            protected string m_FileName;
-            private System.Runtime.Serialization.Json.DataContractJsonSerializer m_Ser;
+            protected string _FileName;
+            private System.Runtime.Serialization.Json.DataContractJsonSerializer _Ser;
 
 
 
-            StorageFolder m_Folder;
+            StorageFolder _Folder;
 
-            protected System.Threading.AutoResetEvent m_BusyWait;
+            protected System.Threading.AutoResetEvent _BusyWait;
 
             protected IDisposable CreateBusyLock()
             {
-                m_BusyWait.WaitOne();
+                _BusyWait.WaitOne();
 
-                var dis = System.Reactive.Disposables.Disposable.Create(() => m_BusyWait.Set());
+                var dis = System.Reactive.Disposables.Disposable.Create(() => _BusyWait.Set());
 
                 return dis;
             }
@@ -64,17 +64,17 @@ namespace MVVMSidekick
             {
                 using (CreateBusyLock())
                 {
-                    var folder = m_Folder;
+                    var folder = _Folder;
                     var file = await GetFileIfExists(folder);
 
 
                     if (file == null)
                     {
-                        file = await folder.CreateFileAsync(m_FileName);
+                        file = await folder.CreateFileAsync(_FileName);
                     }
 
                     var ms = new MemoryStream();
-                    m_Ser.WriteObject(ms, this.Value);
+                    _Ser.WriteObject(ms, this.Value);
                     ms.Position = 0;
                     await Windows.Storage.FileIO.WriteBytesAsync(file, ms.ToArray());
 
@@ -90,7 +90,7 @@ namespace MVVMSidekick
 
                 try
                 {
-                    return await m_Folder.GetFileAsync(m_FileName);
+                    return await _Folder.GetFileAsync(_FileName);
                 }
                 catch (FileNotFoundException)
                 {
@@ -103,7 +103,7 @@ namespace MVVMSidekick
             {
                 using (CreateBusyLock())
                 {
-                    var folder = m_Folder;
+                    var folder = _Folder;
                     var file = await GetFileIfExists(folder);
                     if (file != null)
                     {
@@ -115,7 +115,7 @@ namespace MVVMSidekick
 
                             try
                             {
-                                var lst = m_Ser.ReadObject(ms);
+                                var lst = _Ser.ReadObject(ms);
 
                                 this.Value = (T)(lst);
                             }
@@ -145,7 +145,7 @@ namespace MVVMSidekick
                 get
                 {
 
-                    var vc = m_ValueLocator(this);
+                    var vc = _ValueLocator(this);
                     var v = vc.Value;
                     //if (v == null || v.Equals(default(T)))
                     //{
@@ -156,26 +156,26 @@ namespace MVVMSidekick
                     return v;
 
                 }
-                set { m_ValueLocator(this).SetValueAndTryNotify(value); }
+                set { _ValueLocator(this).SetValueAndTryNotify(value); }
             }
 
 
             #region Property T Value Setup
 
-            protected Property<T> m_Value =
-              new Property<T> { LocatorFunc = m_ValueLocator };
+            protected Property<T> _Value =
+              new Property<T> { LocatorFunc = _ValueLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<BindableBase, ValueContainer<T>> m_ValueLocator =
+            static Func<BindableBase, ValueContainer<T>> _ValueLocator =
                 RegisterContainerLocator<T>(
                 "Value",
                 model =>
                 {
-                    model.m_Value =
-                        model.m_Value
+                    model._Value =
+                        model._Value
                         ??
-                        new Property<T> { LocatorFunc = m_ValueLocator };
-                    return model.m_Value.Container =
-                        model.m_Value.Container
+                        new Property<T> { LocatorFunc = _ValueLocator };
+                    return model._Value.Container =
+                        model._Value.Container
                         ??
                         new ValueContainer<T>("Value", model);
                 });
@@ -1029,14 +1029,14 @@ namespace MVVMSidekick
         {
             public FrameNavigator(Frame frame, EventRouter.EventRouter eventRouter)
             {
-                m_Frame = frame;
-                m_EventRouter = eventRouter;
+                _Frame = frame;
+                _EventRouter = eventRouter;
                 this.PageInitActions = new Dictionary<Type, Action<LayoutAwarePage, IDictionary<string, object>>>();
             }
 
 
-            Frame m_Frame;
-            EventRouter.EventRouter m_EventRouter;
+            Frame _Frame;
+            EventRouter.EventRouter _EventRouter;
 
             void CheckParametersNull(ref  Dictionary<string, object> parameters)
             {
@@ -1060,7 +1060,7 @@ namespace MVVMSidekick
                         task.Start();
                     };
                 arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
-                m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+                _EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
 
                 return task;
 
@@ -1086,7 +1086,7 @@ namespace MVVMSidekick
 
 
 
-                m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+                _EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
 
                 return taskR;
 
@@ -1115,7 +1115,7 @@ namespace MVVMSidekick
 
 
 
-                m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+                _EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
                 return taskVm;
             }
 
@@ -1149,7 +1149,7 @@ namespace MVVMSidekick
 
 
 
-                m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+                _EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
                 return new NavigateResult<TViewModel, TResult>
                 {
                     ViewModel = taskVm,
@@ -1171,7 +1171,7 @@ namespace MVVMSidekick
             //            task.Start();
             //        };
             //    arg.ParameterDictionary[NavigateParameterKeys.FinishedCallback] = finishNavigateAction;
-            //    m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+            //    _EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
 
             //    return task;
 
@@ -1197,7 +1197,7 @@ namespace MVVMSidekick
 
 
 
-            //    m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+            //    _EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
 
             //    return taskR;
 
@@ -1226,7 +1226,7 @@ namespace MVVMSidekick
 
 
 
-            //    m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+            //    _EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
             //    return taskVm;
             //}
 
@@ -1260,7 +1260,7 @@ namespace MVVMSidekick
 
 
 
-            //    m_EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
+            //    _EventRouter.RaiseEvent<NavigateCommandEventArgs>(arg.ViewModel, arg);
             //    return new NavigateResult<TViewModel, TResult>
             //    {
             //        ViewModel = taskVm,
@@ -1277,7 +1277,7 @@ namespace MVVMSidekick
             //    {
             //        ParameterDictionary = parameters,
             //        TargetViewType =  ,
-            //        TargetFrame = m_Frame,
+            //        TargetFrame = _Frame,
             //        ViewModel = sourceVm
             //    };
             //    return arg;
@@ -1292,7 +1292,7 @@ namespace MVVMSidekick
                 {
                     ParameterDictionary = parameters,
                     TargetViewType = viewType,
-                    TargetFrame = m_Frame,
+                    TargetFrame = _Frame,
                     ViewModel = sourceVm
                 };
                 return arg;
@@ -1302,20 +1302,20 @@ namespace MVVMSidekick
 
             public bool GoForward()
             {
-                var can = m_Frame.CanGoForward;
+                var can = _Frame.CanGoForward;
                 if (can)
                 {
-                    m_Frame.GoForward();
+                    _Frame.GoForward();
                 }
                 return can;
             }
 
             public bool GoBack()
             {
-                var can = m_Frame.CanGoBack;
+                var can = _Frame.CanGoBack;
                 if (can)
                 {
-                    m_Frame.GoBack();
+                    _Frame.GoBack();
                 }
                 return can;
             }

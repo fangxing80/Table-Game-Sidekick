@@ -57,30 +57,30 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public Byte[] ByteArray
         {
-            get { return m_ByteArrayLocator(this).Value; }
+            get { return _ByteArrayLocator(this).Value; }
             set
             {
-                m_ByteArrayLocator(this).SetValueAndTryNotify(value);
+                _ByteArrayLocator(this).SetValueAndTryNotify(value);
                 SetBitmap(value);
 
             }
         }
 
         #region Property Byte[] ByteArray Setup
-        protected Property<Byte[]> m_ByteArray =
-          new Property<Byte[]> { LocatorFunc = m_ByteArrayLocator };
+        protected Property<Byte[]> _ByteArray =
+          new Property<Byte[]> { LocatorFunc = _ByteArrayLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<Byte[]>> m_ByteArrayLocator =
+        static Func<BindableBase, ValueContainer<Byte[]>> _ByteArrayLocator =
             RegisterContainerLocator<Byte[]>(
             "ByteArray",
             model =>
             {
-                model.m_ByteArray =
-                    model.m_ByteArray
+                model._ByteArray =
+                    model._ByteArray
                     ??
-                    new Property<Byte[]> { LocatorFunc = m_ByteArrayLocator };
-                return model.m_ByteArray.Container =
-                    model.m_ByteArray.Container
+                    new Property<Byte[]> { LocatorFunc = _ByteArrayLocator };
+                return model._ByteArray.Container =
+                    model._ByteArray.Container
                     ??
                     new ValueContainer<Byte[]>("ByteArray", model, new byte[0]);
             });
@@ -105,25 +105,25 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public BitmapImage BitmapImage
         {
-            get { return m_BitmapImageLocator(this).Value; }
-            set { m_BitmapImageLocator(this).SetValueAndTryNotify(value); }
+            get { return _BitmapImageLocator(this).Value; }
+            set { _BitmapImageLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property BitmapImage BitmapImage Setup
-        protected Property<BitmapImage> m_BitmapImage =
-          new Property<BitmapImage> { LocatorFunc = m_BitmapImageLocator };
+        protected Property<BitmapImage> _BitmapImage =
+          new Property<BitmapImage> { LocatorFunc = _BitmapImageLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<BitmapImage>> m_BitmapImageLocator =
+        static Func<BindableBase, ValueContainer<BitmapImage>> _BitmapImageLocator =
             RegisterContainerLocator<BitmapImage>(
             "BitmapImage",
             model =>
             {
-                model.m_BitmapImage =
-                    model.m_BitmapImage
+                model._BitmapImage =
+                    model._BitmapImage
                     ??
-                    new Property<BitmapImage> { LocatorFunc = m_BitmapImageLocator };
-                return model.m_BitmapImage.Container =
-                    model.m_BitmapImage.Container
+                    new Property<BitmapImage> { LocatorFunc = _BitmapImageLocator };
+                return model._BitmapImage.Container =
+                    model._BitmapImage.Container
                     ??
                     new ValueContainer<BitmapImage>("BitmapImage", model);
             });

@@ -331,6 +331,11 @@ namespace MVVMSidekick
                 }                            
                 return reference.Container;
             }
+
+            public static ValueContainer<T> Initialize<T>(this BindableBase model, string propertyName, ref Property<T> reference, ref Func<BindableBase, ValueContainer<T>> locator, Func<BindableBase,T> defaultValueFactory = null)
+            {
+                return Initialize(model, propertyName, ref reference, ref locator, () => defaultValueFactory(model));
+            }
         }
 
 

@@ -30,9 +30,9 @@ namespace TableGameSidekick_Metro.ViewModels
         public NewGame_Model(IStorage<Dictionary<Guid, GameInfomation>> storage)
             : this()
         {
-            m_Storage = storage;
+            _Storage = storage;
         }
-        IStorage<Dictionary<Guid, GameInfomation>> m_Storage;
+        IStorage<Dictionary<Guid, GameInfomation>> _Storage;
 
         private async Task ConfigProperties()
         {
@@ -51,7 +51,7 @@ namespace TableGameSidekick_Metro.ViewModels
             #region 配置游戏原型选中后的逻辑
 
             //选中游戏信息原型变化后，其部分信息被直接填充到NewGameInfo.
-            m_SelectedPrototypeGameInfomation.LocateValueContainer(this)
+            _SelectedPrototypeGameInfomation.LocateValueContainer(this)
                 .GetValueChangeObservable()
                 .Where(e => e.EventArgs != null)
                 .Subscribe
@@ -124,7 +124,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
             #region 设置删除已选玩家 Command
 
-            m_SelectedPlayersLocator(this)
+            _SelectedPlayersLocator(this)
                 .GetValueChangeObservable()
                 .Select(x => x.EventArgs.Count > 0)//删除已选玩家按钮必须在已选玩家大于0的时候启用
                 .Subscribe(
@@ -162,7 +162,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     )
                 .Concat
                 (
-                    m_SelectedPrototypeGameInfomation.LocateValueContainer(this)
+                    _SelectedPrototypeGameInfomation.LocateValueContainer(this)
                     .GetValueChangeObservable()
                     .Select(x => 1)
 
@@ -178,12 +178,12 @@ namespace TableGameSidekick_Metro.ViewModels
                 .Subscribe(
                      async e =>
                      {
-                         if (m_Storage.Value ==null)
+                         if (_Storage.Value ==null)
                          {
-                             m_Storage.Value = new Dictionary<Guid, GameInfomation>();
+                             _Storage.Value = new Dictionary<Guid, GameInfomation>();
                          }
-                         m_Storage.Value[NewGameInfomation.Id] = NewGameInfomation;
-                         await m_Storage.Save();
+                         _Storage.Value[NewGameInfomation.Id] = NewGameInfomation;
+                         await _Storage.Save();
                          this.Result = NewGameInfomation;
                          this.Close();
                      }
@@ -238,24 +238,24 @@ namespace TableGameSidekick_Metro.ViewModels
         /// </summary>
         public ObservableCollection<GameInfomation> GameInfomationPrototypes
         {
-            get { return m_GameInfomationPrototypesLocator(this).Value; }
-            set { m_GameInfomationPrototypesLocator(this).SetValueAndTryNotify(value); }
+            get { return _GameInfomationPrototypesLocator(this).Value; }
+            set { _GameInfomationPrototypesLocator(this).SetValueAndTryNotify(value); }
         }
         #region Property ObservableCollection<GameInfomation> GameInfomationPrototypes Setup
-        protected Property<ObservableCollection<GameInfomation>> m_GameInfomationPrototypes =
-            new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GameInfomationPrototypesLocator };
+        protected Property<ObservableCollection<GameInfomation>> _GameInfomationPrototypes =
+            new Property<ObservableCollection<GameInfomation>> { LocatorFunc = _GameInfomationPrototypesLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<GameInfomation>>> m_GameInfomationPrototypesLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<GameInfomation>>> _GameInfomationPrototypesLocator =
             RegisterContainerLocator<ObservableCollection<GameInfomation>>(
             "GameInfomationPrototypes",
             model =>
             {
-                model.m_GameInfomationPrototypes =
-                    model.m_GameInfomationPrototypes
+                model._GameInfomationPrototypes =
+                    model._GameInfomationPrototypes
                     ??
-                    new Property<ObservableCollection<GameInfomation>> { LocatorFunc = m_GameInfomationPrototypesLocator };
-                return model.m_GameInfomationPrototypes.Container =
-                    model.m_GameInfomationPrototypes.Container
+                    new Property<ObservableCollection<GameInfomation>> { LocatorFunc = _GameInfomationPrototypesLocator };
+                return model._GameInfomationPrototypes.Container =
+                    model._GameInfomationPrototypes.Container
                     ??
                     new ValueContainer<ObservableCollection<GameInfomation>>("GameInfomationPrototypes", model);
             }
@@ -271,23 +271,23 @@ namespace TableGameSidekick_Metro.ViewModels
         /// </summary>
         public GameInfomation SelectedPrototypeGameInfomation
         {
-            get { return m_SelectedPrototypeGameInfomation.LocateValueContainer(this).Value; }
-            set { m_SelectedPrototypeGameInfomation.LocateValueContainer(this).SetValueAndTryNotify(value); }
+            get { return _SelectedPrototypeGameInfomation.LocateValueContainer(this).Value; }
+            set { _SelectedPrototypeGameInfomation.LocateValueContainer(this).SetValueAndTryNotify(value); }
         }
         #region Property GameInfomation SelectedPrototypeGameInfomation Setup
-        protected Property<GameInfomation> m_SelectedPrototypeGameInfomation = new Property<GameInfomation> { LocatorFunc = m_SelectedPrototypeGameInfomationLocator };
+        protected Property<GameInfomation> _SelectedPrototypeGameInfomation = new Property<GameInfomation> { LocatorFunc = _SelectedPrototypeGameInfomationLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<GameInfomation>> m_SelectedPrototypeGameInfomationLocator =
+        static Func<BindableBase, ValueContainer<GameInfomation>> _SelectedPrototypeGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
             "SelectedPrototypeGameInfomation",
             model =>
             {
-                model.m_SelectedPrototypeGameInfomation =
-                    model.m_SelectedPrototypeGameInfomation
+                model._SelectedPrototypeGameInfomation =
+                    model._SelectedPrototypeGameInfomation
                     ??
-                    new Property<GameInfomation> { LocatorFunc = m_SelectedPrototypeGameInfomationLocator };
-                return model.m_SelectedPrototypeGameInfomation.Container =
-                     model.m_SelectedPrototypeGameInfomation.Container
+                    new Property<GameInfomation> { LocatorFunc = _SelectedPrototypeGameInfomationLocator };
+                return model._SelectedPrototypeGameInfomation.Container =
+                     model._SelectedPrototypeGameInfomation.Container
                      ??
                      new ValueContainer<GameInfomation>("SelectedPrototypeGameInfomation", model, new GameInfomation() { Id = Guid.NewGuid() });
 
@@ -306,27 +306,27 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public GameInfomation NewGameInfomation
         {
-            get { return m_NewGameInfomationLocator(this).Value; }
-            set { m_NewGameInfomationLocator(this).SetValueAndTryNotify(value); }
+            get { return _NewGameInfomationLocator(this).Value; }
+            set { _NewGameInfomationLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property GameInfomation NewGameInfomation Setup
 
-        protected Property<GameInfomation> m_NewGameInfomation =
-          new Property<GameInfomation> { LocatorFunc = m_NewGameInfomationLocator };
+        protected Property<GameInfomation> _NewGameInfomation =
+          new Property<GameInfomation> { LocatorFunc = _NewGameInfomationLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<GameInfomation>> m_NewGameInfomationLocator =
+        static Func<BindableBase, ValueContainer<GameInfomation>> _NewGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
             "NewGameInfomation",
             model =>
             {
-                model.m_NewGameInfomation =
-                    model.m_NewGameInfomation
+                model._NewGameInfomation =
+                    model._NewGameInfomation
                     ??
-                    new Property<GameInfomation> { LocatorFunc = m_NewGameInfomationLocator };
-                return model.m_NewGameInfomation.Container =
-                    model.m_NewGameInfomation.Container
+                    new Property<GameInfomation> { LocatorFunc = _NewGameInfomationLocator };
+                return model._NewGameInfomation.Container =
+                    model._NewGameInfomation.Container
                     ??
                     new ValueContainer<GameInfomation>("NewGameInfomation", model, new GameInfomation());
             });
@@ -339,25 +339,25 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public IList<object> SelectedPlayers
         {
-            get { return m_SelectedPlayersLocator(this).Value; }
-            set { m_SelectedPlayersLocator(this).SetValueAndTryNotify(value); }
+            get { return _SelectedPlayersLocator(this).Value; }
+            set { _SelectedPlayersLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property IList<object> SelectedPlayers Setup
-        protected Property<IList<object>> m_SelectedPlayers =
-          new Property<IList<object>> { LocatorFunc = m_SelectedPlayersLocator };
+        protected Property<IList<object>> _SelectedPlayers =
+          new Property<IList<object>> { LocatorFunc = _SelectedPlayersLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<IList<object>>> m_SelectedPlayersLocator =
+        static Func<BindableBase, ValueContainer<IList<object>>> _SelectedPlayersLocator =
             RegisterContainerLocator<IList<object>>(
             "SelectedPlayers",
             model =>
             {
-                model.m_SelectedPlayers =
-                    model.m_SelectedPlayers
+                model._SelectedPlayers =
+                    model._SelectedPlayers
                     ??
-                    new Property<IList<object>> { LocatorFunc = m_SelectedPlayersLocator };
-                return model.m_SelectedPlayers.Container =
-                    model.m_SelectedPlayers.Container
+                    new Property<IList<object>> { LocatorFunc = _SelectedPlayersLocator };
+                return model._SelectedPlayers.Container =
+                    model._SelectedPlayers.Container
                     ??
                     new ValueContainer<IList<object>>("SelectedPlayers", model);
             });
@@ -370,12 +370,12 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public CommandModel<ReactiveCommand, string> StartGameCommand
         {
-            get { return m_StartGameCommand.WithViewModel(this); }
-            protected set { m_StartGameCommand = value; }
+            get { return _StartGameCommand.WithViewModel(this); }
+            protected set { _StartGameCommand = value; }
         }
         #region StartGameCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, string> m_StartGameCommand
+        CommandModel<ReactiveCommand, string> _StartGameCommand
             = new ReactiveCommand().CreateCommandModel("StartGameCommand");
 
         #endregion
@@ -383,26 +383,26 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public CommandModel<ReactiveCommand, String> PickContactsCommand
         {
-            get { return m_PickContactsCommand.WithViewModel(this); }
-            protected set { m_PickContactsCommand = value; }
+            get { return _PickContactsCommand.WithViewModel(this); }
+            protected set { _PickContactsCommand = value; }
         }
 
         #region PickContactsCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_PickContactsCommand
+        CommandModel<ReactiveCommand, String> _PickContactsCommand
       = new ReactiveCommand(true).CreateCommandModel("AddPlayersCommand");
 
         #endregion
 
         public CommandModel<ReactiveCommand, String> DeleteSelectedPlayersCommand
         {
-            get { return m_DeleteSelectedPlayersCommand.WithViewModel(this); }
-            protected set { m_DeleteSelectedPlayersCommand = value; }
+            get { return _DeleteSelectedPlayersCommand.WithViewModel(this); }
+            protected set { _DeleteSelectedPlayersCommand = value; }
         }
 
         #region DeleteSelectedPlayersCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_DeleteSelectedPlayersCommand
+        CommandModel<ReactiveCommand, String> _DeleteSelectedPlayersCommand
             = new ReactiveCommand(canExecute: false).CreateCommandModel("DeleteSelectedPlayers");
         #endregion
 
@@ -411,13 +411,13 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public CommandModel<ReactiveCommand, String> SaveGameInfoAndStartCommand
         {
-            get { return m_SaveGameInfoAndStartCommand.WithViewModel(this); }
-            protected set { m_SaveGameInfoAndStartCommand = value; }
+            get { return _SaveGameInfoAndStartCommand.WithViewModel(this); }
+            protected set { _SaveGameInfoAndStartCommand = value; }
         }
 
         #region SaveGameInfoAndStartCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_SaveGameInfoAndStartCommand
+        CommandModel<ReactiveCommand, String> _SaveGameInfoAndStartCommand
             = new ReactiveCommand(canExecute: false).CreateCommandModel("SaveGameInfoAndStartCommand");
         #endregion
 

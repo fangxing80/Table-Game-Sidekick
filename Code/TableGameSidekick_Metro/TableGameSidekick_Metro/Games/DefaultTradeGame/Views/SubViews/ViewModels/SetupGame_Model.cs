@@ -179,25 +179,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
         public ObservableCollection<ResourceConfig> ResourceConfigs
         {
-            get { return m_ResourceConfigsLocator(this).Value; }
-            set { m_ResourceConfigsLocator(this).SetValueAndTryNotify(value); }
+            get { return _ResourceConfigsLocator(this).Value; }
+            set { _ResourceConfigsLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property ObservableCollection<ResourceConfig>  ResourceConfigs Setup
-        protected Property<ObservableCollection<ResourceConfig>> m_ResourceConfigs =
-          new Property<ObservableCollection<ResourceConfig>> { LocatorFunc = m_ResourceConfigsLocator };
+        protected Property<ObservableCollection<ResourceConfig>> _ResourceConfigs =
+          new Property<ObservableCollection<ResourceConfig>> { LocatorFunc = _ResourceConfigsLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<ResourceConfig>>> m_ResourceConfigsLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<ResourceConfig>>> _ResourceConfigsLocator =
             RegisterContainerLocator<ObservableCollection<ResourceConfig>>(
                 "ResourceConfigs",
                 model =>
                 {
-                    model.m_ResourceConfigs =
-                        model.m_ResourceConfigs
+                    model._ResourceConfigs =
+                        model._ResourceConfigs
                         ??
-                        new Property<ObservableCollection<ResourceConfig>> { LocatorFunc = m_ResourceConfigsLocator };
-                    return model.m_ResourceConfigs.Container =
-                        model.m_ResourceConfigs.Container
+                        new Property<ObservableCollection<ResourceConfig>> { LocatorFunc = _ResourceConfigsLocator };
+                    return model._ResourceConfigs.Container =
+                        model._ResourceConfigs.Container
                         ??
                         new ValueContainer<ObservableCollection<ResourceConfig>>("ResourceConfigs", model, new ObservableCollection<ResourceConfig>());
                 });
@@ -208,25 +208,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
         public BindableTuple<int, ResourceConfig> CurrentSelectedResourceConfig
         {
-            get { return m_CurrentSelectedResourceConfigLocator(this).Value; }
-            set { m_CurrentSelectedResourceConfigLocator(this).SetValueAndTryNotify(value); }
+            get { return _CurrentSelectedResourceConfigLocator(this).Value; }
+            set { _CurrentSelectedResourceConfigLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property BindableTuple<int,ResourceConfig>  CurrentSelectedResourceConfig Setup
-        protected Property<BindableTuple<int, ResourceConfig>> m_CurrentSelectedResourceConfig =
-          new Property<BindableTuple<int, ResourceConfig>> { LocatorFunc = m_CurrentSelectedResourceConfigLocator };
+        protected Property<BindableTuple<int, ResourceConfig>> _CurrentSelectedResourceConfig =
+          new Property<BindableTuple<int, ResourceConfig>> { LocatorFunc = _CurrentSelectedResourceConfigLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<BindableTuple<int, ResourceConfig>>> m_CurrentSelectedResourceConfigLocator =
+        static Func<BindableBase, ValueContainer<BindableTuple<int, ResourceConfig>>> _CurrentSelectedResourceConfigLocator =
             RegisterContainerLocator<BindableTuple<int, ResourceConfig>>(
                 "CurrentSelectedResourceConfig",
                 model =>
                 {
-                    model.m_CurrentSelectedResourceConfig =
-                        model.m_CurrentSelectedResourceConfig
+                    model._CurrentSelectedResourceConfig =
+                        model._CurrentSelectedResourceConfig
                         ??
-                        new Property<BindableTuple<int, ResourceConfig>> { LocatorFunc = m_CurrentSelectedResourceConfigLocator };
-                    return model.m_CurrentSelectedResourceConfig.Container =
-                        model.m_CurrentSelectedResourceConfig.Container
+                        new Property<BindableTuple<int, ResourceConfig>> { LocatorFunc = _CurrentSelectedResourceConfigLocator };
+                    return model._CurrentSelectedResourceConfig.Container =
+                        model._CurrentSelectedResourceConfig.Container
                         ??
                         new ValueContainer<BindableTuple<int, ResourceConfig>>("CurrentSelectedResourceConfig", model, new BindableTuple<int, ResourceConfig>(-1, null));
                 });
@@ -235,25 +235,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
         public TradeGameData GameData
         {
-            get { return m_GameDataLocator(this).Value; }
-            set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
+            get { return _GameDataLocator(this).Value; }
+            set { _GameDataLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property TradeGameData GameData Setup
-        protected Property<TradeGameData> m_GameData =
-          new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
+        protected Property<TradeGameData> _GameData =
+          new Property<TradeGameData> { LocatorFunc = _GameDataLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<TradeGameData>> m_GameDataLocator =
+        static Func<BindableBase, ValueContainer<TradeGameData>> _GameDataLocator =
             RegisterContainerLocator<TradeGameData>(
                 "GameData",
                 model =>
                 {
-                    model.m_GameData =
-                        model.m_GameData
+                    model._GameData =
+                        model._GameData
                         ??
-                        new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
-                    return model.m_GameData.Container =
-                        model.m_GameData.Container
+                        new Property<TradeGameData> { LocatorFunc = _GameDataLocator };
+                    return model._GameData.Container =
+                        model._GameData.Container
                         ??
                         new ValueContainer<TradeGameData>("GameData", model);
                 });
@@ -267,13 +267,13 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
         public CommandModel<ReactiveCommand, String> AddResourceCommand
         {
-            get { return m_AddResourceCommand.WithViewModel(this); }
-            protected set { m_AddResourceCommand = value; }
+            get { return _AddResourceCommand.WithViewModel(this); }
+            protected set { _AddResourceCommand = value; }
         }
 
         #region AddResourceCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_AddResourceCommand
+        CommandModel<ReactiveCommand, String> _AddResourceCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel("AddResourceCommand");
         #endregion
 
@@ -284,13 +284,13 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
         public CommandModel<ReactiveCommand, String> RemoveResourceCommand
         {
-            get { return m_RemoveResourceCommand.WithViewModel(this); }
-            protected set { m_RemoveResourceCommand = value; }
+            get { return _RemoveResourceCommand.WithViewModel(this); }
+            protected set { _RemoveResourceCommand = value; }
         }
 
         #region RemoveResourceCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_RemoveResourceCommand
+        CommandModel<ReactiveCommand, String> _RemoveResourceCommand
             = new ReactiveCommand(canExecute: false).CreateCommandModel("RemoveResourceCommand");
         #endregion
 
@@ -299,13 +299,13 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
         public CommandModel<ReactiveCommand, String> StartGameCommmand
         {
-            get { return m_StartGameCommmand.WithViewModel(this); }
-            protected set { m_StartGameCommmand = value; }
+            get { return _StartGameCommmand.WithViewModel(this); }
+            protected set { _StartGameCommmand = value; }
         }
 
         #region StartGameCommmand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_StartGameCommmand
+        CommandModel<ReactiveCommand, String> _StartGameCommmand
             = new ReactiveCommand(canExecute: true).CreateCommandModel("StartGameCommmand");
         #endregion
 
@@ -313,13 +313,13 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
 
         public CommandModel<ReactiveCommand, String> BackwardCommand
         {
-            get { return m_BackwardCommand.WithViewModel(this); }
-            protected set { m_BackwardCommand = value; }
+            get { return _BackwardCommand.WithViewModel(this); }
+            protected set { _BackwardCommand = value; }
         }
 
         #region BackwardCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_BackwardCommand
+        CommandModel<ReactiveCommand, String> _BackwardCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel("BackwardCommand");
         #endregion
 

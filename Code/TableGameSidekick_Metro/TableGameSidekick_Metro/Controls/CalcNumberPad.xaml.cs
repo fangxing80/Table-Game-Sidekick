@@ -63,11 +63,11 @@ namespace TableGameSidekick_Metro.Controls
         {
             get
             {
-                return m_InputPanel.DataContext as CalcNumberPad_Model;
+                return _InputPanel.DataContext as CalcNumberPad_Model;
             }
             set
             {
-                m_InputPanel.DataContext = value;
+                _InputPanel.DataContext = value;
             }
         }
         public ICommand ShowInputCommand
@@ -317,11 +317,11 @@ namespace TableGameSidekick_Metro.Controls
 
         public String ShowString
         {
-            get { return m_ShowStringLocator(this).Value; }
+            get { return _ShowStringLocator(this).Value; }
             set
             {
                 //   _raiseCollectionChangedEvent = false;
-                m_ShowStringLocator(this).Value = value;
+                _ShowStringLocator(this).Value = value;
                 ActualInputChars.Clear();
                 foreach (var c in DefaultValue)
                 {
@@ -332,20 +332,20 @@ namespace TableGameSidekick_Metro.Controls
         }
 
         #region Property String ShowString Setup
-        protected Property<String> m_ShowString =
-          new Property<String> { LocatorFunc = m_ShowStringLocator };
+        protected Property<String> _ShowString =
+          new Property<String> { LocatorFunc = _ShowStringLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<String>> m_ShowStringLocator =
+        static Func<BindableBase, ValueContainer<String>> _ShowStringLocator =
             RegisterContainerLocator<String>(
                 "ShowString",
                 model =>
                 {
-                    model.m_ShowString =
-                        model.m_ShowString
+                    model._ShowString =
+                        model._ShowString
                         ??
-                        new Property<String> { LocatorFunc = m_ShowStringLocator };
-                    return model.m_ShowString.Container =
-                        model.m_ShowString.Container
+                        new Property<String> { LocatorFunc = _ShowStringLocator };
+                    return model._ShowString.Container =
+                        model._ShowString.Container
                         ??
                         new ValueContainer<String>("ShowString", model, DefaultValue);
                 });
@@ -356,25 +356,25 @@ namespace TableGameSidekick_Metro.Controls
 
         public ObservableCollection<Char> ActualInputChars
         {
-            get { return m_ActualInputCharsLocator(this).Value; }
+            get { return _ActualInputCharsLocator(this).Value; }
 
         }
 
         #region Property  ObservableCollection<Char> ActualInputChars Setup
-        protected Property<ObservableCollection<Char>> m_ActualInputChars =
-          new Property<ObservableCollection<Char>> { LocatorFunc = m_ActualInputCharsLocator };
+        protected Property<ObservableCollection<Char>> _ActualInputChars =
+          new Property<ObservableCollection<Char>> { LocatorFunc = _ActualInputCharsLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<Char>>> m_ActualInputCharsLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<Char>>> _ActualInputCharsLocator =
             RegisterContainerLocator<ObservableCollection<Char>>(
                 "ActualInputChars",
                 model =>
                 {
-                    model.m_ActualInputChars =
-                        model.m_ActualInputChars
+                    model._ActualInputChars =
+                        model._ActualInputChars
                         ??
-                        new Property<ObservableCollection<Char>> { LocatorFunc = m_ActualInputCharsLocator };
-                    return model.m_ActualInputChars.Container =
-                        model.m_ActualInputChars.Container
+                        new Property<ObservableCollection<Char>> { LocatorFunc = _ActualInputCharsLocator };
+                    return model._ActualInputChars.Container =
+                        model._ActualInputChars.Container
                         ??
                         new ValueContainer<ObservableCollection<Char>>("ActualInputChars", model, new ObservableCollection<char>(DefaultValue.ToCharArray()));
                 });
@@ -383,25 +383,25 @@ namespace TableGameSidekick_Metro.Controls
 
         public Visibility Visibility
         {
-            get { return m_VisibilityLocator(this).Value; }
-            set { m_VisibilityLocator(this).SetValueAndTryNotify(value); }
+            get { return _VisibilityLocator(this).Value; }
+            set { _VisibilityLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property Visibility Visibility Setup
-        protected Property<Visibility> m_Visibility =
-          new Property<Visibility> { LocatorFunc = m_VisibilityLocator };
+        protected Property<Visibility> _Visibility =
+          new Property<Visibility> { LocatorFunc = _VisibilityLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<Visibility>> m_VisibilityLocator =
+        static Func<BindableBase, ValueContainer<Visibility>> _VisibilityLocator =
             RegisterContainerLocator<Visibility>(
                 "Visibility",
                 model =>
                 {
-                    model.m_Visibility =
-                        model.m_Visibility
+                    model._Visibility =
+                        model._Visibility
                         ??
-                        new Property<Visibility> { LocatorFunc = m_VisibilityLocator };
-                    return model.m_Visibility.Container =
-                        model.m_Visibility.Container
+                        new Property<Visibility> { LocatorFunc = _VisibilityLocator };
+                    return model._Visibility.Container =
+                        model._Visibility.Container
                         ??
                         new ValueContainer<Visibility>("Visibility", model, Visibility.Collapsed);
                 });
@@ -417,13 +417,13 @@ namespace TableGameSidekick_Metro.Controls
         /// </summary>
         public ICommandModel<ReactiveCommand, String> ButtonPushCommand
         {
-            get { return m_ButtonPushCommand.WithViewModel(this); }
-            protected set { m_ButtonPushCommand = (CommandModel<ReactiveCommand, String>)value; }
+            get { return _ButtonPushCommand.WithViewModel(this); }
+            protected set { _ButtonPushCommand = (CommandModel<ReactiveCommand, String>)value; }
         }
 
         #region ButtonPushCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_ButtonPushCommand
+        CommandModel<ReactiveCommand, String> _ButtonPushCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
 
@@ -433,13 +433,13 @@ namespace TableGameSidekick_Metro.Controls
 
         public ICommandModel<ReactiveCommand, String> ShowInputCommand
         {
-            get { return m_ShowInputCommand.WithViewModel(this); }
-            protected set { m_ShowInputCommand = (CommandModel<ReactiveCommand, String>)value; }
+            get { return _ShowInputCommand.WithViewModel(this); }
+            protected set { _ShowInputCommand = (CommandModel<ReactiveCommand, String>)value; }
         }
 
         #region ShowInputCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_ShowInputCommand
+        CommandModel<ReactiveCommand, String> _ShowInputCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
 

@@ -92,7 +92,7 @@ Canvas.ZIndex="100"
   
   
         <Border Background="Black" Opacity=".7" Grid.Row="1" Grid.Column="1">
-            <Grid Background="Black" x:Name="m_InputPanel"  Height="400" Width="400" >
+            <Grid Background="Black" x:Name="_InputPanel"  Height="400" Width="400" >
                 <Grid.DataContext>
                     <local:CalcNumberPad_Model/>
                 </Grid.DataContext>

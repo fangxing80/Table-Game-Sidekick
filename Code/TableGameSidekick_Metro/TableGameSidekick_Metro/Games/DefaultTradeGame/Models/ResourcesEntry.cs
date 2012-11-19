@@ -15,25 +15,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         [DataMember]
         public string ResourceName
         {
-            get { return m_ResourceNameLocator(this).Value; }
-            set { m_ResourceNameLocator(this).SetValueAndTryNotify(value); }
+            get { return _ResourceNameLocator(this).Value; }
+            set { _ResourceNameLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property string ResourceName Setup
-        protected Property<string> m_ResourceName =
-          new Property<string> { LocatorFunc = m_ResourceNameLocator };
+        protected Property<string> _ResourceName =
+          new Property<string> { LocatorFunc = _ResourceNameLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<string>> m_ResourceNameLocator =
+        static Func<BindableBase, ValueContainer<string>> _ResourceNameLocator =
             RegisterContainerLocator<string>(
                 "ResourceName",
                 model =>
                 {
-                    model.m_ResourceName =
-                        model.m_ResourceName
+                    model._ResourceName =
+                        model._ResourceName
                         ??
-                        new Property<string> { LocatorFunc = m_ResourceNameLocator };
-                    return model.m_ResourceName.Container =
-                        model.m_ResourceName.Container
+                        new Property<string> { LocatorFunc = _ResourceNameLocator };
+                    return model._ResourceName.Container =
+                        model._ResourceName.Container
                         ??
                         new ValueContainer<string>("ResourceName", model);
                 });
@@ -43,25 +43,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         [DataMember]
         public ImageData Image
         {
-            get { return m_ImageLocator(this).Value; }
-            set { m_ImageLocator(this).SetValueAndTryNotify(value); }
+            get { return _ImageLocator(this).Value; }
+            set { _ImageLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property ImageData Image Setup
-        protected Property<ImageData> m_Image =
-          new Property<ImageData> { LocatorFunc = m_ImageLocator };
+        protected Property<ImageData> _Image =
+          new Property<ImageData> { LocatorFunc = _ImageLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ImageData>> m_ImageLocator =
+        static Func<BindableBase, ValueContainer<ImageData>> _ImageLocator =
             RegisterContainerLocator<ImageData>(
                 "Image",
                 model =>
                 {
-                    model.m_Image =
-                        model.m_Image
+                    model._Image =
+                        model._Image
                         ??
-                        new Property<ImageData> { LocatorFunc = m_ImageLocator };
-                    return model.m_Image.Container =
-                        model.m_Image.Container
+                        new Property<ImageData> { LocatorFunc = _ImageLocator };
+                    return model._Image.Container =
+                        model._Image.Container
                         ??
                         new ValueContainer<ImageData>("Image", model);
                 });
@@ -71,25 +71,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         [DataMember]
         public Double Amount
         {
-            get { return m_AmountLocator(this).Value; }
-            set { m_AmountLocator(this).SetValueAndTryNotify(value); }
+            get { return _AmountLocator(this).Value; }
+            set { _AmountLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property Double Amount Setup
-        protected Property<Double> m_Amount =
-          new Property<Double> { LocatorFunc = m_AmountLocator };
+        protected Property<Double> _Amount =
+          new Property<Double> { LocatorFunc = _AmountLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<Double>> m_AmountLocator =
+        static Func<BindableBase, ValueContainer<Double>> _AmountLocator =
             RegisterContainerLocator<Double>(
                 "Amount",
                 model =>
                 {
-                    model.m_Amount =
-                        model.m_Amount
+                    model._Amount =
+                        model._Amount
                         ??
-                        new Property<Double> { LocatorFunc = m_AmountLocator };
-                    return model.m_Amount.Container =
-                        model.m_Amount.Container
+                        new Property<Double> { LocatorFunc = _AmountLocator };
+                    return model._Amount.Container =
+                        model._Amount.Container
                         ??
                         new ValueContainer<Double>("Amount", model);
                 });

@@ -60,27 +60,27 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public GameInfomation CurrentGameInfomation
         {
-            get { return m_CurrentGameInfomationLocator(this).Value; }
-            set { m_CurrentGameInfomationLocator(this).SetValueAndTryNotify(value); }
+            get { return _CurrentGameInfomationLocator(this).Value; }
+            set { _CurrentGameInfomationLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property GameInfomation CurrentGameInfomation Setup
 
-        protected Property<GameInfomation> m_CurrentGameInfomation =
-          new Property<GameInfomation> { LocatorFunc = m_CurrentGameInfomationLocator };
+        protected Property<GameInfomation> _CurrentGameInfomation =
+          new Property<GameInfomation> { LocatorFunc = _CurrentGameInfomationLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<GameInfomation>> m_CurrentGameInfomationLocator =
+        static Func<BindableBase, ValueContainer<GameInfomation>> _CurrentGameInfomationLocator =
             RegisterContainerLocator<GameInfomation>(
             "CurrentGameInfomation",
             model =>
             {
-                model.m_CurrentGameInfomation =
-                    model.m_CurrentGameInfomation
+                model._CurrentGameInfomation =
+                    model._CurrentGameInfomation
                     ??
-                    new Property<GameInfomation> { LocatorFunc = m_CurrentGameInfomationLocator };
-                return model.m_CurrentGameInfomation.Container =
-                    model.m_CurrentGameInfomation.Container
+                    new Property<GameInfomation> { LocatorFunc = _CurrentGameInfomationLocator };
+                return model._CurrentGameInfomation.Container =
+                    model._CurrentGameInfomation.Container
                     ??
                     new ValueContainer<GameInfomation>("CurrentGameInfomation", model);
             });
@@ -93,25 +93,25 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public BindableBase GameModel
         {
-            get { return m_GameModelLocator(this).Value; }
-            set { m_GameModelLocator(this).SetValueAndTryNotify(value); }
+            get { return _GameModelLocator(this).Value; }
+            set { _GameModelLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property BindableBase GameModel Setup
-        protected Property<BindableBase> m_GameModel =
-          new Property<BindableBase> { LocatorFunc = m_GameModelLocator };
+        protected Property<BindableBase> _GameModel =
+          new Property<BindableBase> { LocatorFunc = _GameModelLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<BindableBase>> m_GameModelLocator =
+        static Func<BindableBase, ValueContainer<BindableBase>> _GameModelLocator =
             RegisterContainerLocator<BindableBase>(
                 "GameModel",
                 model =>
                 {
-                    model.m_GameModel =
-                        model.m_GameModel
+                    model._GameModel =
+                        model._GameModel
                         ??
-                        new Property<BindableBase> { LocatorFunc = m_GameModelLocator };
-                    return model.m_GameModel.Container =
-                        model.m_GameModel.Container
+                        new Property<BindableBase> { LocatorFunc = _GameModelLocator };
+                    return model._GameModel.Container =
+                        model._GameModel.Container
                         ??
                         new ValueContainer<BindableBase>("GameModel", model);
                 });
@@ -123,13 +123,13 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public CommandModel<ReactiveCommand, String> BackToMainCommand
         {
-            get { return m_BackToMainCommand.WithViewModel(this); }
-            protected set { m_BackToMainCommand = value; }
+            get { return _BackToMainCommand.WithViewModel(this); }
+            protected set { _BackToMainCommand = value; }
         }
 
         #region BackToMainCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_BackToMainCommand
+        CommandModel<ReactiveCommand, String> _BackToMainCommand
             = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
 

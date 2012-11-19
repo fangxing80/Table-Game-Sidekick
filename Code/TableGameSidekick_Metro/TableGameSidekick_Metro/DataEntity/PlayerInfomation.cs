@@ -32,25 +32,25 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public ImageData Image
         {
-            get { return m_ImageLocator(this).Value; }
-            set { m_ImageLocator(this).SetValueAndTryNotify(value); }
+            get { return _ImageLocator(this).Value; }
+            set { _ImageLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property ImageData Image Setup
-        protected Property<ImageData> m_Image =
-          new Property<ImageData> { LocatorFunc = m_ImageLocator };
+        protected Property<ImageData> _Image =
+          new Property<ImageData> { LocatorFunc = _ImageLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ImageData>> m_ImageLocator =
+        static Func<BindableBase, ValueContainer<ImageData>> _ImageLocator =
             RegisterContainerLocator<ImageData>(
             "Image",
             model =>
             {
-                model.m_Image =
-                    model.m_Image
+                model._Image =
+                    model._Image
                     ??
-                    new Property<ImageData> { LocatorFunc = m_ImageLocator };
-                return model.m_Image.Container =
-                    model.m_Image.Container
+                    new Property<ImageData> { LocatorFunc = _ImageLocator };
+                return model._Image.Container =
+                    model._Image.Container
                     ??
                     new ValueContainer<ImageData>("Image", model);
             });

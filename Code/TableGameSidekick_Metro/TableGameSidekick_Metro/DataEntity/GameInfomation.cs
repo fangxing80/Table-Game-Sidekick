@@ -15,25 +15,25 @@ namespace TableGameSidekick_Metro.DataEntity
         [DataMember]
         public ImageData Image
         {
-            get { return m_ImageLocator(this).Value; }
-            set { m_ImageLocator(this).SetValueAndTryNotify(value); }
+            get { return _ImageLocator(this).Value; }
+            set { _ImageLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property ImageData Image Setup
-        protected Property<ImageData> m_Image =
-          new Property<ImageData> { LocatorFunc = m_ImageLocator };
+        protected Property<ImageData> _Image =
+          new Property<ImageData> { LocatorFunc = _ImageLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ImageData>> m_ImageLocator =
+        static Func<BindableBase, ValueContainer<ImageData>> _ImageLocator =
             RegisterContainerLocator<ImageData>(
                 "Image",
                 model =>
                 {
-                    model.m_Image =
-                        model.m_Image
+                    model._Image =
+                        model._Image
                         ??
-                        new Property<ImageData> { LocatorFunc = m_ImageLocator };
-                    return model.m_Image.Container =
-                        model.m_Image.Container
+                        new Property<ImageData> { LocatorFunc = _ImageLocator };
+                    return model._Image.Container =
+                        model._Image.Container
                         ??
                         new ValueContainer<ImageData>("Image", model);
                 });
@@ -46,27 +46,27 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public string GameDescription
         {
-            get { return m_GameDescriptionLocator(this).Value; }
-            set { m_GameDescriptionLocator(this).SetValueAndTryNotify(value); }
+            get { return _GameDescriptionLocator(this).Value; }
+            set { _GameDescriptionLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property string GameDescription Setup
 
-        protected Property<string> m_GameDescription =
-          new Property<string> { LocatorFunc = m_GameDescriptionLocator };
+        protected Property<string> _GameDescription =
+          new Property<string> { LocatorFunc = _GameDescriptionLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<string>> m_GameDescriptionLocator =
+        static Func<BindableBase, ValueContainer<string>> _GameDescriptionLocator =
             RegisterContainerLocator<string>(
                 "GameDescription",
                 model =>
                 {
-                    model.m_GameDescription =
-                        model.m_GameDescription
+                    model._GameDescription =
+                        model._GameDescription
                         ??
-                        new Property<string> { LocatorFunc = m_GameDescriptionLocator };
-                    return model.m_GameDescription.Container =
-                        model.m_GameDescription.Container
+                        new Property<string> { LocatorFunc = _GameDescriptionLocator };
+                    return model._GameDescription.Container =
+                        model._GameDescription.Container
                         ??
                         new ValueContainer<string>("GameDescription", model);
                 });
@@ -78,25 +78,25 @@ namespace TableGameSidekick_Metro.DataEntity
         [DataMember]
         public Dictionary<string, object> Settings
         {
-            get { return m_SettingsLocator(this).Value; }
-            set { m_SettingsLocator(this).SetValueAndTryNotify(value); }
+            get { return _SettingsLocator(this).Value; }
+            set { _SettingsLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property Dictionary<string,object> Settings Setup
-        protected Property<Dictionary<string, object>> m_Settings =
-          new Property<Dictionary<string, object>> { LocatorFunc = m_SettingsLocator };
+        protected Property<Dictionary<string, object>> _Settings =
+          new Property<Dictionary<string, object>> { LocatorFunc = _SettingsLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<Dictionary<string, object>>> m_SettingsLocator =
+        static Func<BindableBase, ValueContainer<Dictionary<string, object>>> _SettingsLocator =
             RegisterContainerLocator<Dictionary<string, object>>(
                 "Settings",
                 model =>
                 {
-                    model.m_Settings =
-                        model.m_Settings
+                    model._Settings =
+                        model._Settings
                         ??
-                        new Property<Dictionary<string, object>> { LocatorFunc = m_SettingsLocator };
-                    return model.m_Settings.Container =
-                        model.m_Settings.Container
+                        new Property<Dictionary<string, object>> { LocatorFunc = _SettingsLocator };
+                    return model._Settings.Container =
+                        model._Settings.Container
                         ??
                         new ValueContainer<Dictionary<string, object>>("Settings", model);
                 });
@@ -114,27 +114,27 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public DateTime StartTime
         {
-            get { return m_StartTimeLocator(this).Value; }
-            set { m_StartTimeLocator(this).SetValueAndTryNotify(value); }
+            get { return _StartTimeLocator(this).Value; }
+            set { _StartTimeLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property DateTime StartTime Setup
 
-        protected Property<DateTime> m_StartTime =
-          new Property<DateTime> { LocatorFunc = m_StartTimeLocator };
+        protected Property<DateTime> _StartTime =
+          new Property<DateTime> { LocatorFunc = _StartTimeLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<DateTime>> m_StartTimeLocator =
+        static Func<BindableBase, ValueContainer<DateTime>> _StartTimeLocator =
             RegisterContainerLocator<DateTime>(
             "StartTime",
             model =>
             {
-                model.m_StartTime =
-                    model.m_StartTime
+                model._StartTime =
+                    model._StartTime
                     ??
-                    new Property<DateTime> { LocatorFunc = m_StartTimeLocator };
-                return model.m_StartTime.Container =
-                    model.m_StartTime.Container
+                    new Property<DateTime> { LocatorFunc = _StartTimeLocator };
+                return model._StartTime.Container =
+                    model._StartTime.Container
                     ??
                     new ValueContainer<DateTime>("StartTime", model, DateTime.Now);
             });
@@ -153,27 +153,27 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public DateTime LastEditTime
         {
-            get { return m_LastEditTimeLocator(this).Value; }
-            set { m_LastEditTimeLocator(this).SetValueAndTryNotify(value); }
+            get { return _LastEditTimeLocator(this).Value; }
+            set { _LastEditTimeLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property DateTime LastEditTime Setup
 
-        protected Property<DateTime> m_LastEditTime =
-          new Property<DateTime> { LocatorFunc = m_LastEditTimeLocator };
+        protected Property<DateTime> _LastEditTime =
+          new Property<DateTime> { LocatorFunc = _LastEditTimeLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<DateTime>> m_LastEditTimeLocator =
+        static Func<BindableBase, ValueContainer<DateTime>> _LastEditTimeLocator =
             RegisterContainerLocator<DateTime>(
             "LastEditTime",
             model =>
             {
-                model.m_LastEditTime =
-                    model.m_LastEditTime
+                model._LastEditTime =
+                    model._LastEditTime
                     ??
-                    new Property<DateTime> { LocatorFunc = m_LastEditTimeLocator };
-                return model.m_LastEditTime.Container =
-                    model.m_LastEditTime.Container
+                    new Property<DateTime> { LocatorFunc = _LastEditTimeLocator };
+                return model._LastEditTime.Container =
+                    model._LastEditTime.Container
                     ??
                     new ValueContainer<DateTime>("LastEditTime", model,DateTime.Now  );
             });
@@ -195,27 +195,27 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public ObservableCollection<PlayerInfomation> Players
         {
-            get { return m_PlayersLocator(this).Value; }
-            set { m_PlayersLocator(this).SetValueAndTryNotify(value); }
+            get { return _PlayersLocator(this).Value; }
+            set { _PlayersLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property ObservableCollection<PlayerInfomation> Players Setup
 
-        protected Property<ObservableCollection<PlayerInfomation>> m_Players =
-          new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_PlayersLocator };
+        protected Property<ObservableCollection<PlayerInfomation>> _Players =
+          new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = _PlayersLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<PlayerInfomation>>> m_PlayersLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<PlayerInfomation>>> _PlayersLocator =
             RegisterContainerLocator<ObservableCollection<PlayerInfomation>>(
             "Players",
             model =>
             {
-                model.m_Players =
-                    model.m_Players
+                model._Players =
+                    model._Players
                     ??
-                    new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = m_PlayersLocator };
-                return model.m_Players.Container =
-                    model.m_Players.Container
+                    new Property<ObservableCollection<PlayerInfomation>> { LocatorFunc = _PlayersLocator };
+                return model._Players.Container =
+                    model._Players.Container
                     ??
                     new ValueContainer<ObservableCollection<PlayerInfomation>>("Players", model, new ObservableCollection<PlayerInfomation>());
             });
@@ -236,27 +236,27 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public Guid Id
         {
-            get { return m_IdLocator(this).Value; }
-            set { m_IdLocator(this).SetValueAndTryNotify(value); }
+            get { return _IdLocator(this).Value; }
+            set { _IdLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property Guid Id Setup
 
-        protected Property<Guid> m_Id =
-          new Property<Guid> { LocatorFunc = m_IdLocator };
+        protected Property<Guid> _Id =
+          new Property<Guid> { LocatorFunc = _IdLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<Guid>> m_IdLocator =
+        static Func<BindableBase, ValueContainer<Guid>> _IdLocator =
             RegisterContainerLocator<Guid>(
             "Id",
             model =>
             {
-                model.m_Id =
-                    model.m_Id
+                model._Id =
+                    model._Id
                     ??
-                    new Property<Guid> { LocatorFunc = m_IdLocator };
-                return model.m_Id.Container =
-                    model.m_Id.Container
+                    new Property<Guid> { LocatorFunc = _IdLocator };
+                return model._Id.Container =
+                    model._Id.Container
                     ??
                     new ValueContainer<Guid>("Id", model, Guid.NewGuid());
             });
@@ -276,27 +276,27 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public GameType GameType
         {
-            get { return m_GameTypeLocator(this).Value; }
-            set { m_GameTypeLocator(this).SetValueAndTryNotify(value); }
+            get { return _GameTypeLocator(this).Value; }
+            set { _GameTypeLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property GameType GameType Setup
 
-        protected Property<GameType> m_GameType =
-          new Property<GameType> { LocatorFunc = m_GameTypeLocator };
+        protected Property<GameType> _GameType =
+          new Property<GameType> { LocatorFunc = _GameTypeLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<GameType>> m_GameTypeLocator =
+        static Func<BindableBase, ValueContainer<GameType>> _GameTypeLocator =
             RegisterContainerLocator<GameType>(
             "GameType",
             model =>
             {
-                model.m_GameType =
-                    model.m_GameType
+                model._GameType =
+                    model._GameType
                     ??
-                    new Property<GameType> { LocatorFunc = m_GameTypeLocator };
-                return model.m_GameType.Container =
-                    model.m_GameType.Container
+                    new Property<GameType> { LocatorFunc = _GameTypeLocator };
+                return model._GameType.Container =
+                    model._GameType.Container
                     ??
                     new ValueContainer<GameType>("GameType", model);
             });
@@ -312,27 +312,27 @@ namespace TableGameSidekick_Metro.DataEntity
 
         public string AdvanceGameKey
         {
-            get { return m_AdvanceGameKeyLocator(this).Value; }
-            set { m_AdvanceGameKeyLocator(this).SetValueAndTryNotify(value); }
+            get { return _AdvanceGameKeyLocator(this).Value; }
+            set { _AdvanceGameKeyLocator(this).SetValueAndTryNotify(value); }
         }
 
 
         #region Property string AdvanceGameKey Setup
 
-        protected Property<string> m_AdvanceGameKey =
-          new Property<string> { LocatorFunc = m_AdvanceGameKeyLocator };
+        protected Property<string> _AdvanceGameKey =
+          new Property<string> { LocatorFunc = _AdvanceGameKeyLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<string>> m_AdvanceGameKeyLocator =
+        static Func<BindableBase, ValueContainer<string>> _AdvanceGameKeyLocator =
             RegisterContainerLocator<string>(
             "AdvanceGameKey",
             model =>
             {
-                model.m_AdvanceGameKey =
-                    model.m_AdvanceGameKey
+                model._AdvanceGameKey =
+                    model._AdvanceGameKey
                     ??
-                    new Property<string> { LocatorFunc = m_AdvanceGameKeyLocator };
-                return model.m_AdvanceGameKey.Container =
-                    model.m_AdvanceGameKey.Container
+                    new Property<string> { LocatorFunc = _AdvanceGameKeyLocator };
+                return model._AdvanceGameKey.Container =
+                    model._AdvanceGameKey.Container
                     ??
                     new ValueContainer<string>("AdvanceGameKey", model);
             });

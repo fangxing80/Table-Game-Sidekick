@@ -61,25 +61,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         [DataMember ]
         public ObservableCollection<PlayerData> PlayersData
         {
-            get { return m_PlayersDataLocator(this).Value; }
-            set { m_PlayersDataLocator(this).SetValueAndTryNotify(value); }
+            get { return _PlayersDataLocator(this).Value; }
+            set { _PlayersDataLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property ObservableCollection<PlayerData> PlayersData Setup
-        protected Property<ObservableCollection<PlayerData>> m_PlayersData =
-          new Property<ObservableCollection<PlayerData>> { LocatorFunc = m_PlayersDataLocator };
+        protected Property<ObservableCollection<PlayerData>> _PlayersData =
+          new Property<ObservableCollection<PlayerData>> { LocatorFunc = _PlayersDataLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<PlayerData>>> m_PlayersDataLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<PlayerData>>> _PlayersDataLocator =
             RegisterContainerLocator<ObservableCollection<PlayerData>>(
                 "PlayersData",
                 model =>
                 {
-                    model.m_PlayersData =
-                        model.m_PlayersData
+                    model._PlayersData =
+                        model._PlayersData
                         ??
-                        new Property<ObservableCollection<PlayerData>> { LocatorFunc = m_PlayersDataLocator };
-                    return model.m_PlayersData.Container =
-                        model.m_PlayersData.Container
+                        new Property<ObservableCollection<PlayerData>> { LocatorFunc = _PlayersDataLocator };
+                    return model._PlayersData.Container =
+                        model._PlayersData.Container
                         ??
                         new ValueContainer<ObservableCollection<PlayerData>>("PlayersData", model, new ObservableCollection<PlayerData>());
                 });
@@ -91,25 +91,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         [DataMember ]
         public bool IsStarted
         {
-            get { return m_IsStartedLocator(this).Value; }
-            set { m_IsStartedLocator(this).SetValueAndTryNotify(value); }
+            get { return _IsStartedLocator(this).Value; }
+            set { _IsStartedLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property bool IsStarted Setup
-        protected Property<bool> m_IsStarted =
-          new Property<bool> { LocatorFunc = m_IsStartedLocator };
+        protected Property<bool> _IsStarted =
+          new Property<bool> { LocatorFunc = _IsStartedLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<bool>> m_IsStartedLocator =
+        static Func<BindableBase, ValueContainer<bool>> _IsStartedLocator =
             RegisterContainerLocator<bool>(
                 "IsStarted",
                 model =>
                 {
-                    model.m_IsStarted =
-                        model.m_IsStarted
+                    model._IsStarted =
+                        model._IsStarted
                         ??
-                        new Property<bool> { LocatorFunc = m_IsStartedLocator };
-                    return model.m_IsStarted.Container =
-                        model.m_IsStarted.Container
+                        new Property<bool> { LocatorFunc = _IsStartedLocator };
+                    return model._IsStarted.Container =
+                        model._IsStarted.Container
                         ??
                         new ValueContainer<bool>("IsStarted", model);
                 });

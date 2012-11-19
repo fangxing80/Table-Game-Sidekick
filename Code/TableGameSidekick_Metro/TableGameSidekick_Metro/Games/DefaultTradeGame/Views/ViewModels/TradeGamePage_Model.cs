@@ -41,13 +41,13 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
 
         public TradeGamePage_Model(IStorage<TradeGameData> storage, GameInfomation gameInfomation)
         {
-            m_GameInfomation = gameInfomation;
-            m_Storage = storage;
+            _GameInfomation = gameInfomation;
+            _Storage = storage;
 
 
             if (storage.Value == null)
             {
-                m_Storage.Value = GameData = new TradeGameData();
+                _Storage.Value = GameData = new TradeGameData();
 
                 foreach (var player in gameInfomation.Players)
                 {
@@ -132,45 +132,45 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
 
                 );
         }
-        GameInfomation m_GameInfomation;
+        GameInfomation _GameInfomation;
 
-        IStorage<TradeGameData> m_Storage;
+        IStorage<TradeGameData> _Storage;
 
 
         public TradeGameData GameData
         {
-            get { return m_GameDataLocator(this).Value; }
-            set { m_GameDataLocator(this).SetValueAndTryNotify(value); }
+            get { return _GameDataLocator(this).Value; }
+            set { _GameDataLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property TradeGameData GameData Setup
-        protected Property<TradeGameData> m_GameData =
-          new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
+        protected Property<TradeGameData> _GameData =
+          new Property<TradeGameData> { LocatorFunc = _GameDataLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<TradeGameData>> m_GameDataLocator =
+        static Func<BindableBase, ValueContainer<TradeGameData>> _GameDataLocator =
             RegisterContainerLocator<TradeGameData>(
                 "GameData",
                 model =>
                 {
-                    model.m_GameData =
-                        model.m_GameData
+                    model._GameData =
+                        model._GameData
                         ??
-                        new Property<TradeGameData> { LocatorFunc = m_GameDataLocator };
-                    return model.m_GameData.Container =
-                        model.m_GameData.Container
+                        new Property<TradeGameData> { LocatorFunc = _GameDataLocator };
+                    return model._GameData.Container =
+                        model._GameData.Container
                         ??
                         new ValueContainer<TradeGameData>("GameData", model);
                 });
         #endregion
         public CommandModel<ReactiveCommand, String> OnLoadCommand
         {
-            get { return m_OnLoadCommand.WithViewModel(this); }
-            protected set { m_OnLoadCommand = value; }
+            get { return _OnLoadCommand.WithViewModel(this); }
+            protected set { _OnLoadCommand = value; }
         }
 
         #region OnLoadCommand Configuration
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> m_OnLoadCommand
+        CommandModel<ReactiveCommand, String> _OnLoadCommand
              = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
 

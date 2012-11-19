@@ -18,25 +18,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         [DataMember]
         public PlayerInfomation PlayerInfomation
         {
-            get { return m_PlayerInfomationLocator(this).Value; }
-            set { m_PlayerInfomationLocator(this).SetValueAndTryNotify(value); }
+            get { return _PlayerInfomationLocator(this).Value; }
+            set { _PlayerInfomationLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property PlayerInfomation PlayerInfomation Setup
-        protected Property<PlayerInfomation> m_PlayerInfomation =
-          new Property<PlayerInfomation> { LocatorFunc = m_PlayerInfomationLocator };
+        protected Property<PlayerInfomation> _PlayerInfomation =
+          new Property<PlayerInfomation> { LocatorFunc = _PlayerInfomationLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<PlayerInfomation>> m_PlayerInfomationLocator =
+        static Func<BindableBase, ValueContainer<PlayerInfomation>> _PlayerInfomationLocator =
             RegisterContainerLocator<PlayerInfomation>(
                 "PlayerInfomation",
                 model =>
                 {
-                    model.m_PlayerInfomation =
-                        model.m_PlayerInfomation
+                    model._PlayerInfomation =
+                        model._PlayerInfomation
                         ??
-                        new Property<PlayerInfomation> { LocatorFunc = m_PlayerInfomationLocator };
-                    return model.m_PlayerInfomation.Container =
-                        model.m_PlayerInfomation.Container
+                        new Property<PlayerInfomation> { LocatorFunc = _PlayerInfomationLocator };
+                    return model._PlayerInfomation.Container =
+                        model._PlayerInfomation.Container
                         ??
                         new ValueContainer<PlayerInfomation>("PlayerInfomation", model);
                 });
@@ -47,25 +47,25 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         [DataMember]
         public ObservableCollection<ResourcesEntry> Resources
         {
-            get { return m_ResourcesLocator(this).Value; }
-            set { m_ResourcesLocator(this).SetValueAndTryNotify(value); }
+            get { return _ResourcesLocator(this).Value; }
+            set { _ResourcesLocator(this).SetValueAndTryNotify(value); }
         }
 
         #region Property ObservableCollection<ResourcesEntry >  Resources Setup
-        protected Property<ObservableCollection<ResourcesEntry>> m_Resources =
-          new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = m_ResourcesLocator };
+        protected Property<ObservableCollection<ResourcesEntry>> _Resources =
+          new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = _ResourcesLocator };
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<ResourcesEntry>>> m_ResourcesLocator =
+        static Func<BindableBase, ValueContainer<ObservableCollection<ResourcesEntry>>> _ResourcesLocator =
             RegisterContainerLocator<ObservableCollection<ResourcesEntry>>(
                 "Resources",
                 model =>
                 {
-                    model.m_Resources =
-                        model.m_Resources
+                    model._Resources =
+                        model._Resources
                         ??
-                        new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = m_ResourcesLocator };
-                    return model.m_Resources.Container =
-                        model.m_Resources.Container
+                        new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = _ResourcesLocator };
+                    return model._Resources.Container =
+                        model._Resources.Container
                         ??
                         new ValueContainer<ObservableCollection<ResourcesEntry>>("Resources", model);
                 });

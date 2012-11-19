@@ -31,14 +31,14 @@ namespace TableGameSidekick_Metro
     sealed partial class App : Application
     {
 
-        static Frame m_MainFrame;
+        static Frame _MainFrame;
         /// <summary>
         /// 本App的主Frame
         /// </summary>
         public static Frame MainFrame
         {
-            get { return App.m_MainFrame; }
-            set { App.m_MainFrame = value; }
+            get { return App._MainFrame; }
+            set { App._MainFrame = value; }
         }
         /// <summary>
         /// 本App的主事件路由
@@ -56,7 +56,7 @@ namespace TableGameSidekick_Metro
             this.Suspending += OnSuspending;
 
  
-            MainEventRouter.InitFrameNavigator(ref  m_MainFrame);
+            MainEventRouter.InitFrameNavigator(ref  _MainFrame);
             MainFrame.GetFrameNavigator().PageInitActions = new Dictionary<Type, Action<MVVMSidekick.Views.LayoutAwarePage, IDictionary<string, object>>> 
                 { 
                     {
