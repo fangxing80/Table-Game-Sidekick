@@ -113,7 +113,8 @@
         </Literal>
       </Declarations>
       <Code Language="csharp" >
-        <![CDATA[        public CommandModel<$commandType$, $resourceType$> Command$commandName$
+        <![CDATA[
+        public CommandModel<$commandType$, $resourceType$> Command$commandName$
         {
             get { return _Command$commandName$Locator(this).Value; }
             set { _Command$commandName$Locator(this).SetValueAndTryNotify(value); }

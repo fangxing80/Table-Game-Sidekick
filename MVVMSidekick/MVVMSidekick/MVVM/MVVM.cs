@@ -301,10 +301,23 @@ namespace MVVMSidekick
         }
 
         /// <summary>
-        /// 为ViewModel增加的一些关于Dispose的快捷方法
+        /// 为ViewModel增加的一些关于BindableBase的快捷方法
         /// </summary>
         public static class BindableBaseExtensions
         {
+            /// <summary>
+            /// 使用连续的API设置ValueContainer的一些参数
+            /// </summary>
+            /// <typeparam name="TProperty">ValueContainer内容的类型</typeparam>
+            /// <param name="target">ValueContainer的配置目标实例</param>
+            /// <param name="action">配置内容</param>
+            /// <returns>ValueContainer的配置目标实例</returns>
+            public static ValueContainer<TProperty> Config<TProperty>(this ValueContainer<TProperty> target, Action<ValueContainer<TProperty>> action)
+            {
+                action(target);
+                return target;                
+            }
+
             /// <summary>
             /// 将IDisposable 对象注册到VM中的销毁对象列表。
             /// </summary>
@@ -675,9 +688,6 @@ namespace MVVMSidekick
         [DataContract]
         public abstract class BindableBase<TBindable> : BindableBase where TBindable : BindableBase<TBindable>
         {
-
-
-
 
             /// <summary>
             /// 每个属性类型独占的一个专门的类型缓存。

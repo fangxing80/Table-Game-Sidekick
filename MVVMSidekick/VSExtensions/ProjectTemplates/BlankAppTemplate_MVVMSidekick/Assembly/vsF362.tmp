@@ -177,17 +177,8 @@
         </member>
         <member name="T:MVVMSidekick.ViewModels.BindableBaseExtensions">
             <summary>
-            为ViewModel增加的一些关于BindableBase的快捷方法
+            为ViewModel增加的一些关于Dispose的快捷方法
             </summary>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.BindableBaseExtensions.Config``1(MVVMSidekick.ViewModels.ValueContainer{``0},System.Action{MVVMSidekick.ViewModels.ValueContainer{``0}})">
-            <summary>
-            使用连续的API设置ValueContainer的一些参数
-            </summary>
-            <typeparam name="TProperty">ValueContainer内容的类型</typeparam>
-            <param name="target">ValueContainer的配置目标实例</param>
-            <param name="action">配置内容</param>
-            <returns>ValueContainer的配置目标实例</returns>
         </member>
         <member name="M:MVVMSidekick.ViewModels.BindableBaseExtensions.DisposeWith``1(``0,MVVMSidekick.ViewModels.BindableBase)">
             <summary>

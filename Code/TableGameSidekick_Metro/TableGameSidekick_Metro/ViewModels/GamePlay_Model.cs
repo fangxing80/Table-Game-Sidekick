@@ -58,33 +58,16 @@ namespace TableGameSidekick_Metro.ViewModels
         }
 
 
+        
         public GameInfomation CurrentGameInfomation
         {
             get { return _CurrentGameInfomationLocator(this).Value; }
             set { _CurrentGameInfomationLocator(this).SetValueAndTryNotify(value); }
         }
-
-
         #region Property GameInfomation CurrentGameInfomation Setup
-
-        protected Property<GameInfomation> _CurrentGameInfomation =
-          new Property<GameInfomation> { LocatorFunc = _CurrentGameInfomationLocator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<GameInfomation>> _CurrentGameInfomationLocator =
-            RegisterContainerLocator<GameInfomation>(
-            "CurrentGameInfomation",
-            model =>
-            {
-                model._CurrentGameInfomation =
-                    model._CurrentGameInfomation
-                    ??
-                    new Property<GameInfomation> { LocatorFunc = _CurrentGameInfomationLocator };
-                return model._CurrentGameInfomation.Container =
-                    model._CurrentGameInfomation.Container
-                    ??
-                    new ValueContainer<GameInfomation>("CurrentGameInfomation", model);
-            });
-
+        protected Property<GameInfomation> _CurrentGameInfomation = new Property<GameInfomation> { LocatorFunc = _CurrentGameInfomationLocator };
+        static Func<BindableBase, ValueContainer<GameInfomation>> _CurrentGameInfomationLocator = RegisterContainerLocator<GameInfomation>("CurrentGameInfomation", model => model.Initialize("CurrentGameInfomation", ref model._CurrentGameInfomation, ref _CurrentGameInfomationLocator, _CurrentGameInfomationDefaultValueFactory));
+        static Func<GameInfomation> _CurrentGameInfomationDefaultValueFactory = null;
         #endregion
 
 

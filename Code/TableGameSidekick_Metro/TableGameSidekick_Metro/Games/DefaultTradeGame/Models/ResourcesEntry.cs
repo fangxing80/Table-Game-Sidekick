@@ -10,35 +10,28 @@ using TableGameSidekick_Metro.DataEntity;
 
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 {
+
+        
+        
+
+
     [DataContract]
     public class ResourcesEntry : BindableBase<ResourcesEntry>
     {
-        [DataMember]
+        [DataMember]        
         public string ResourceName
         {
             get { return _ResourceNameLocator(this).Value; }
             set { _ResourceNameLocator(this).SetValueAndTryNotify(value); }
         }
-
         #region Property string ResourceName Setup
-        protected Property<string> _ResourceName =
-          new Property<string> { LocatorFunc = _ResourceNameLocator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<string>> _ResourceNameLocator =
-            RegisterContainerLocator<string>(
-                "ResourceName",
-                model =>
-                {
-                    model._ResourceName =
-                        model._ResourceName
-                        ??
-                        new Property<string> { LocatorFunc = _ResourceNameLocator };
-                    return model._ResourceName.Container =
-                        model._ResourceName.Container
-                        ??
-                        new ValueContainer<string>("ResourceName", model);
-                });
+        protected Property<string> _ResourceName = new Property<string> { LocatorFunc = _ResourceNameLocator };
+        static Func<BindableBase, ValueContainer<string>> _ResourceNameLocator = RegisterContainerLocator<string>("ResourceName", 
+            model => model
+                .Initialize("ResourceName", ref model._ResourceName, ref _ResourceNameLocator, _ResourceNameDefaultValueFactory))               
+        static Func<string> _ResourceNameDefaultValueFactory = null;
         #endregion
+
 
 
         [DataMember]
@@ -97,21 +90,8 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         #endregion
 
         
-        public CommandModel<ReactiveCommand, String> CommandSomeCommand
-        {
-            get { return _CommandSomeCommandLocator(this).Value; }
-            set { _CommandSomeCommandLocator(this).SetValueAndTryNotify(value); }
-        }
-        #region Property CommandModel<ReactiveCommand, String> CommandSomeCommand Setup
-        protected Property<CommandModel<ReactiveCommand, String>> _CommandSomeCommand = new Property<CommandModel<ReactiveCommand, String>> { LocatorFunc = _CommandSomeCommandLocator };
-        static Func<BindableBase, ValueContainer<CommandModel<ReactiveCommand, String>>> _CommandSomeCommandLocator = RegisterContainerLocator<CommandModel<ReactiveCommand, String>>("CommandSomeCommand", model => model.Initialize("CommandSomeCommand", ref model._CommandSomeCommand, ref _CommandSomeCommandLocator, _CommandSomeCommandDefaultValueFactory));
-        static Func<BindableBase, CommandModel<ReactiveCommand, String>> _CommandSomeCommandDefaultValueFactory =
-            model => {
-                var cmd=new ReactiveCommand(canExecute: true) { ViewModel = model }; //New Command Core
-                cmd.Subscribe(_ => { }).DisposeWith(model); //Config it if needed
-                return cmd.CreateCommandModel("SomeCommand"); 
-            };
-        #endregion
+        
+
 
 
 
