@@ -25,30 +25,16 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         /// 庄家资源
         /// </summary>
         [DataMember ]
+        
         public ObservableCollection<ResourcesEntry> BankersStash
         {
-            get { return m_BankersStashLocator(this).Value; }
-            set { m_BankersStashLocator(this).SetValueAndTryNotify(value); }
+            get { return _BankersStashLocator(this).Value; }
+            set { _BankersStashLocator(this).SetValueAndTryNotify(value); }
         }
-
-        #region Property ObservableCollection<ResourcesEntry>  BankersStash Setup
-        protected Property<ObservableCollection<ResourcesEntry>> m_BankersStash =
-          new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = m_BankersStashLocator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<ResourcesEntry>>> m_BankersStashLocator =
-            RegisterContainerLocator<ObservableCollection<ResourcesEntry>>(
-                "BankersStash",
-                model =>
-                {
-                    model.m_BankersStash =
-                        model.m_BankersStash
-                        ??
-                        new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = m_BankersStashLocator };
-                    return model.m_BankersStash.Container =
-                        model.m_BankersStash.Container
-                        ??
-                        new ValueContainer<ObservableCollection<ResourcesEntry>>("BankersStash", model, new ObservableCollection<ResourcesEntry>());
-                });
+        #region Property ObservableCollection<ResourcesEntry> BankersStash Setup
+        protected Property<ObservableCollection<ResourcesEntry>> _BankersStash = new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = _BankersStashLocator };
+        static Func<BindableBase, ValueContainer<ObservableCollection<ResourcesEntry>>> _BankersStashLocator = RegisterContainerLocator<ObservableCollection<ResourcesEntry>>("BankersStash", model => model.Initialize("BankersStash", ref model._BankersStash, ref _BankersStashLocator, _BankersStashDefaultValueFactory));
+        static Func<ObservableCollection<ResourcesEntry>> _BankersStashDefaultValueFactory = ()=>new  ObservableCollection<ResourcesEntry>() ;
         #endregion
 
 
@@ -56,31 +42,17 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         /// 各种资源最大数目限制
         /// </summary>
          [DataMember ]
+        
         public ObservableCollection<ResourcesEntry> ResouceLimitations
         {
-            get { return m_ResouceLimitationsLocator(this).Value; }
-            set { m_ResouceLimitationsLocator(this).SetValueAndTryNotify(value); }
+            get { return _ResouceLimitationsLocator(this).Value; }
+            set { _ResouceLimitationsLocator(this).SetValueAndTryNotify(value); }
         }
-
-        #region Property ObservableCollection <ResourcesEntry > ResouceLimitations Setup
-        protected Property<ObservableCollection<ResourcesEntry>> m_ResouceLimitations =
-          new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = m_ResouceLimitationsLocator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<ObservableCollection<ResourcesEntry>>> m_ResouceLimitationsLocator =
-            RegisterContainerLocator<ObservableCollection<ResourcesEntry>>(
-                "ResouceLimitations",
-                model =>
-                {
-                    model.m_ResouceLimitations =
-                        model.m_ResouceLimitations
-                        ??
-                        new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = m_ResouceLimitationsLocator };
-                    return model.m_ResouceLimitations.Container =
-                        model.m_ResouceLimitations.Container
-                        ??
-                        new ValueContainer<ObservableCollection<ResourcesEntry>>("ResouceLimitations", model, new ObservableCollection<ResourcesEntry>());
-                });
-        #endregion
+         #region Property ObservableCollection<ResourcesEntry> ResouceLimitations Setup
+         protected Property<ObservableCollection<ResourcesEntry>> _ResouceLimitations = new Property<ObservableCollection<ResourcesEntry>> { LocatorFunc = _ResouceLimitationsLocator };
+         static Func<BindableBase, ValueContainer<ObservableCollection<ResourcesEntry>>> _ResouceLimitationsLocator = RegisterContainerLocator<ObservableCollection<ResourcesEntry>>("ResouceLimitations", model => model.Initialize("ResouceLimitations", ref model._ResouceLimitations, ref _ResouceLimitationsLocator, _ResouceLimitationsDefaultValueFactory));
+         static Func<ObservableCollection<ResourcesEntry>> _ResouceLimitationsDefaultValueFactory = ()=>new  ObservableCollection<ResourcesEntry>();
+         #endregion
 
 
         /// <summary>

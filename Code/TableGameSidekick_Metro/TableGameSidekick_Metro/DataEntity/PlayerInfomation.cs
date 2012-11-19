@@ -14,33 +14,16 @@ namespace TableGameSidekick_Metro.DataEntity
 
         [DataMember]
 
+        
         public string Name
         {
-            get { return m_NameLocator(this).Value ?? ""; }
-            set { m_NameLocator(this).SetValueAndTryNotify(value); }
+            get { return _NameLocator(this).Value; }
+            set { _NameLocator(this).SetValueAndTryNotify(value); }
         }
-
-
         #region Property string Name Setup
-
-        protected Property<string> m_Name =
-          new Property<string> { LocatorFunc = m_NameLocator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<string>> m_NameLocator =
-            RegisterContainerLocator<string>(
-            "Name",
-            model =>
-            {
-                model.m_Name =
-                    model.m_Name
-                    ??
-                    new Property<string> { LocatorFunc = m_NameLocator };
-                return model.m_Name.Container =
-                    model.m_Name.Container
-                    ??
-                    new ValueContainer<string>("Name", model, "");
-            });
-
+        protected Property<string> _Name = new Property<string> { LocatorFunc = _NameLocator };
+        static Func<BindableBase, ValueContainer<string>> _NameLocator = RegisterContainerLocator<string>("Name", model => model.Initialize("Name", ref model._Name, ref _NameLocator, _NameDefaultValueFactory));
+        static Func<string> _NameDefaultValueFactory = ()=>"";
         #endregion
 
 

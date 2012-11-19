@@ -24,30 +24,16 @@
           <Default>MyProperty</Default>
         </Literal>
       </Declarations>
-      <Code Language="csharp"><![CDATA[        public $type$ $property$
+      <Code Language="csharp">
+                  <![CDATA[        public $type$ $property$
         {
-            get { return m_$property$Locator(this).Value; }
-            set { m_$property$Locator(this).SetValueAndTryNotify(value); }
-        }        
-        
+            get { return _$property$Locator(this).Value; }
+            set { _$property$Locator(this).SetValueAndTryNotify(value); }
+        }
         #region Property $type$ $property$ Setup        
-        protected Property<$type$> m_$property$ =
-          new Property<$type$>{ LocatorFunc = m_$property$Locator};
-        [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase,ValueContainer<$type$>> m_$property$Locator=
-            RegisterContainerLocator<$type$>(
-                "$property$",
-                model =>
-                {
-                    model.m_$property$=
-                        model.m_$property$ 
-                        ?? 
-                        new Property<$type$>{LocatorFunc = m_$property$Locator}; 
-                    return model.m_$property$.Container = 
-                        model.m_$property$.Container
-                        ??
-                        new ValueContainer<$type$>("$property$",model);
-                });          
+        protected Property<$type$> _$property$ = new Property<$type$>{ LocatorFunc = _$property$Locator};
+        static Func<BindableBase,ValueContainer<$type$>> _$property$Locator= RegisterContainerLocator<$type$>("$property$", model =>model.Initialize("$property$",ref model._$property$, ref _$property$Locator,_$property$DefaultValueFactory));         
+        static Func<$type$> _$property$DefaultValueFactory = null;
         #endregion
 ]]>
       </Code>
@@ -131,13 +117,13 @@
 
         public CommandModel<$commandType$, $resourceType$> $commandName$
         {
-            get { return m_$commandName$.WithViewModel(this); }
-            protected set { m_$commandName$ = value; }
+            get { return _$commandName$.WithViewModel(this); }
+            protected set { _$commandName$ = value; }
         }       
         
         #region $commandName$ Configuration
         [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<$commandType$, $resourceType$> m_$commandName$
+        CommandModel<$commandType$, $resourceType$> _$commandName$
             = new $commandType$(canExecute: true).CreateCommandModel(default($resourceType$));
         #endregion
 ]]>
@@ -172,12 +158,12 @@
       </Declarations>
       <Code Language="csharp" >
         <![CDATA[
-        CommandModel<$commandType$> m_$commandName$
+        CommandModel<$commandType$> _$commandName$
             = new $commandType$().CreateCommandModel();
         public CommandModel<$commandType$> $commandName$
         {
-            get { return m_$commandName$; }
-            protected set { m_$commandName$ = value; }
+            get { return _$commandName$; }
+            protected set { _$commandName$ = value; }
         }        
 ]]>
       </Code>

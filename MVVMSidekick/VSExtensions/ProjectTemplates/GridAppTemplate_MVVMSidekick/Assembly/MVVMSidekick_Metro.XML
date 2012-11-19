@@ -175,12 +175,12 @@
             本UI是否处于忙状态
             </summary>
         </member>
-        <member name="T:MVVMSidekick.ViewModels.DisposableExtensions">
+        <member name="T:MVVMSidekick.ViewModels.BindableBaseExtensions">
             <summary>
             为ViewModel增加的一些关于Dispose的快捷方法
             </summary>
         </member>
-        <member name="M:MVVMSidekick.ViewModels.DisposableExtensions.RegisterDisposeToViewModel``1(``0,MVVMSidekick.ViewModels.BindableBase)">
+        <member name="M:MVVMSidekick.ViewModels.BindableBaseExtensions.RegisterDisposeToViewModel``1(``0,MVVMSidekick.ViewModels.BindableBase)">
             <summary>
             将IDisposable 对象注册到VM中的销毁对象列表。
             </summary>
@@ -218,25 +218,11 @@
             </summary>
             <typeparam name="TProperty"></typeparam>
         </member>
-        <member name="M:MVVMSidekick.ViewModels.ValueContainer`1.#ctor(System.String,MVVMSidekick.ViewModels.BindableBase)">
-            <summary>
-            创建属性值容器
-            </summary>
-            <param name="info">属性名</param>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.ValueContainer`1.#ctor(System.String,System.Func{`0,`0,System.Boolean},MVVMSidekick.ViewModels.BindableBase)">
-            <summary>
-            创建属性值容器
-            </summary>
-            <param name="info">属性名</param>
-            <param name="equalityComparer">判断两个值是否相等的比较器</param>
-        </member>
         <member name="M:MVVMSidekick.ViewModels.ValueContainer`1.#ctor(System.String,MVVMSidekick.ViewModels.BindableBase,`0)">
             <summary>
             创建属性值容器
             </summary>
             <param name="info">属性名</param>
-            <param name="initValue">初始值</param>
         </member>
         <member name="M:MVVMSidekick.ViewModels.ValueContainer`1.#ctor(System.String,MVVMSidekick.ViewModels.BindableBase,System.Func{`0,`0,System.Boolean},`0)">
             <summary>

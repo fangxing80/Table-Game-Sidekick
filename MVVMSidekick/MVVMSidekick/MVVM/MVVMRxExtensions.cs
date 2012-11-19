@@ -93,9 +93,9 @@ namespace MVVMSidekick.Reactive
 
 
 
-        protected Lazy<IObservable<EventPattern<EventCommandEventArgs>>> m_LazyObservableExecute;
-        protected Lazy<IObserver<bool>> m_LazyObserverCanExecute;
-        protected bool m_CurrentCanExecuteObserverValue;
+        protected Lazy<IObservable<EventPattern<EventCommandEventArgs>>> _LazyObservableExecute;
+        protected Lazy<IObserver<bool>> _LazyObserverCanExecute;
+        protected bool _CurrentCanExecuteObserverValue;
 
         protected ReactiveCommand()
         {
@@ -106,13 +106,13 @@ namespace MVVMSidekick.Reactive
         public ReactiveCommand(bool canExecute = false)
             : this()
         {
-            m_CurrentCanExecuteObserverValue = canExecute;
+            _CurrentCanExecuteObserverValue = canExecute;
         }
 
 
         virtual protected void ConfigReactive()
         {
-            m_LazyObservableExecute = new Lazy<IObservable<EventPattern<EventCommandEventArgs>>>
+            _LazyObservableExecute = new Lazy<IObservable<EventPattern<EventCommandEventArgs>>>
             (
                 () =>
                 {
@@ -132,14 +132,14 @@ namespace MVVMSidekick.Reactive
                 }
             );
 
-            m_LazyObserverCanExecute = new Lazy<IObserver<bool>>
+            _LazyObserverCanExecute = new Lazy<IObserver<bool>>
             (
                 () =>
                     Observer.Create<bool>(
                     canExe =>
                     {
-                        var oldv = this.m_CurrentCanExecuteObserverValue;
-                        m_CurrentCanExecuteObserverValue = canExe;
+                        var oldv = this._CurrentCanExecuteObserverValue;
+                        _CurrentCanExecuteObserverValue = canExe;
                         if (oldv != canExe)
                         {
                             OnCanExecuteChanged();
@@ -149,11 +149,11 @@ namespace MVVMSidekick.Reactive
 
             );
         }
-        public IObserver<bool> CanExecuteObserver { get { return m_LazyObserverCanExecute.Value; } }
+        public IObserver<bool> CanExecuteObserver { get { return _LazyObserverCanExecute.Value; } }
 
         public override bool CanExecute(object parameter)
         {
-            return m_CurrentCanExecuteObserverValue;
+            return _CurrentCanExecuteObserverValue;
         }
 
 
@@ -163,7 +163,7 @@ namespace MVVMSidekick.Reactive
 
         public IDisposable Subscribe(IObserver<EventPattern<EventCommandEventArgs>> observer)
         {
-            return m_LazyObservableExecute
+            return _LazyObservableExecute
                   .Value
                   .Subscribe(observer);
         }
@@ -207,21 +207,21 @@ namespace MVVMSidekick.Reactive
         public ReactiveAsyncCommand(bool canExecute = false, ExeuteBehavior behavior = Reactive.ExeuteBehavior.CannotExecute)
             : this(behavior)
         {
-            m_CurrentCanExecuteObserverValue = canExecute;
+            _CurrentCanExecuteObserverValue = canExecute;
         }
 
-        protected Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>> m_LazyObservableExecute;
-        protected Lazy<IObserver<bool>> m_LazyObserverCanExecute;
-        protected bool m_CurrentCanExecuteObserverValue;
+        protected Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>> _LazyObservableExecute;
+        protected Lazy<IObserver<bool>> _LazyObserverCanExecute;
+        protected bool _CurrentCanExecuteObserverValue;
         public CancellationTokenSource CancellationTokenSource { get; private set; }
         public ExeuteBehavior ExeuteBehavior { get; private set; }
         public IProgress<TProgress> Progress { get; set; }
 
-        bool IsExecuting { get { return m_ExecutingCount != 0; } }
-        internal int m_ExecutingCount = 0;
+        bool IsExecuting { get { return _ExecutingCount != 0; } }
+        internal int _ExecutingCount = 0;
         public IDisposable Subscribe(IObserver<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>> observer)
         {
-            return m_LazyObservableExecute.Value.Subscribe(
+            return _LazyObservableExecute.Value.Subscribe(
                     fac =>
                     {
                         if (IsExecuting && ExeuteBehavior == Reactive.ExeuteBehavior.CanExecuteCancelRunningTask)
@@ -242,7 +242,7 @@ namespace MVVMSidekick.Reactive
 
         virtual protected void ConfigReactive()
         {
-            m_LazyObservableExecute = new Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>>
+            _LazyObservableExecute = new Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>>
             (
                 () =>
                     Observable.FromEventPattern<EventHandler<EventCommandEventArgs>, EventCommandEventArgs>
@@ -268,14 +268,14 @@ namespace MVVMSidekick.Reactive
                 )
             );
 
-            m_LazyObserverCanExecute = new Lazy<IObserver<bool>>
+            _LazyObserverCanExecute = new Lazy<IObserver<bool>>
             (
                 () =>
                     Observer.Create<bool>(
                     canExe =>
                     {
-                        var oldv = this.m_CurrentCanExecuteObserverValue;
-                        m_CurrentCanExecuteObserverValue = canExe;
+                        var oldv = this._CurrentCanExecuteObserverValue;
+                        _CurrentCanExecuteObserverValue = canExe;
                         if (oldv != canExe)
                         {
                             OnCanExecuteChanged();
@@ -285,17 +285,17 @@ namespace MVVMSidekick.Reactive
 
             );
         }
-        public IObserver<bool> CanExecuteObserver { get { return m_LazyObserverCanExecute.Value; } }
+        public IObserver<bool> CanExecuteObserver { get { return _LazyObserverCanExecute.Value; } }
 
         public override bool CanExecute(object parameter)
         {
             switch (this.ExeuteBehavior)
             {
                 case ExeuteBehavior.CannotExecute:
-                    return m_CurrentCanExecuteObserverValue && (!IsExecuting);
+                    return _CurrentCanExecuteObserverValue && (!IsExecuting);
 
                 default:
-                    return m_CurrentCanExecuteObserverValue;
+                    return _CurrentCanExecuteObserverValue;
             }
         }
 
@@ -305,7 +305,7 @@ namespace MVVMSidekick.Reactive
             internal AsyncRunningDisposableContext(ReactiveAsyncCommand<TProgress> command)
             {
                 Command = command;
-                Interlocked.Increment(ref Command.m_ExecutingCount);
+                Interlocked.Increment(ref Command._ExecutingCount);
                 Command.OnCanExecuteChanged();
 
             }
@@ -316,7 +316,7 @@ namespace MVVMSidekick.Reactive
             public Object Parameter { get; set; }
             public void Dispose()
             {
-                Interlocked.Decrement(ref Command.m_ExecutingCount);
+                Interlocked.Decrement(ref Command._ExecutingCount);
                 Command.OnCanExecuteChanged();
             }
         }

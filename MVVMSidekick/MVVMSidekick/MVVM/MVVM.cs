@@ -87,6 +87,7 @@ namespace MVVMSidekick
         public abstract class BindableBase
             : IDisposable, INotifyPropertyChanged, IDataErrorInfo, IBindableBase
         {
+           
 
             /// <summary>
             ///  0 for not disposed, 1 for disposed
@@ -302,7 +303,7 @@ namespace MVVMSidekick
         /// <summary>
         /// 为ViewModel增加的一些关于Dispose的快捷方法
         /// </summary>
-        public static class DisposableExtensions
+        public static class BindableBaseExtensions
         {
             /// <summary>
             /// 将IDisposable 对象注册到VM中的销毁对象列表。
@@ -315,6 +316,20 @@ namespace MVVMSidekick
             {
                 vm.AddDisposable(item);
                 return item;
+            }
+            public static ValueContainer<T> Initialize<T>(this BindableBase model, string propertyName, ref Property<T> reference, ref Func<BindableBase, ValueContainer<T>> locator ,Func<T> defaultValueFactory =null )
+            {
+                if (reference == null)
+                    reference = new Property<T> { LocatorFunc = locator };
+                if (reference.Container ==null )
+                {
+                    reference.Container = new ValueContainer<T>(propertyName, model) ;
+                    if ( defaultValueFactory !=null)
+                    {
+                        reference.Container.Value  = defaultValueFactory();
+                    }
+                }                            
+                return reference.Container;
             }
         }
 
@@ -378,44 +393,45 @@ namespace MVVMSidekick
             /// 创建属性值容器
             /// </summary>
             /// <param name="info">属性名</param>
-            public ValueContainer(string info, BindableBase vm)
-                : this(info, vm, (v1, v2) => v1.Equals(v2), default(TProperty))
-            {
-            }
-
-            /// <summary>
-            /// 创建属性值容器
-            /// </summary>
-            /// <param name="info">属性名</param>
-            /// <param name="equalityComparer">判断两个值是否相等的比较器</param>
-            public ValueContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, BindableBase vm)
-                : this(info, vm, equalityComparer, default(TProperty))
-            {
-            }
-
-            /// <summary>
-            /// 创建属性值容器
-            /// </summary>
-            /// <param name="info">属性名</param>
-            /// <param name="initValue">初始值</param>
-            public ValueContainer(string info, BindableBase vm, TProperty initValue)
+            public ValueContainer(string info, BindableBase vm, TProperty initValue =default (TProperty ))
                 : this(info, vm, (v1, v2) => v1.Equals(v2), initValue)
             {
             }
 
+            ///// <summary>
+            ///// 创建属性值容器
+            ///// </summary>
+            ///// <param name="info">属性名</param>
+            ///// <param name="equalityComparer">判断两个值是否相等的比较器</param>
+            //public ValueContainer(string info, Func<TProperty, TProperty, bool> equalityComparer, BindableBase vm)
+            //    : this(info, vm, equalityComparer)
+            //{
+            //}
+
+            ///// <summary>
+            ///// 创建属性值容器
+            ///// </summary>
+            ///// <param name="info">属性名</param>
+            ///// <param name="initValue">初始值</param>
+            //public ValueContainer(string info, BindableBase vm, TProperty initValue)
+            //    : this(info, vm, (v1, v2) => v1.Equals(v2), initValue)
+            //{
+            //}
+
             /// <summary>
             /// 创建属性值容器
             /// </summary>
             /// <param name="info">属性名</param>
             /// <param name="equalityComparer">判断两个值是否相等的比较器</param>
             /// <param name="initValue">初始值</param>
-            public ValueContainer(string info, BindableBase vm, Func<TProperty, TProperty, bool> equalityComparer, TProperty initValue)
+            public ValueContainer(string info, BindableBase vm, Func<TProperty, TProperty, bool> equalityComparer,TProperty  initValue=default (TProperty))
             {
                 EqualityComparer = equalityComparer;
                 PropertyName = info;
-                _value = initValue;
+                
                 PropertyType = typeof(TProperty);
                 ViewModel = vm;
+                Value = initValue;
                 // _eventObject = new ValueChangedEventObject<TProperty>(this);
             }
 
@@ -454,18 +470,20 @@ namespace MVVMSidekick
             /// </summary>
             /// <param name="objectInstance">属性所在的ViewModel</param>
             /// <param name="value">属性值</param>
-            public void SetValueAndTryNotify(TProperty value)
+            public ValueContainer<TProperty> SetValueAndTryNotify(TProperty value)
             {
                 InternalPropertyChange(this.ViewModel, value, ref _value, PropertyName);
+                return this;
             }
 
             /// <summary>
             /// 单纯保存值
             /// </summary>
             /// <param name="value">新值</param>
-            public void SetValue(TProperty value)
+            public ValueContainer<TProperty> SetValue(TProperty value)
             {
                 _value = value;
+                return this;
             }
 
 
@@ -577,25 +595,25 @@ namespace MVVMSidekick
             /// </summary>
             public TItem1 Item1
             {
-                get { return m_Item1Locator(this).Value; }
-                set { m_Item1Locator(this).SetValueAndTryNotify(value); }
+                get { return _Item1Locator(this).Value; }
+                set { _Item1Locator(this).SetValueAndTryNotify(value); }
             }
 
             #region Property TItem1 Item1 Setup
-            protected Property<TItem1> m_Item1 =
-              new Property<TItem1> { LocatorFunc = m_Item1Locator };
+            protected Property<TItem1> _Item1 =
+              new Property<TItem1> { LocatorFunc = _Item1Locator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<BindableBase, ValueContainer<TItem1>> m_Item1Locator =
+            static Func<BindableBase, ValueContainer<TItem1>> _Item1Locator =
                 RegisterContainerLocator<TItem1>(
                     "Item1",
                     model =>
                     {
-                        model.m_Item1 =
-                            model.m_Item1
+                        model._Item1 =
+                            model._Item1
                             ??
-                            new Property<TItem1> { LocatorFunc = m_Item1Locator };
-                        return model.m_Item1.Container =
-                            model.m_Item1.Container
+                            new Property<TItem1> { LocatorFunc = _Item1Locator };
+                        return model._Item1.Container =
+                            model._Item1.Container
                             ??
                             new ValueContainer<TItem1>("Item1", model);
                     });
@@ -606,25 +624,25 @@ namespace MVVMSidekick
             /// </summary>
             public TItem2 Item2
             {
-                get { return m_Item2Locator(this).Value; }
-                set { m_Item2Locator(this).SetValueAndTryNotify(value); }
+                get { return _Item2Locator(this).Value; }
+                set { _Item2Locator(this).SetValueAndTryNotify(value); }
             }
 
             #region Property TItem2 Item2 Setup
-            protected Property<TItem2> m_Item2 =
-              new Property<TItem2> { LocatorFunc = m_Item2Locator };
+            protected Property<TItem2> _Item2 =
+              new Property<TItem2> { LocatorFunc = _Item2Locator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<BindableBase, ValueContainer<TItem2>> m_Item2Locator =
+            static Func<BindableBase, ValueContainer<TItem2>> _Item2Locator =
                 RegisterContainerLocator<TItem2>(
                     "Item2",
                     model =>
                     {
-                        model.m_Item2 =
-                            model.m_Item2
+                        model._Item2 =
+                            model._Item2
                             ??
-                            new Property<TItem2> { LocatorFunc = m_Item2Locator };
-                        return model.m_Item2.Container =
-                            model.m_Item2.Container
+                            new Property<TItem2> { LocatorFunc = _Item2Locator };
+                        return model._Item2.Container =
+                            model._Item2.Container
                             ??
                             new ValueContainer<TItem2>("Item2", model);
                     });
@@ -728,17 +746,17 @@ namespace MVVMSidekick
             /// </summary>
             //public override string Error
             //{
-            //    get { return m_ErrorLocator(this).Value; }
-            //    protected set { m_ErrorLocator(this).SetValueAndTryNotify(value); }
+            //    get { return _ErrorLocator(this).Value; }
+            //    protected set { _ErrorLocator(this).SetValueAndTryNotify(value); }
             //}
             protected override string GetError()
             {
-                return m_ErrorLocator(this).Value;
+                return _ErrorLocator(this).Value;
             }
 
             protected override void SetError(string value)
             {
-                m_ErrorLocator(this).SetValueAndTryNotify(value);
+                _ErrorLocator(this).SetValueAndTryNotify(value);
             }
 
 
@@ -746,20 +764,20 @@ namespace MVVMSidekick
 
             #region Property string Error Setup
 
-            protected Property<string> m_Error =
-              new Property<string> { LocatorFunc = m_ErrorLocator };
+            protected Property<string> _Error =
+              new Property<string> { LocatorFunc = _ErrorLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<BindableBase, ValueContainer<string>> m_ErrorLocator =
+            static Func<BindableBase, ValueContainer<string>> _ErrorLocator =
                 RegisterContainerLocator<string>(
                 "Error",
                 model =>
                 {
-                    model.m_Error =
-                        model.m_Error
+                    model._Error =
+                        model._Error
                         ??
-                        new Property<string> { LocatorFunc = m_ErrorLocator };
-                    return model.m_Error.Container =
-                        model.m_Error.Container
+                        new Property<string> { LocatorFunc = _ErrorLocator };
+                    return model._Error.Container =
+                        model._Error.Container
                         ??
                         new ValueContainer<string>("Error", model);
                 });
@@ -935,25 +953,25 @@ namespace MVVMSidekick
 
             public TResult Result
             {
-                get { return m_ResultLocator(this).Value; }
-                set { m_ResultLocator(this).SetValueAndTryNotify(value); }
+                get { return _ResultLocator(this).Value; }
+                set { _ResultLocator(this).SetValueAndTryNotify(value); }
             }
 
             #region Property TResult Result Setup
-            protected Property<TResult> m_Result =
-              new Property<TResult> { LocatorFunc = m_ResultLocator };
+            protected Property<TResult> _Result =
+              new Property<TResult> { LocatorFunc = _ResultLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<BindableBase, ValueContainer<TResult>> m_ResultLocator =
+            static Func<BindableBase, ValueContainer<TResult>> _ResultLocator =
                 RegisterContainerLocator<TResult>(
                     "Result",
                     model =>
                     {
-                        model.m_Result =
-                            model.m_Result
+                        model._Result =
+                            model._Result
                             ??
-                            new Property<TResult> { LocatorFunc = m_ResultLocator };
-                        return model.m_Result.Container =
-                            model.m_Result.Container
+                            new Property<TResult> { LocatorFunc = _ResultLocator };
+                        return model._Result.Container =
+                            model._Result.Container
                             ??
                             new ValueContainer<TResult>("Result", model);
                     });
@@ -983,25 +1001,25 @@ namespace MVVMSidekick
             /// </summary>
             public bool IsUIBusy
             {
-                get { return m_IsUIBusyLocator(this).Value; }
-                set { m_IsUIBusyLocator(this).SetValueAndTryNotify(value); }
+                get { return _IsUIBusyLocator(this).Value; }
+                set { _IsUIBusyLocator(this).SetValueAndTryNotify(value); }
             }
 
             #region Property bool IsUIBusy Setup
-            protected Property<bool> m_IsUIBusy =
-              new Property<bool> { LocatorFunc = m_IsUIBusyLocator };
+            protected Property<bool> _IsUIBusy =
+              new Property<bool> { LocatorFunc = _IsUIBusyLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<BindableBase, ValueContainer<bool>> m_IsUIBusyLocator =
+            static Func<BindableBase, ValueContainer<bool>> _IsUIBusyLocator =
                 RegisterContainerLocator<bool>(
                     "IsUIBusy",
                     model =>
                     {
-                        model.m_IsUIBusy =
-                            model.m_IsUIBusy
+                        model._IsUIBusy =
+                            model._IsUIBusy
                             ??
-                            new Property<bool> { LocatorFunc = m_IsUIBusyLocator };
-                        return model.m_IsUIBusy.Container =
-                            model.m_IsUIBusy.Container
+                            new Property<bool> { LocatorFunc = _IsUIBusyLocator };
+                        return model._IsUIBusy.Container =
+                            model._IsUIBusy.Container
                             ??
                             new ValueContainer<bool>("IsUIBusy", model);
                     });
@@ -1121,27 +1139,27 @@ namespace MVVMSidekick
             /// </summary>
             public bool LastCanExecuteValue
             {
-                get { return m_LastCanExecuteValueLocator(this).Value; }
-                set { m_LastCanExecuteValueLocator(this).SetValueAndTryNotify(value); }
+                get { return _LastCanExecuteValueLocator(this).Value; }
+                set { _LastCanExecuteValueLocator(this).SetValueAndTryNotify(value); }
             }
 
 
             #region Property bool LastCanExecuteValue Setup
 
-            protected Property<bool> m_LastCanExecuteValue =
-              new Property<bool> { LocatorFunc = m_LastCanExecuteValueLocator };
+            protected Property<bool> _LastCanExecuteValue =
+              new Property<bool> { LocatorFunc = _LastCanExecuteValueLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<BindableBase, ValueContainer<bool>> m_LastCanExecuteValueLocator =
+            static Func<BindableBase, ValueContainer<bool>> _LastCanExecuteValueLocator =
                 RegisterContainerLocator<bool>(
                 "LastCanExecuteValue",
                 model =>
                 {
-                    model.m_LastCanExecuteValue =
-                        model.m_LastCanExecuteValue
+                    model._LastCanExecuteValue =
+                        model._LastCanExecuteValue
                         ??
-                        new Property<bool> { LocatorFunc = m_LastCanExecuteValueLocator };
-                    return model.m_LastCanExecuteValue.Container =
-                        model.m_LastCanExecuteValue.Container
+                        new Property<bool> { LocatorFunc = _LastCanExecuteValueLocator };
+                    return model._LastCanExecuteValue.Container =
+                        model._LastCanExecuteValue.Container
                         ??
                         new ValueContainer<bool>("LastCanExecuteValue", model);
                 });
@@ -1155,27 +1173,27 @@ namespace MVVMSidekick
             /// </summary>
             public TResource Resource
             {
-                get { return m_ResourceLocator(this).Value; }
-                set { m_ResourceLocator(this).SetValueAndTryNotify(value); }
+                get { return _ResourceLocator(this).Value; }
+                set { _ResourceLocator(this).SetValueAndTryNotify(value); }
             }
 
 
             #region Property TResource Resource Setup
 
-            protected Property<TResource> m_Resource =
-              new Property<TResource> { LocatorFunc = m_ResourceLocator };
+            protected Property<TResource> _Resource =
+              new Property<TResource> { LocatorFunc = _ResourceLocator };
             [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            static Func<BindableBase, ValueContainer<TResource>> m_ResourceLocator =
+            static Func<BindableBase, ValueContainer<TResource>> _ResourceLocator =
                 RegisterContainerLocator<TResource>(
                 "Resource",
                 model =>
                 {
-                    model.m_Resource =
-                        model.m_Resource
+                    model._Resource =
+                        model._Resource
                         ??
-                        new Property<TResource> { LocatorFunc = m_ResourceLocator };
-                    return model.m_Resource.Container =
-                        model.m_Resource.Container
+                        new Property<TResource> { LocatorFunc = _ResourceLocator };
+                    return model._Resource.Container =
+                        model._Resource.Container
                         ??
                         new ValueContainer<TResource>("Resource", model);
                 });
