@@ -29,7 +29,7 @@ namespace TableGameSidekick_Metro.ViewModels
         {
             #region SaveDataCommand 设置
             GetValueContainer(x => x.CurrentGameInfomation)
-                .GetValueChangeObservable()
+                .GetValueChangedObservable()
                 .Select(x => x.EventArgs != null)
                 .Subscribe(BackToMainCommand.CommandCore.CanExecuteObserver);
 

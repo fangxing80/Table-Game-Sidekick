@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Data;
 using MVVMSidekick.Reactive;
 using System.Reactive.Linq;
 using System.Reactive;
+using Windows.UI.Xaml.Input;
 namespace MVVMSidekick
 {
     namespace Storages
@@ -186,7 +187,7 @@ namespace MVVMSidekick
         }
 
 
-    
+
     }
 
     namespace ViewModels
@@ -606,7 +607,7 @@ namespace MVVMSidekick
                     // Pass the navigation parameter and preserved page state to the page, using
                     // the same strategy for loading suspended state and recreating pages discarded
                     // from cache
-                   // this.LoadState(e.Parameter, (Dictionary<String, Object>)frameState[this._pageKey]);
+                    // this.LoadState(e.Parameter, (Dictionary<String, Object>)frameState[this._pageKey]);
                 }
 
                 Action<LayoutAwarePage, IDictionary<string, object>> init = null;
@@ -1284,7 +1285,7 @@ namespace MVVMSidekick
             //}
             private NavigateCommandEventArgs CreateArgs(Type viewType, IViewModelBase sourceVm, Dictionary<string, object> parameters)
             {
-                if (sourceVm==null)
+                if (sourceVm == null)
                 {
                     throw new ArgumentNullException("sourceVm cannot be null");
                 }
@@ -1415,16 +1416,47 @@ namespace MVVMSidekick
             public object EventArgs { get; set; }
 
         }
+
+        public static class TypeEventHelper
+        {
+            public static void AddEventHandler<T>(this FrameworkElement target, EventInfo eventInfo, T handler) 
+            {
+                WindowsRuntimeMarshal.AddEventHandler<T>
+                                    (ev => (EventRegistrationToken)eventInfo.AddMethod.Invoke(target, new object[] { ev }),
+                                      et => eventInfo.RemoveMethod.Invoke(target, new object[] { et }),
+                                        handler);
+
+            }
+
+            public readonly static Dictionary<Type, Dictionary<string, EventInfo>> TypeEventDic
+                    = new Dictionary<Type, Dictionary<string, EventInfo>>();
+
+            public static Dictionary<string, EventInfo> GetOrCreateEventCache(this Type t)
+            {
+                Dictionary<string, EventInfo> es;
+                if (!TypeEventDic.TryGetValue(t, out es))
+                {
+                    es = t.GetRuntimeEvents()
+                        .ToDictionary(x => x.Name, x => x);
+                    TypeEventDic[t] = es;
+                }
+                return es;
+            }
+        }
         public class CommandBinder : DependencyObject
         {
 
 
             public ICommand Command
             {
-                get {
-                    return (ICommand)GetValue(CommandProperty); }
-                set { 
-                    SetValue(CommandProperty, value); }
+                get
+                {
+                    return (ICommand)GetValue(CommandProperty);
+                }
+                set
+                {
+                    SetValue(CommandProperty, value);
+                }
             }
 
             // Using a DependencyProperty as the backing store for Command.  This enables animation, styling, binding, etc...
@@ -1457,10 +1489,7 @@ namespace MVVMSidekick
                 DependencyProperty.Register("EventName", typeof(string), typeof(CommandBinder), new PropertyMetadata(""));
 
 
-            static Dictionary<Type, Dictionary<string, EventInfo>> TypeEventDic
-                = new Dictionary<Type, Dictionary<string, EventInfo>>();
-
-
+          
             public static CommandBinder GetCommandBinder(DependencyObject obj)
             {
                 return (CommandBinder)obj.GetValue(CommandBinderProperty);
@@ -1480,44 +1509,46 @@ namespace MVVMSidekick
                         (d, v) =>
                         {
 
-                            TryBind(d);
+                            TryBind(d as FrameworkElement );
                         }
                     ));
 
 
-            public static void TryBind(DependencyObject d)
+            public static void TryBind(FrameworkElement d)
             {
                 var t = d.GetType();
                 var cb = (CommandBinder)d.GetValue(CommandBinderProperty);
                 while (t != null)
                 {
                     Dictionary<string, EventInfo> es;
-                    if (!TypeEventDic.TryGetValue(t, out es))
-                    {
-                        es = t.GetRuntimeEvents()
-                            .ToDictionary(x => x.Name, x => x);
-                        TypeEventDic[t] = es;
-                    }
+                    es = t.GetOrCreateEventCache ();
                     EventInfo eventInfo;
                     if (es.TryGetValue(cb.EventName, out eventInfo))
                     {
-                        var r = new RoutedEventHandler(
-                            (o, e) =>
-                                {
-                                    ((ICommand)cb.GetValue(CommandProperty))
-                                        .Execute(
-                                            new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d }
-                                            );
-
-                                }
-                                );
-
-                        WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>
-                            (e => (EventRegistrationToken)eventInfo.AddMethod.Invoke(d, new object[] { e }),
-                              et => eventInfo.RemoveMethod.Invoke(d, new object[] { et }),
-                              r);
 
 
+                        if (eventInfo.EventHandlerType == typeof (RoutedEventHandler ) )
+                        {
+                            d.AddEventHandler<RoutedEventHandler>(eventInfo, (o, e) =>
+                            {
+                                ((ICommand)cb.GetValue(CommandProperty))
+                                    .Execute(
+                                        new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d }
+                                        );
+
+                            });
+                        }
+                        else if (eventInfo.EventHandlerType == typeof (TappedEventHandler ) )
+                        {
+                            d.AddEventHandler<TappedEventHandler>(eventInfo, (o, e) =>
+                            {
+                                ((ICommand)cb.GetValue(CommandProperty))
+                                    .Execute(
+                                        new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d }
+                                        );
+
+                            });
+                        }
 
                         ////eventInfo.AddEventHandler(
                         ////    d,
@@ -1531,6 +1562,8 @@ namespace MVVMSidekick
 
 
             }
+
+          
         }
 
     }

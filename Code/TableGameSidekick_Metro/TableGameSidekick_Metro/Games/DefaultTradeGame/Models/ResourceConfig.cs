@@ -40,12 +40,12 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 
             this.GetValueContainer(X => X.TotalAmount)
 
-                .GetValueChangeObservable()
+                .GetValueChangedObservable()
                 .Select(x => null as object)
                 .Merge (
                     this
                     .GetValueContainer(x => x.HasLimitition)
-                    .GetValueChangeObservable ()
+                    .GetValueChangedObservable ()
                     .Select(x => null as object))              
                 .Subscribe(
                     x =>

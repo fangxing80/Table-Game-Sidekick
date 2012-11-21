@@ -15,6 +15,8 @@ using System.Reactive.Subjects;
 using System.Reactive;
 using MVVMSidekick.Commands;
 using MVVMSidekick.EventRouter;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 
 namespace MVVMSidekick.Reactive
@@ -37,7 +39,17 @@ namespace MVVMSidekick.Reactive
 
     public static class MVVMRxExtensions
     {
-        public static IObservable<EventTuple<ValueContainer<TValue>, TValue>> GetValueChangeObservable<TValue>
+        public static IObservable<EventPattern<NotifyCollectionChangedEventArgs>> GetCollectionChangedObservable<T>(this ObservableCollection<T> source)
+        {
+            var rval = Observable
+              .FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>
+                  (
+                      ev => source.CollectionChanged += ev,
+                      ev => source.CollectionChanged -= ev
+                  );
+            return rval;
+        }
+        public static IObservable<EventTuple<ValueContainer<TValue>, TValue>> GetValueChangedObservable<TValue>
             (
                 this ValueContainer<TValue> source
 
@@ -55,14 +67,27 @@ namespace MVVMSidekick.Reactive
         }
 
         public static IObservable<EventTuple<ValueContainer<TValue>, ValueChangedEventArgs<TValue>>>
-            GetValueChangeEventArgObservable<TValue>(this ValueContainer<TValue> source)
+            GetValueChangedEventArgObservable<TValue>(this ValueContainer<TValue> source)
         {
 
             var eventArgSeq = Observable.FromEventPattern<EventHandler<ValueChangedEventArgs<TValue>>, ValueChangedEventArgs<TValue>>(
                     eh => source.ValueChanged += eh,
                     eh => source.ValueChanged -= eh);
             return eventArgSeq.Select(
-                        x => EventTuple.Create( source, x.EventArgs )
+                        x => EventTuple.Create(source, x.EventArgs)
+                    );
+            ;
+        }
+
+
+        public static IObservable<object> GetValueChangedNullObservable<TValue>(this ValueContainer<TValue> source)
+        {
+
+            var eventArgSeq = Observable.FromEventPattern<EventHandler<ValueChangedEventArgs<TValue>>, ValueChangedEventArgs<TValue>>(
+                    eh => source.ValueChanged += eh,
+                    eh => source.ValueChanged -= eh);
+            return eventArgSeq.Select(
+                        x => null as object
                     );
             ;
         }
@@ -86,7 +111,7 @@ namespace MVVMSidekick.Reactive
 
     }
 
-    
+
 
     public class ReactiveCommand : EventCommandBase, ICommand, IObservable<EventPattern<EventCommandEventArgs>>
     {

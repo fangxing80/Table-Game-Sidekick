@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Common="using:MVVMSidekick.Views"
     xmlns:CommonLocal="using:TableGameSidekick_Metro.Common"
-    
     xmlns:converters="using:MVVMSidekick.ValueConverters"
     x:Class="TableGameSidekick_Metro.Controls.CalcNumberPad"
 Canvas.ZIndex="100"
@@ -103,32 +102,37 @@ Canvas.ZIndex="100"
                     <ColumnDefinition Width="25*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25*"/>
-                    <RowDefinition Height="25*"/>
-                    <RowDefinition Height="25*"/>
-                    <RowDefinition Height="25*"/>
-                    <RowDefinition Height="25*"/>
+                    <RowDefinition Height="66*"/>
+                <RowDefinition Height="33*"/>
+                <RowDefinition Height="61*"/>
+                    <RowDefinition Height="80*"/>
+                    <RowDefinition Height="80*"/>
+                    <RowDefinition Height="80*"/>
                 </Grid.RowDefinitions>
-                <Button Grid.Column="0" Grid.Row="1" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="1" FontSize="{StaticResource FontSize}" Content="1"/>
-                <Button Grid.Column="1" Grid.Row="1" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="2" FontSize="{StaticResource FontSize}" Content="2"/>
-                <Button Grid.Column="2" Grid.Row="1" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="3" FontSize="{StaticResource FontSize}" Content="3"/>
-                <Button Grid.Column="0" Grid.Row="2" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="4" FontSize="{StaticResource FontSize}" Content="4"/>
-                <Button Grid.Column="1" Grid.Row="2" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="5" FontSize="{StaticResource FontSize}" Content="5"/>
-                <Button Grid.Column="2" Grid.Row="2" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="6" FontSize="{StaticResource FontSize}" Content="6"/>
-                <Button Grid.Column="0" Grid.Row="3" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="7" FontSize="{StaticResource FontSize}" Content="7"/>
-                <Button Grid.Column="1" Grid.Row="3" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="8" FontSize="{StaticResource FontSize}" Content="8"/>
-                <Button Grid.Column="2" Grid.Row="3" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="9" FontSize="{StaticResource FontSize}" Content="9"/>
-                <Button Grid.Column="0" Grid.Row="4" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="." FontSize="{StaticResource FontSize}" Content="."/>
-                <Button Grid.Column="1" Grid.Row="4" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="0" FontSize="{StaticResource FontSize}" Content="0"/>
-                <Button Grid.Column="2" Grid.Row="4" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="Back" FontSize="{StaticResource FontSize}" Content="🔙"/>
-                <Button Grid.Column="3" Grid.Row="1" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="Clear" FontSize="{StaticResource FontSize}" Content="♻" Grid.RowSpan="2"  />
-                <Button Grid.Column="3" Grid.Row="0" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="Cancel" FontSize="{StaticResource FontSize}" Content="↗"  />
-                <Button Grid.Column="3" Grid.Row="3" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="Enter" FontSize="{StaticResource FontSize}" Content="↩" Grid.RowSpan="2"  />
-            <TextBox Grid.ColumnSpan="3" Margin="10,10,10,5" TextWrapping="Wrap" Text="{Binding ShowString, Mode=OneWay}" FontSize="{StaticResource FontSize}" TextAlignment="Right" IsReadOnly="True"/>
+                <Button Grid.Column="0" Grid.Row="2" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="1" FontSize="{StaticResource FontSize}" Content="1"/>
+                <Button Grid.Column="1" Grid.Row="2" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="2" FontSize="{StaticResource FontSize}" Content="2"/>
+                <Button Grid.Column="2" Grid.Row="2" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="3" FontSize="{StaticResource FontSize}" Content="3"/>
+                <Button Grid.Column="0" Grid.Row="3" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="4" FontSize="{StaticResource FontSize}" Content="4"/>
+                <Button Grid.Column="1" Grid.Row="3" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="5" FontSize="{StaticResource FontSize}" Content="5"/>
+                <Button Grid.Column="2" Grid.Row="3" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="6" FontSize="{StaticResource FontSize}" Content="6"/>
+                <Button Grid.Column="0" Grid.Row="4" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="7" FontSize="{StaticResource FontSize}" Content="7"/>
+                <Button Grid.Column="1" Grid.Row="4" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="8" FontSize="{StaticResource FontSize}" Content="8"/>
+                <Button Grid.Column="2" Grid.Row="4" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="9" FontSize="{StaticResource FontSize}" Content="9"/>
+                <Button Grid.Column="0" Grid.Row="5" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="." FontSize="{StaticResource FontSize}" Content="."/>
+                <Button Grid.Column="1" Grid.Row="5" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="0" FontSize="{StaticResource FontSize}" Content="0"/>
+                <Button Grid.Column="2" Grid.Row="5" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="Back" FontSize="{StaticResource FontSize}" Content="🔙"/>
+                <Button Grid.Column="3" Grid.Row="2" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="Clear" FontSize="{StaticResource FontSize}" Content="C" Grid.RowSpan="2"  />
+                <Button Grid.Column="3" Grid.Row="0" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="Cancel" FontSize="{StaticResource FontSize}" Content="↗" Grid.RowSpan="2"  />
+                <Button Grid.Column="3" Grid.Row="4" Style="{StaticResource PadButtonStyle}" Command="{Binding ButtonPushCommand, Mode=OneWay}" CommandParameter="Enter" FontSize="{StaticResource FontSize}" Content="↩" Grid.RowSpan="2"  />
+            <TextBox Grid.ColumnSpan="3" Margin="10,10,10,0" TextWrapping="Wrap" Text="{Binding ShowString, Mode=OneWay}" FontSize="{StaticResource FontSize}" TextAlignment="Right" IsReadOnly="True"></TextBox>
+            <StackPanel   Orientation="Horizontal"   Grid.Row="1" VerticalAlignment="Center" Grid.ColumnSpan="3"  Height="23" HorizontalAlignment="Right">
+                <TextBlock HorizontalAlignment="Right" >/</TextBlock>
+                <TextBlock HorizontalAlignment="Right" Text="{Binding MaxValueShowString}"/>
+            </StackPanel>
 
 
 
-            </Grid>
+        </Grid>
         </Border>
    
 </UserControl>

@@ -52,7 +52,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
             //选中游戏信息原型变化后，其部分信息被直接填充到NewGameInfo.
             _SelectedPrototypeGameInfomation.LocateValueContainer(this)
-                .GetValueChangeObservable()
+                .GetValueChangedObservable()
                 .Where(e => e.EventArgs != null)
                 .Subscribe
                 (
@@ -125,7 +125,7 @@ namespace TableGameSidekick_Metro.ViewModels
             #region 设置删除已选玩家 Command
 
             _SelectedPlayersLocator(this)
-                .GetValueChangeObservable()
+                .GetValueChangedObservable()
                 .Select(x => x.EventArgs.Count > 0)//删除已选玩家按钮必须在已选玩家大于0的时候启用
                 .Subscribe(
                     DeleteSelectedPlayersCommand
@@ -163,7 +163,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 .Concat
                 (
                     _SelectedPrototypeGameInfomation.LocateValueContainer(this)
-                    .GetValueChangeObservable()
+                    .GetValueChangedObservable()
                     .Select(x => 1)
 
                 )

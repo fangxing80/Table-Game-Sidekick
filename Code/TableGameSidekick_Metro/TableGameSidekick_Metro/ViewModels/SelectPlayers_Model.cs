@@ -77,7 +77,7 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
             _SelectedItemsLocator(this)
-                .GetValueChangeObservable()
+                .GetValueChangedObservable()
                 .Select(
                     x => x.EventArgs.Count() > 0
                 )
@@ -100,7 +100,7 @@ namespace TableGameSidekick_Metro.ViewModels
                 .DisposeWith(this);
 
             _SelectedItemsLocator(this)
-                .GetValueChangeEventArgObservable()
+                .GetValueChangedEventArgObservable()
                 .Subscribe
                 (
                    async e =>
@@ -167,7 +167,7 @@ namespace TableGameSidekick_Metro.ViewModels
         async void ConfigModel()
         {
 
-            _NewPlayerPicResourcePath.LocateValueContainer(this).GetValueChangeObservable()
+            _NewPlayerPicResourcePath.LocateValueContainer(this).GetValueChangedObservable()
                 //.Throttle(TimeSpan.FromSeconds(1))
              .Subscribe
              (

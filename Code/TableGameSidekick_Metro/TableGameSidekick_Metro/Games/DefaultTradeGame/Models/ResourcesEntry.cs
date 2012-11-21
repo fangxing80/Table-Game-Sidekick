@@ -26,9 +26,9 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         }
         #region Property string ResourceName Setup
         protected Property<string> _ResourceName = new Property<string> { LocatorFunc = _ResourceNameLocator };
-        static Func<BindableBase, ValueContainer<string>> _ResourceNameLocator = RegisterContainerLocator<string>("ResourceName", 
+        static Func<BindableBase, ValueContainer<string>> _ResourceNameLocator = RegisterContainerLocator<string>("ResourceName",
             model => model
-                .Initialize("ResourceName", ref model._ResourceName, ref _ResourceNameLocator, _ResourceNameDefaultValueFactory))               
+                .Initialize("ResourceName", ref model._ResourceName, ref _ResourceNameLocator, _ResourceNameDefaultValueFactory));          
         static Func<string> _ResourceNameDefaultValueFactory = null;
         #endregion
 

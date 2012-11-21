@@ -18,8 +18,12 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Input;
-
+using System.Reactive.Linq;
 using System.Reactive.Concurrency;
+using System.Diagnostics;
+using MVVMSidekick.Commands;
+using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace TableGameSidekick_Metro.Controls
@@ -32,32 +36,14 @@ namespace TableGameSidekick_Metro.Controls
         public CalcNumberPad()
         {
             this.InitializeComponent();
-            ViewModel.GetValueContainer<Visibility>("Visibility")
-                .GetValueChangeObservable()
-                .Subscribe(x =>
-                    Visibility = x.EventArgs);
-            ViewModel.InputFinished += ViewModel_InputFinished;
+            //ViewModel.GetValueContainer<Visibility>("Visibility")
+            //    .GetValueChangeObservable()
+            //    .Subscribe(x =>
+            //        Visibility = x.EventArgs);
+            //  ViewModel.InputFinished += ViewModel_InputFinished;
         }
 
-        void ViewModel_InputFinished(object sender, EventArgs e)
-        {
-            if (e != null)
-            {
-                ValueTarget.Text = Double.Parse(this.ViewModel.ShowString).ToString();
-            }
 
-            this.Reset();
-        }
-
-        public void Reset()
-        {
-
-            ViewModel.Visibility = Visibility.Collapsed;
-            // ViewModel.ActualInputChars.Clear();
-
-        }
-
-        public TextBox ValueTarget { get; set; }
 
         public CalcNumberPad_Model ViewModel
         {
@@ -78,67 +64,145 @@ namespace TableGameSidekick_Metro.Controls
 
 
 
-        public static CalcNumberPad GetCalcNumberPad(DependencyObject obj)
+
+
+
+        public static CalcNumberPad  GetCalcNumberPad(DependencyObject obj)
         {
-            return (CalcNumberPad)obj.GetValue(CalcNumberPadProperty);
+            return (CalcNumberPad )obj.GetValue(CalcNumberPadProperty);
         }
 
-        public static void SetCalcNumberPad(DependencyObject obj, CalcNumberPad value)
+        public static void SetCalcNumberPad(DependencyObject obj, CalcNumberPad  value)
         {
             obj.SetValue(CalcNumberPadProperty, value);
         }
 
-
+        // Using a DependencyProperty as the backing store for CalcNumberPad.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CalcNumberPadProperty =
-            DependencyProperty.RegisterAttached("CalcNumberPad", typeof(CalcNumberPad), typeof(CalcNumberPad),new PropertyMetadata(null,
-                (o, e) =>
-                {
-                    var itm = o as Panel;
-                    if (itm != null)
-                    {
-                        var np = e.NewValue as CalcNumberPad;
-                        itm.Children.Add(np);
-                    }
-                }
+            DependencyProperty.RegisterAttached("CalcNumberPad", typeof(CalcNumberPad ), typeof(CalcNumberPad ), new PropertyMetadata(null,
+                 (o, e) =>
+                 {
+                     var itm = o as Panel;
+                     if (itm != null)
+                     {
+                         var np = e.NewValue as CalcNumberPad;
+                         itm.Children.Add(np);
+                     }
+                 }));
+
+
+
+
+
+
+
+
+        public static double GetMinValue(DependencyObject obj)
+        {
+            return (double)obj.GetValue(MinValueProperty);
+        }
+
+        public static void SetMinValue(DependencyObject obj, double value)
+        {
+            obj.SetValue(MinValueProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for MinValue.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MinValueProperty =
+            DependencyProperty.RegisterAttached("MinValue", typeof(double), typeof(CalcNumberPad), new PropertyMetadata(0));
+
+
+
+
+        public static double GetMaxValue(DependencyObject obj)
+        {
+            return (double)obj.GetValue(MaxValueProperty);
+        }
+
+        public static void SetMaxValue(DependencyObject obj, double value)
+        {
+            obj.SetValue(MaxValueProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for MaxValue.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MaxValueProperty =
+            DependencyProperty.RegisterAttached("MaxValue", typeof(double), typeof(CalcNumberPad), new PropertyMetadata(-1));
+
+
+
+
+        
+
+
+        public static string GetFinalResult(DependencyObject obj)
+        {
+            return (string)obj.GetValue(FinalResultProperty);
+        }
+
+        public static void SetFinalResult(DependencyObject obj, string value)
+        {
+            obj.SetValue(FinalResultProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for FinalResult.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FinalResultProperty =
+            DependencyProperty.RegisterAttached("FinalResult", typeof(string), typeof(CalcNumberPad), new PropertyMetadata(""));
+
+
+
+
+        public static bool GetHasLimitation(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(HasLimitationProperty);
+        }
+
+        public static void SetHasLimitation(DependencyObject obj, bool value)
+        {
+            obj.SetValue(HasLimitationProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for HasLimitation.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HasLimitationProperty =
+            DependencyProperty.RegisterAttached("HasLimitation", typeof(bool), typeof(CalcNumberPad), new PropertyMetadata(false));
+
+
+
+        public static string GetEventName(DependencyObject obj)
+        {
+            return (string)obj.GetValue(EventNameProperty);
+        }
+
+        public static void SetEventName(DependencyObject obj, string value)
+        {
+            obj.SetValue(EventNameProperty, value);
+        }
+
+        public static readonly DependencyProperty EventNameProperty =
+            DependencyProperty.RegisterAttached("EventName", typeof(string), typeof(CalcNumberPad), new PropertyMetadata(null,
+                   (o, e) =>
+                   {
+                       var tb = o as FrameworkElement;
+
+
+                       var cache = tb.GetType().GetOrCreateEventCache();
+                       EventInfo ei;
+                       if (cache.TryGetValue(e.NewValue.ToString(), out  ei))
+                       {
+                           if (ei.EventHandlerType == typeof(RoutedEventHandler))
+                           {
+                               tb.AddEventHandler<RoutedEventHandler>(ei, (a, b) => CalcNumberPad_Model.ShowCommand(tb));
+                           }
+                           else if (ei.EventHandlerType == typeof(TappedEventHandler))
+                           {
+                               tb.AddEventHandler<TappedEventHandler>(ei, (a, b) => CalcNumberPad_Model.ShowCommand(tb));
+                           }
+                       }
+
+
+
+                   }
 
                 ));
-
-
-        public static bool GetUseCalcPad(DependencyObject obj)
-        {
-            return (bool)obj.GetValue(UseCalcPadProperty);
-        }
-
-        public static void SetUseCalcPad(DependencyObject obj, bool value)
-        {
-            obj.SetValue(UseCalcPadProperty, value);
-        }
-
-        // Using a DependencyProperty as the backing store for UseCalcPad.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty UseCalcPadProperty =
-            DependencyProperty.RegisterAttached("UseCalcPad", typeof(bool), typeof(CalcNumberPad), new PropertyMetadata(false,
-                  (o, e) =>
-                  {
-                      if (e.OldValue != null || (bool)e.NewValue == true)
-                      {
-                          var tb = o as TextBox;
-                          if (tb != null)
-                          {
-                              // var pad = (e.NewValue as Panel).GetValue(CalcNumberPadProperty) as CalcNumberPad;
-                              tb.GotFocus +=
-                                  (object sender, RoutedEventArgs ev) =>
-                                  {
-                                      CalcNumberPad_Model.ShowCommand(tb);
-
-                                  };
-
-                          }
-
-                      }
-
-                  }));
-
-
 
 
 
@@ -156,18 +220,14 @@ namespace TableGameSidekick_Metro.Controls
             ConfigProperties();
             ConfigCommands();
         }
-
+        internal Action ClosePad = () => { };
+        internal Action<string> FillValue = s => { };
         void ConfigProperties()
         {
             //每次有内容修改
-            var obsCol = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>
-                (
-                    ev => this.ActualInputChars.CollectionChanged += ev,
-                    ev => this.ActualInputChars.CollectionChanged -= ev
-                );
+            var obsCol = this.ActualInputChars.GetCollectionChangedObservable();
 
             obsCol
-
                 .Do //进行验证并且把结果输出到 ShowString属性
                 (
                      e =>
@@ -205,6 +265,13 @@ namespace TableGameSidekick_Metro.Controls
                 .Subscribe()
                 .DisposeWith(this);
 
+            this.GetValueContainer(x => x.HasLimitation).GetValueChangedNullObservable()
+                .Select(x => null as Object)
+                .Merge(this.GetValueContainer(x => x.MaxValue).GetValueChangedNullObservable())
+                .Subscribe(
+
+
+                );
 
         }
 
@@ -243,7 +310,7 @@ namespace TableGameSidekick_Metro.Controls
                                 break;
                             case "Cancel":
 
-                                InputFinished(null, null);
+                                this.ClosePad();
                                 break;
 
                             case "Clear":
@@ -255,11 +322,12 @@ namespace TableGameSidekick_Metro.Controls
                                 break;
                             case "Enter":
 
-                                if (InputFinished != null)
-                                {
-                                    InputFinished(null, EventArgs.Empty);
-                                }
-
+                                //if (InputFinished != null)
+                                //{
+                                //    InputFinished(null, EventArgs.Empty);
+                                //}
+                                FillValue( ShowString);
+                                this.ClosePad();
                                 break;
                             default:
                                 break;
@@ -286,10 +354,11 @@ namespace TableGameSidekick_Metro.Controls
             #endregion
         }
 
-        public static void ShowCommand(TextBox eventSource)
+        public static void ShowCommand(FrameworkElement eventSource)
         {
             CalcNumberPad calc = null;
             FrameworkElement elem = eventSource;
+            //定位上层最近的一个CalcNumberPad定义的对象
             while (elem != null)
             {
                 calc = elem.GetValue(CalcNumberPad.CalcNumberPadProperty) as CalcNumberPad;
@@ -300,16 +369,37 @@ namespace TableGameSidekick_Metro.Controls
                 elem = elem.Parent as FrameworkElement;
             }
 
-
+            //找到的话 显示该对象
             if (calc != null)
             {
-                calc.ValueTarget = eventSource;
+                var vm = calc.ViewModel;
+                if (vm == null)
+                {
+                    calc.ViewModel = vm = new CalcNumberPad_Model();
+                }
+
+                vm.ClosePad = () =>
+                   calc.Visibility = Visibility.Collapsed;
+                vm.FillValue = s => CalcNumberPad.SetFinalResult(eventSource , s);
+                vm.AddDisposeAction(() =>
+                    {
+                        vm.ClosePad = null;
+                        vm.FillValue = null;
+                    });
+
+                vm.MaxValue = CalcNumberPad.GetMaxValue(eventSource);
+                vm.MinValue = CalcNumberPad.GetMinValue(eventSource);
+                vm.HasLimitation = CalcNumberPad.GetHasLimitation(eventSource);
+                string val = CalcNumberPad.GetFinalResult(eventSource);
+
+
                 calc.ViewModel.ActualInputChars.Clear();
-                foreach (var item in calc.ValueTarget.Text)
+                foreach (var item in val)
                 {
                     calc.ViewModel.ActualInputChars.Add(item);
                 }
-                calc.ViewModel.Visibility = Visibility.Visible;
+        
+                calc.Visibility = Visibility.Visible;
             }
         }
 
@@ -331,6 +421,21 @@ namespace TableGameSidekick_Metro.Controls
             }
         }
 
+
+
+        //public string FinalResult
+        //{
+        //    get { return _FinalResultLocator(this).Value; }
+        //    set { _FinalResultLocator(this).SetValueAndTryNotify(value); }
+        //}
+        //#region Property string  FinalResult Setup
+        //protected Property<string> _FinalResult = new Property<string> { LocatorFunc = _FinalResultLocator };
+        //static Func<BindableBase, ValueContainer<string>> _FinalResultLocator = RegisterContainerLocator<string>("FinalResult", model => model.Initialize("FinalResult", ref model._FinalResult, ref _FinalResultLocator, _FinalResultDefaultValueFactory));
+        //static Func<string> _FinalResultDefaultValueFactory = () => string.Empty;
+        //#endregion
+
+
+
         #region Property String ShowString Setup
         protected Property<String> _ShowString =
           new Property<String> { LocatorFunc = _ShowStringLocator };
@@ -351,6 +456,59 @@ namespace TableGameSidekick_Metro.Controls
                 });
         #endregion
 
+
+
+
+
+
+        public double MaxValue
+        {
+            get { return _MaxValueLocator(this).Value; }
+            set { _MaxValueLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property double MaxValue Setup
+        protected Property<double> _MaxValue = new Property<double> { LocatorFunc = _MaxValueLocator };
+        static Func<BindableBase, ValueContainer<double>> _MaxValueLocator = RegisterContainerLocator<double>("MaxValue", model => model.Initialize("MaxValue", ref model._MaxValue, ref _MaxValueLocator, _MaxValueDefaultValueFactory));
+        static Func<double> _MaxValueDefaultValueFactory = () => 10000000;
+        #endregion
+
+
+        public string MaxValueShowString
+        {
+            get { return _MaxValueShowStringLocator(this).Value; }
+            set { _MaxValueShowStringLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property string MaxValueShowString Setup
+        protected Property<string> _MaxValueShowString = new Property<string> { LocatorFunc = _MaxValueShowStringLocator };
+        static Func<BindableBase, ValueContainer<string>> _MaxValueShowStringLocator = RegisterContainerLocator<string>("MaxValueShowString", model => model.Initialize("MaxValueShowString", ref model._MaxValueShowString, ref _MaxValueShowStringLocator, _MaxValueShowStringDefaultValueFactory));
+        static Func<string> _MaxValueShowStringDefaultValueFactory = null;
+        #endregion
+
+
+
+
+        public double MinValue
+        {
+            get { return _MinValueLocator(this).Value; }
+            set { _MinValueLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property double  MinValue Setup
+        protected Property<double> _MinValue = new Property<double> { LocatorFunc = _MinValueLocator };
+        static Func<BindableBase, ValueContainer<double>> _MinValueLocator = RegisterContainerLocator<double>("MinValue", model => model.Initialize("MinValue", ref model._MinValue, ref _MinValueLocator, _MinValueDefaultValueFactory));
+        static Func<double> _MinValueDefaultValueFactory = () => 0;
+        #endregion
+
+
+        public bool HasLimitation
+        {
+            get { return _HasLimitationLocator(this).Value; }
+            set { _HasLimitationLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property bool HasLimitation Setup
+        protected Property<bool> _HasLimitation = new Property<bool> { LocatorFunc = _HasLimitationLocator };
+        static Func<BindableBase, ValueContainer<bool>> _HasLimitationLocator = RegisterContainerLocator<bool>("HasLimitation", model => model.Initialize("HasLimitation", ref model._HasLimitation, ref _HasLimitationLocator, _HasLimitationDefaultValueFactory));
+        static Func<bool> _HasLimitationDefaultValueFactory = null;
+        #endregion
 
 
 
@@ -380,32 +538,6 @@ namespace TableGameSidekick_Metro.Controls
                 });
         #endregion
 
-
-        public Visibility Visibility
-        {
-            get { return _VisibilityLocator(this).Value; }
-            set { _VisibilityLocator(this).SetValueAndTryNotify(value); }
-        }
-
-        #region Property Visibility Visibility Setup
-        protected Property<Visibility> _Visibility =
-          new Property<Visibility> { LocatorFunc = _VisibilityLocator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<Visibility>> _VisibilityLocator =
-            RegisterContainerLocator<Visibility>(
-                "Visibility",
-                model =>
-                {
-                    model._Visibility =
-                        model._Visibility
-                        ??
-                        new Property<Visibility> { LocatorFunc = _VisibilityLocator };
-                    return model._Visibility.Container =
-                        model._Visibility.Container
-                        ??
-                        new ValueContainer<Visibility>("Visibility", model, Visibility.Collapsed);
-                });
-        #endregion
 
 
 
@@ -444,8 +576,6 @@ namespace TableGameSidekick_Metro.Controls
         #endregion
 
 
-
-        public event EventHandler InputFinished;
 
     }
 }

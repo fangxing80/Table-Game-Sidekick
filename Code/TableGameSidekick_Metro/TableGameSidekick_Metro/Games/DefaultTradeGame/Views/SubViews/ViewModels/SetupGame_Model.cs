@@ -109,7 +109,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
             //点击创建记录按钮，增加一条记录
 
             CurrentSelectedResourceConfig.GetValueContainer(x => x.Item2)
-                .GetValueChangeObservable()
+                .GetValueChangedObservable()
                 .Select(
                     x =>
                         x.EventArgs != null
