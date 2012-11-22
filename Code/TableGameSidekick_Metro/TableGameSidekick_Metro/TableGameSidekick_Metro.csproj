@@ -105,9 +105,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants.cs" />
-    <Compile Include="Controls\CalcNumberPad.xaml.cs">
-      <DependentUpon>CalcNumberPad.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DataEntity\GameInfomation.cs" />
     <Compile Include="DataEntity\GameType.cs" />
     <Compile Include="DataEntity\ImageData.cs" />
@@ -196,10 +193,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Common\StandardStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\CalcNumberPad.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

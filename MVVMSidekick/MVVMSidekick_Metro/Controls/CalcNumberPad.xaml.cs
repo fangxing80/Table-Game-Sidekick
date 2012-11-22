@@ -26,7 +26,7 @@ using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace TableGameSidekick_Metro.Controls
+namespace MVVMSidekick.Controls
 {
     /// <summary>
     /// 一个通过扩展属性附加到界面上 且与Textbox绑定的数字编辑器
