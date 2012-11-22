@@ -806,11 +806,6 @@
             Value converter that translates true to false and vice versa.
             </summary>
         </member>
-        <member name="T:MVVMSidekick.ValueConverters.DoubleStringConverter">
-            <summary>
-            Value converter that translates true to false and vice versa.
-            </summary>
-        </member>
         <member name="T:MVVMSidekick.ValueConverters.BooleanNotConverter">
             <summary>
             Value converter that translates true to <see cref="F:Windows.UI.Xaml.Visibility.Visible"/> and false to

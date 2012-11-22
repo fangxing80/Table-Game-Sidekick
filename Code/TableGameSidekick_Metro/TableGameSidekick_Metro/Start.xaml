@@ -112,15 +112,26 @@
                 <Button Content="Continue" Height="50" Width="130" Command="{Binding DefaultViewModel.ContinueCommand, ElementName=pageRoot, Mode=OneWay}"/>
             </StackPanel>
         </ScrollViewer>
-        <TextBox Grid.Column="1" HorizontalAlignment="Left"   Margin="135,420,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top">
-   
+        <TextBox Grid.Column="1" HorizontalAlignment="Left"   Margin="135,420,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"
+                      controls:CalcNumberPad.EventName="GotFocus" 
+                    controls:CalcNumberPad.HasLimitation="False"  
+                    controls:CalcNumberPad.MinValue="5" 
+                    controls:CalcNumberPad.MaxValue="10000"                     
+                    controls:CalcNumberPad.FinalResult="{Binding Text, Mode=TwoWay, RelativeSource={RelativeSource Mode=Self}}"
+                 >
+
 
 
         </TextBox>
 
-        <TextBlock  Grid.Column="1" HorizontalAlignment="Left"   Text="xxx"  Margin="254,420,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" controls:CalcNumberPad.EventName="Tapped" controls:CalcNumberPad.MinValue="5" controls:CalcNumberPad.MaxValue="10000" controls:CalcNumberPad.HasLimitation="True" controls:CalcNumberPad.FinalResult="{Binding Text, Mode=TwoWay, RelativeSource={RelativeSource Mode=Self}}">
+        <TextBlock  Grid.Column="1" HorizontalAlignment="Left"   Text="xxx"  Margin="254,420,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" 
+                    controls:CalcNumberPad.EventName="Tapped" 
+                    controls:CalcNumberPad.HasLimitation="True" 
+                    controls:CalcNumberPad.MinValue="5" 
+                    controls:CalcNumberPad.MaxValue="10000"                     
+                    controls:CalcNumberPad.FinalResult="{Binding Text, Mode=TwoWay, RelativeSource={RelativeSource Mode=Self}}"                    >
 
-         
+
         </TextBlock>
 
 

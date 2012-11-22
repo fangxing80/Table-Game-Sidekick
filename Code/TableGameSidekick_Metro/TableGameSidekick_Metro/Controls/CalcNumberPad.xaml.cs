@@ -67,19 +67,19 @@ namespace TableGameSidekick_Metro.Controls
 
 
 
-        public static CalcNumberPad  GetCalcNumberPad(DependencyObject obj)
+        public static CalcNumberPad GetCalcNumberPad(DependencyObject obj)
         {
-            return (CalcNumberPad )obj.GetValue(CalcNumberPadProperty);
+            return (CalcNumberPad)obj.GetValue(CalcNumberPadProperty);
         }
 
-        public static void SetCalcNumberPad(DependencyObject obj, CalcNumberPad  value)
+        public static void SetCalcNumberPad(DependencyObject obj, CalcNumberPad value)
         {
             obj.SetValue(CalcNumberPadProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for CalcNumberPad.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CalcNumberPadProperty =
-            DependencyProperty.RegisterAttached("CalcNumberPad", typeof(CalcNumberPad ), typeof(CalcNumberPad ), new PropertyMetadata(null,
+            DependencyProperty.RegisterAttached("CalcNumberPad", typeof(CalcNumberPad), typeof(CalcNumberPad), new PropertyMetadata(null,
                  (o, e) =>
                  {
                      var itm = o as Panel;
@@ -131,7 +131,7 @@ namespace TableGameSidekick_Metro.Controls
 
 
 
-        
+
 
 
         public static string GetFinalResult(DependencyObject obj)
@@ -222,54 +222,98 @@ namespace TableGameSidekick_Metro.Controls
         }
         internal Action ClosePad = () => { };
         internal Action<string> FillValue = s => { };
+        //bool IsActiveActualInputCharsCollectionChangedObservable = true;
         void ConfigProperties()
         {
             //每次有内容修改
-            var obsCol = this.ActualInputChars.GetCollectionChangedObservable();
+            var obsCol = this.ActualInputChars.GetCollectionChangedObservable();//.Where(_ => IsActiveActualInputCharsCollectionChangedObservable);
 
             obsCol
                 .Do //进行验证并且把结果输出到 ShowString属性
                 (
                      e =>
                      {
-                         //TODO:验证逻辑
-                         var str = new string(ActualInputChars.ToArray());
-                         double v;
-                         if (!double.TryParse(str, out v))
+                         try
                          {
-                             if (this.ActualInputChars.Count > 0)
+
+
+                             //IsActiveActualInputCharsCollectionChangedObservable = false;
+                             //TODO:验证逻辑
+                             var str = new string(ActualInputChars.ToArray());
+                             double v;
+                             if (!double.TryParse(str, out v))
                              {
-                                 this.ActualInputChars.RemoveAt(this.ActualInputChars.Count - 1);
+                                 if (this.ActualInputChars.Count > 0)
+                                 {
+                                     this.ActualInputChars.RemoveAt(this.ActualInputChars.Count - 1);
+                                 }
+                                 else
+                                 {
+                                     str = DefaultValue;
+                                 }
                              }
-                             else
+                             if (HasLimitation)
+                             {
+                                 if (MinValue >= MaxValue)
+                                 {
+                                     throw new InvalidOperationException("Max must bigger or equal than min");
+                                 }
+                                 if (v > MaxValue)
+                                 {
+                                     v = MaxValue;
+                                 }
+                                 if (v < MinValue)
+                                 {
+                                     v = MinValue;
+                                 }
+                             }
+
+
+                             str = v.ToString("#.##");
+                             str = str.TrimStart('0');
+                             if (string.IsNullOrEmpty(str))
                              {
                                  str = DefaultValue;
                              }
-                         }
-                         str = new string(ActualInputChars.ToArray());
-                         str = str.TrimStart('0');
-                         if (string.IsNullOrEmpty(str))
-                         {
-                             str = DefaultValue;
-                         }
-                         if (str.StartsWith("."))
-                         {
-                             str = "0" + str;
-                         }
-                         //验证后显示
+                             if (str.StartsWith("."))
+                             {
+                                 str = "0" + str;
+                             }
+                             //验证后显示
 
-                         GetValueContainer(x => x.ShowString).SetValueAndTryNotify(str);
+                             GetValueContainer(x => x.ShowString).SetValueAndTryNotify(str);
+                             
+                         }
+                         catch (Exception)
+                         {
 
+                             throw;
+                         }
+                         finally
+                         {
+                             //IsActiveActualInputCharsCollectionChangedObservable = true;
+                         }
                      }
                 )
                 .Subscribe()
                 .DisposeWith(this);
 
+          
             this.GetValueContainer(x => x.HasLimitation).GetValueChangedNullObservable()
-                .Select(x => null as Object)
                 .Merge(this.GetValueContainer(x => x.MaxValue).GetValueChangedNullObservable())
+                .Merge(this.GetValueContainer(x => x.MinValue).GetValueChangedNullObservable())
                 .Subscribe(
-
+                    _ =>
+                    {
+                        if (!this.HasLimitation)
+                        {
+                            this.MaxValueShowString = "";
+                        }
+                        else
+                        {
+                            this.MaxValueShowString = this.MaxValue.ToString("/#.##");
+                        }
+                    }
 
                 );
 
@@ -322,11 +366,8 @@ namespace TableGameSidekick_Metro.Controls
                                 break;
                             case "Enter":
 
-                                //if (InputFinished != null)
-                                //{
-                                //    InputFinished(null, EventArgs.Empty);
-                                //}
-                                FillValue( ShowString);
+
+                                FillValue(ShowString);
                                 this.ClosePad();
                                 break;
                             default:
@@ -380,7 +421,7 @@ namespace TableGameSidekick_Metro.Controls
 
                 vm.ClosePad = () =>
                    calc.Visibility = Visibility.Collapsed;
-                vm.FillValue = s => CalcNumberPad.SetFinalResult(eventSource , s);
+                vm.FillValue = s => CalcNumberPad.SetFinalResult(eventSource, s);
                 vm.AddDisposeAction(() =>
                     {
                         vm.ClosePad = null;
@@ -398,7 +439,7 @@ namespace TableGameSidekick_Metro.Controls
                 {
                     calc.ViewModel.ActualInputChars.Add(item);
                 }
-        
+
                 calc.Visibility = Visibility.Visible;
             }
         }
@@ -412,13 +453,33 @@ namespace TableGameSidekick_Metro.Controls
             {
                 //   _raiseCollectionChangedEvent = false;
                 _ShowStringLocator(this).Value = value;
+                FillActualInput(value);
+
+                //  _raiseCollectionChangedEvent = true;
+            }
+        }
+
+        private void FillActualInput(string value)
+        {
+            try
+            {
+                //IsActiveActualInputCharsCollectionChangedObservable = false;
+
                 ActualInputChars.Clear();
-                foreach (var c in DefaultValue)
+                foreach (var c in value)
                 {
                     ActualInputChars.Add(c);
                 }
-                //  _raiseCollectionChangedEvent = true;
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+
+            }//IsActiveActualInputCharsCollectionChangedObservable = true; }
         }
 
 

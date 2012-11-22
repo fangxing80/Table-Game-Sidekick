@@ -1742,6 +1742,23 @@ namespace MVVMSidekick
             }
         }
 
+
+        /// <summary>
+        /// Value converter that translates true to false and vice versa.
+        /// </summary>
+        public sealed class DoubleStringConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, string language)
+            {
+                return double.Parse(value.ToString ());
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, string language)
+            {
+                return ((double)value).ToString("#.##");
+            }
+        }
+
         /// <summary>
         /// Value converter that translates true to <see cref="Visibility.Visible"/> and false to
         /// <see cref="Visibility.Collapsed"/>.
