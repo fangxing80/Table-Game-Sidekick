@@ -80,7 +80,7 @@ namespace MVVMSidekick.Reactive
         }
 
 
-        public static IObservable<object> GetValueChangedNullObservable<TValue>(this ValueContainer<TValue> source)
+        public static IObservable<object> GetValueChangedObservableWithoutArgs<TValue>(this ValueContainer<TValue> source)
         {
 
             var eventArgSeq = Observable.FromEventPattern<EventHandler<ValueChangedEventArgs<TValue>>, ValueChangedEventArgs<TValue>>(

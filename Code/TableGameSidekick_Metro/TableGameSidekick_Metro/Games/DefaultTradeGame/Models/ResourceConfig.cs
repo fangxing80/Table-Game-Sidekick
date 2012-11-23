@@ -28,34 +28,35 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 
                     if (CheckError(() => TotalAmount < 0, "ERROR_TotalAmount_LESS_THAN_ZERO")) return;
                     if (CheckError(() => EachPlayerAmount < 0, "ERROR_EachPlayerAmount_LESS_THAN_ZERO")) return;
-
-
                     if (HasLimitition)
                     {
                         if (CheckError(() => EachPlayerAmount * Players > TotalAmount, "ERROR_EACH_PLAYER_AMOUNT_OVERFLOW")) return;
                     }
 
                 };
-
-
-            this.GetValueContainer(X => X.TotalAmount)
-
-                .GetValueChangedObservable()
-                .Select(x => null as object)
-                .Merge (
-                    this
+            var limitObservable = this
                     .GetValueContainer(x => x.HasLimitition)
-                    .GetValueChangedObservable ()
-                    .Select(x => null as object))              
+                    .GetValueChangedObservableWithoutArgs()
+                    .Where(_ => this.HasLimitition);
+            this.GetValueContainer(X => X.TotalAmount)
+                .GetValueChangedObservableWithoutArgs()
+                .Merge(limitObservable)
+
                 .Subscribe(
                     x =>
                     {
-
                         this.MaxPerPlayer = (this.HasLimitition) ? TotalAmount / players : 1000000;
                     }
                 )
                 .DisposeWith(this);
-
+            this.GetValueContainer(x => x.MaxPerPlayer)
+                .GetValueChangedObservableWithoutArgs()
+                .Merge(limitObservable)
+                .Where(_ =>
+                    this.MaxPerPlayer < this.EachPlayerAmount)
+                .Subscribe(_ =>
+                    this.EachPlayerAmount = MaxPerPlayer)
+                .DisposeWith(this);
         }
 
 
@@ -256,8 +257,8 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
         #endregion
 
 
-        
-       
+
+
 
 
 

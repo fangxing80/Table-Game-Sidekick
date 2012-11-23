@@ -109,14 +109,14 @@ namespace MVVMSidekick.Controls
 
         // Using a DependencyProperty as the backing store for MinValue.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MinValueProperty =
-            DependencyProperty.RegisterAttached("MinValue", typeof(double), typeof(CalcNumberPad), new PropertyMetadata(0));
+            DependencyProperty.RegisterAttached("MinValue", typeof(double), typeof(CalcNumberPad), new PropertyMetadata(double.MinValue));
 
 
 
 
         public static double GetMaxValue(DependencyObject obj)
         {
-            return (double)obj.GetValue(MaxValueProperty);
+            return (double)obj.GetValue(MaxValueProperty); ;
         }
 
         public static void SetMaxValue(DependencyObject obj, double value)
@@ -126,7 +126,7 @@ namespace MVVMSidekick.Controls
 
         // Using a DependencyProperty as the backing store for MaxValue.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MaxValueProperty =
-            DependencyProperty.RegisterAttached("MaxValue", typeof(double), typeof(CalcNumberPad), new PropertyMetadata(-1));
+            DependencyProperty.RegisterAttached("MaxValue", typeof(double), typeof(CalcNumberPad), new PropertyMetadata(double.MaxValue));
 
 
 
@@ -254,7 +254,7 @@ namespace MVVMSidekick.Controls
                              }
                              if (HasLimitation)
                              {
-                                 if (MinValue >= MaxValue)
+                                 if (MinValue > MaxValue)
                                  {
                                      throw new InvalidOperationException("Max must bigger or equal than min");
                                  }
@@ -282,7 +282,7 @@ namespace MVVMSidekick.Controls
                              //验证后显示
 
                              GetValueContainer(x => x.ShowString).SetValueAndTryNotify(str);
-                             
+
                          }
                          catch (Exception)
                          {
@@ -298,10 +298,10 @@ namespace MVVMSidekick.Controls
                 .Subscribe()
                 .DisposeWith(this);
 
-          
-            this.GetValueContainer(x => x.HasLimitation).GetValueChangedNullObservable()
-                .Merge(this.GetValueContainer(x => x.MaxValue).GetValueChangedNullObservable())
-                .Merge(this.GetValueContainer(x => x.MinValue).GetValueChangedNullObservable())
+
+            this.GetValueContainer(x => x.HasLimitation).GetValueChangedObservableWithoutArgs()
+                .Merge(this.GetValueContainer(x => x.MaxValue).GetValueChangedObservableWithoutArgs())
+                .Merge(this.GetValueContainer(x => x.MinValue).GetValueChangedObservableWithoutArgs())
                 .Subscribe(
                     _ =>
                     {
@@ -398,7 +398,7 @@ namespace MVVMSidekick.Controls
         public static void ShowCommand(FrameworkElement eventSource)
         {
             CalcNumberPad calc = null;
-            FrameworkElement elem = eventSource;
+            DependencyObject elem = eventSource;
             //定位上层最近的一个CalcNumberPad定义的对象
             while (elem != null)
             {
@@ -406,8 +406,11 @@ namespace MVVMSidekick.Controls
                 if (calc != null)
                 {
                     break;
+
                 }
-                elem = elem.Parent as FrameworkElement;
+
+                elem = VisualTreeHelper.GetParent(elem);
+
             }
 
             //找到的话 显示该对象

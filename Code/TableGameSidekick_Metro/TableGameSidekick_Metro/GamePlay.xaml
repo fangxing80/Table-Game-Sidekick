@@ -3,6 +3,7 @@
     x:Class="TableGameSidekick_Metro.GamePlay"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     IsTabStop="false"
+    xmlns:controls="using:MVVMSidekick.Controls"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TableGameSidekick_Metro"
@@ -28,6 +29,9 @@
         * Row 1 contains the rest of the page layout
     -->
     <Grid Style="{StaticResource LayoutRootStyle}">
+        <controls:CalcNumberPad.CalcNumberPad>
+            <controls:CalcNumberPad Visibility="Collapsed"></controls:CalcNumberPad>
+        </controls:CalcNumberPad.CalcNumberPad>
         <Grid.RowDefinitions>
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>

@@ -20,7 +20,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
         // 如果您已经安装了 MVVMSidekick 代码片段，请用 propvm +tab +tab 输入属性
         public SetupGame_Model()
         {
-            ResourceConfigs.Add(new ResourceConfig(4) { EachPlayerAmount = 15, ResourceName = "Gold", TotalAmount = 1000 });
+            ResourceConfigs.Add(new ResourceConfig(4) { EachPlayerAmount = 15, ResourceName = "Gold", TotalAmount = 1000 ,MaxPerPlayer =10000});
             //ResourceConfigs.Add(new ResourceConfig(4) { EachPlayerAmount = 15, ResourceName = "Copper", TotalAmount = 1000 });
 
         }
@@ -96,11 +96,9 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
                                 ResourceName = "Resource" + ResourceConfigs.Count.ToString(),
                                 ImageKey = "Image",
                                 HasLimitition = false,
-                                TotalAmount = 0,
-                                MaxPerPlayer = 1000000,
-                                EachPlayerAmount =100000,
-
-
+                                TotalAmount = 1000000,
+                                MaxPerPlayer = 1000,
+                                EachPlayerAmount =1000,
                             }
                         );
 
