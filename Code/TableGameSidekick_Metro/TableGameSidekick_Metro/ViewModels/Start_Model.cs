@@ -67,32 +67,6 @@ namespace TableGameSidekick_Metro.ViewModels
 
 
 
-        public String P1
-        {
-            get { return _P1Locator(this).Value; }
-            set { _P1Locator(this).SetValueAndTryNotify(value); }
-        }
-
-        #region Property String P1 Setup
-        protected Property<String> _P1 =
-          new Property<String> { LocatorFunc = _P1Locator };
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        static Func<BindableBase, ValueContainer<String>> _P1Locator =
-            RegisterContainerLocator<String>(
-                "P1",
-                model =>
-                {
-                    model._P1 =
-                        model._P1
-                        ??
-                        new Property<String> { LocatorFunc = _P1Locator };
-                    return model._P1.Container =
-                        model._P1.Container
-                        ??
-                        new ValueContainer<String>("P1", model);
-                });
-        #endregion
-
         
         public ObservableCollection<GameInfomation> Games
         {

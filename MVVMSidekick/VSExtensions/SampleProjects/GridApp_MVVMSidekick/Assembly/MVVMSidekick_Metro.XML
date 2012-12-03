@@ -72,11 +72,6 @@
             VM属性任何绑定用值被修改后，触发此事件
             </summary>
         </member>
-        <member name="P:MVVMSidekick.ViewModels.BindableBase.ValidateModel">
-            <summary>
-            验证逻辑
-            </summary>
-        </member>
         <member name="P:MVVMSidekick.ViewModels.BindableBase.System#ComponentModel#IDataErrorInfo#Error">
             <summary>
             验证错误内容
@@ -87,13 +82,6 @@
             对于每个字段，验证失败所产生的错误信息
             </summary>
             <param name="columnName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MVVMSidekick.ViewModels.BindableBase`1.CastVM(MVVMSidekick.ViewModels.BindableBase)">
-            <summary>
-            将一个VM引用特化为本子类型的引用
-            </summary>
-            <param name="vm"></param>
             <returns></returns>
         </member>
         <member name="M:MVVMSidekick.ViewModels.BindableBase`1.GetError">
@@ -179,6 +167,13 @@
             <summary>
             为ViewModel增加的一些关于BindableBase的快捷方法
             </summary>
+        </member>
+        <member name="M:MVVMSidekick.ViewModels.BindableBaseExtensions.CastToModel``1(MVVMSidekick.ViewModels.BindableBase)">
+            <summary>
+            将一个VM引用特化为本子类型的引用
+            </summary>
+            <param name="vm"></param>
+            <returns></returns>
         </member>
         <member name="M:MVVMSidekick.ViewModels.BindableBaseExtensions.Config``1(MVVMSidekick.ViewModels.ValueContainer{``0},System.Action{MVVMSidekick.ViewModels.ValueContainer{``0}})">
             <summary>

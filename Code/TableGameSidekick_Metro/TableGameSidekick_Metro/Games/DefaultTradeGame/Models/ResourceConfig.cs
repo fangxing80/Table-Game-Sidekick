@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using TableGameSidekick_Metro.DataEntity;
-
-
+using System.Reactive;
 namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 {
 
@@ -22,18 +21,20 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Models
 
         public ResourceConfig(int players)
         {
-            ValidateModel =
+            CreatePropertyChangedObservable()
+                .Subscribe(
                 _ =>
                 {
-
                     if (CheckError(() => TotalAmount < 0, "ERROR_TotalAmount_LESS_THAN_ZERO")) return;
                     if (CheckError(() => EachPlayerAmount < 0, "ERROR_EachPlayerAmount_LESS_THAN_ZERO")) return;
                     if (HasLimitition)
                     {
                         if (CheckError(() => EachPlayerAmount * Players > TotalAmount, "ERROR_EACH_PLAYER_AMOUNT_OVERFLOW")) return;
                     }
+                }
+                );
 
-                };
+
             var limitObservable = this
                     .GetValueContainer(x => x.HasLimitition)
                     .GetValueChangedObservableWithoutArgs()

@@ -76,9 +76,6 @@
     <Compile Include="..\MVVMSidekick\MVVM\MVVM.cs">
       <Link>MVVM.cs</Link>
     </Compile>
-    <Compile Include="..\MVVMSidekick\MVVM\MVVMRxExtensions.cs">
-      <Link>MVVMRxExtensions.cs</Link>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

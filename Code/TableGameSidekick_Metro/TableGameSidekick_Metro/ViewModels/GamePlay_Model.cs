@@ -21,8 +21,16 @@ namespace TableGameSidekick_Metro.ViewModels
 
         public GamePlay_Model()
         {
+            if (IsInDesignMode)
+            {
 
-            ConfigCommands();
+            }
+            else
+            {
+                ConfigCommands();
+            
+            }
+            
         }
 
         protected virtual async Task ConfigCommands()

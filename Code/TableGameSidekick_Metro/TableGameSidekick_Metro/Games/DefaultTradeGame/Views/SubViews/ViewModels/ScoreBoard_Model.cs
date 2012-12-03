@@ -19,13 +19,16 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.SubViews.ViewMode
         // 如果您已经安装了 MVVMSidekick 代码片段，请用 propvm +tab +tab 输入属性
 
         public ScoreBoard_Model()
-        {
+        { 
+        
         }
 
-        public ScoreBoard_Model(TradeGameData gameDataModel)
+        public ScoreBoard_Model( TradeGameData gameData )
         {
-            GameData = gameDataModel;
+            GameData = gameData;
         }
+
+   
 
         public TradeGameData GameData
         {

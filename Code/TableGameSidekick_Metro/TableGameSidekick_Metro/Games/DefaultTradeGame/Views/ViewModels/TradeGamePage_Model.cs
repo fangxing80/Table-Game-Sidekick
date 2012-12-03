@@ -30,6 +30,36 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
 
         public TradeGamePage_Model()
         {
+            if (IsInDesignMode)
+            {
+                GameData = new TradeGameData();
+                GameData.PlayersData.Add(
+                    new PlayerData
+                        {
+                            PlayerInfomation = new PlayerInfomation() { Name = "aaa" },
+                            Resources = new ObservableCollection<ResourcesEntry> { 
+                                new ResourcesEntry { ResourceName="Gold" ,Amount =500 },
+                                new ResourcesEntry { ResourceName="Silver" ,Amount =501 }
+                            
+                            }
+
+                        }
+
+                    );
+                GameData.PlayersData.Add(
+                new PlayerData
+                {
+                    PlayerInfomation = new PlayerInfomation() { Name = "bbb" },
+                    Resources = new ObservableCollection<ResourcesEntry> { 
+                                new ResourcesEntry { ResourceName="Gold" ,Amount =502 },
+                                new ResourcesEntry { ResourceName="Silver" ,Amount =503 }
+                            
+                            }
+                }
+
+            );
+
+            }
 
 
 
@@ -55,10 +85,16 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
                 }
 
             }
+            else
+            {
+
+                GameData = storage.Value;
+            }
 
 
 
-            base.ValidateModel =
+            CreatePropertyChangedObservable()
+                .Subscribe(
             ea =>
             {
                 SetError(null);
@@ -98,7 +134,9 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
                     }
                 }
 
-            };
+            }) ;
+
+            IsValidationActivated = true;
 
             OnLoadCommand.CommandCore
                 .Subscribe
@@ -162,6 +200,9 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
                         new ValueContainer<TradeGameData>("GameData", model);
                 });
         #endregion
+
+
+
         public CommandModel<ReactiveCommand, String> OnLoadCommand
         {
             get { return _OnLoadCommand.WithViewModel(this); }
@@ -173,6 +214,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         CommandModel<ReactiveCommand, String> _OnLoadCommand
              = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
         #endregion
+
 
 
     }

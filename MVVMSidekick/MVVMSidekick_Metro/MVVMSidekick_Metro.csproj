@@ -103,9 +103,6 @@
     <Compile Include="..\MVVMSidekick\MVVM\MVVM.cs">
       <Link>MVVM.cs</Link>
     </Compile>
-    <Compile Include="..\MVVMSidekick\MVVM\MVVMRxExtensions.cs">
-      <Link>MVVMRxExtensions.cs</Link>
-    </Compile>
     <Compile Include="Controls\CalcNumberPad.xaml.cs">
       <DependentUpon>CalcNumberPad.xaml</DependentUpon>
     </Compile>

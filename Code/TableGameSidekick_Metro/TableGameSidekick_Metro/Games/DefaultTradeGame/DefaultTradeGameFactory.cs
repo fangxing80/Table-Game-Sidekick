@@ -96,7 +96,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
 
             await navigator.FrameNavigate(Views.ViewModels.TradeGamePage_Model.TradeGamePageViewType, vm, null);
 
-            //   var rval = new DefaultTradeGame.Views.TradeGamePage() { DefaultViewModel = vm };
+
 
             return targetFrame.Content as LayoutAwarePage;
 

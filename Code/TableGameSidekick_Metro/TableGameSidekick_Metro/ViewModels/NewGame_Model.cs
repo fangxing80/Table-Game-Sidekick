@@ -74,7 +74,6 @@ namespace TableGameSidekick_Metro.ViewModels
             #endregion
 
 
-
         }
 
         private void ConfigCommands()
@@ -131,7 +130,7 @@ namespace TableGameSidekick_Metro.ViewModels
                     DeleteSelectedPlayersCommand
                     .CommandCore
                     .CanExecuteObserver)
-                .DisposeWith(this); ;
+                .DisposeWith(this); 
 
             DeleteSelectedPlayersCommand.CommandCore
                 .Subscribe(

@@ -27,7 +27,7 @@ namespace TableGameSidekick_Metro
         public Start()
         {
             this.InitializeComponent();
-
+  
             this.DefaultViewModel = new Start_Model();
         }
 
