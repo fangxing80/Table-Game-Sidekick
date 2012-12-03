@@ -23,7 +23,6 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
     public class TradeGamePage_Model : ViewModelBase<TradeGamePage_Model>
     {
         public static Type ExchangeViewType;
-        //public static Type GameMainViewType;
         public static Type SetupGameViewType;
         public static Type ScoreBoardViewType;
         public static Type TradeGamePageViewType;
@@ -134,11 +133,11 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
                     }
                 }
 
-            }) ;
+            });
 
             IsValidationActivated = true;
 
-            OnLoadCommand.CommandCore
+            CommandOnLoadCommand.CommandCore
                 .Subscribe
                 (
                     async e =>
@@ -202,17 +201,22 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         #endregion
 
 
-
-        public CommandModel<ReactiveCommand, String> OnLoadCommand
+        
+        public CommandModel<ReactiveCommand, String> CommandOnLoadCommand
         {
-            get { return _OnLoadCommand.WithViewModel(this); }
-            protected set { _OnLoadCommand = value; }
+            get { return _CommandOnLoadCommandLocator(this).Value; }
+            set { _CommandOnLoadCommandLocator(this).SetValueAndTryNotify(value); }
         }
-
-        #region OnLoadCommand Configuration
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        CommandModel<ReactiveCommand, String> _OnLoadCommand
-             = new ReactiveCommand(canExecute: true).CreateCommandModel(default(String));
+        #region Property CommandModel<ReactiveCommand, String> CommandOnLoadCommand Setup
+        protected Property<CommandModel<ReactiveCommand, String>> _CommandOnLoadCommand = new Property<CommandModel<ReactiveCommand, String>> { LocatorFunc = _CommandOnLoadCommandLocator };
+        static Func<BindableBase, ValueContainer<CommandModel<ReactiveCommand, String>>> _CommandOnLoadCommandLocator = RegisterContainerLocator<CommandModel<ReactiveCommand, String>>("CommandOnLoadCommand", model => model.Initialize("CommandOnLoadCommand", ref model._CommandOnLoadCommand, ref _CommandOnLoadCommandLocator, _CommandOnLoadCommandDefaultValueFactory));
+        static Func<BindableBase, CommandModel<ReactiveCommand, String>> _CommandOnLoadCommandDefaultValueFactory =
+            model =>
+            {
+                var cmd = new ReactiveCommand(canExecute: true) { ViewModel = model }; //New Command Core
+                //cmd.Subscribe (_=>{ } ).RegisterDisposeToViewModel(model); //Config it if needed
+                return cmd.CreateCommandModel("OnLoadCommand");
+            };
         #endregion
 
 

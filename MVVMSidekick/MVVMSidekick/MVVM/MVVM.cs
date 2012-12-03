@@ -464,8 +464,6 @@ namespace MVVMSidekick
         {
 
 
-
-
             #region 构造器
 
             /// <summary>

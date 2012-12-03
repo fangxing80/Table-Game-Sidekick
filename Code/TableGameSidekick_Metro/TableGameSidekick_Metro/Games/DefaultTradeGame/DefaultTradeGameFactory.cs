@@ -87,7 +87,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame
                             {
                                
                                 p.DefaultViewModel = vm;
-                            
+                                vm.CommandOnLoadCommand.Execute(null);
                             }
 
                     },

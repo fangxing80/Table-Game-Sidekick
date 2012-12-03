@@ -1,30 +1,32 @@
-﻿using MVVMSidekick.ViewModels;
+﻿using MVVMSidekick.EventRouter;
+using MVVMSidekick.Reactive;
+using MVVMSidekick.ViewModels;
 using MVVMSidekick.Views;
-using MVVMSidekick.EventRouter;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using Windows.Foundation.Collections;
-using System.Windows.Input;
-using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml.Data;
-using MVVMSidekick.Reactive;
-using System.Reactive.Linq;
-using System.Reactive;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 namespace MVVMSidekick
 {
     namespace Storages
@@ -1364,9 +1366,9 @@ namespace MVVMSidekick
                        return vm.Navigator == fn;
                    })
                 .Subscribe(
-                   ep =>
+                  async ep =>
                    {
-
+                       await Task.Delay(100);
                        ((Frame)ep.EventArgs.TargetFrame).Navigate(ep.EventArgs.TargetViewType, ep.EventArgs.ParameterDictionary);
                    }
                 );
@@ -1398,15 +1400,7 @@ namespace MVVMSidekick
 
     namespace Commands
     {
-        //Code Sample
-        //<Button>
-        //    <common:CommandBinder.CommandBinder>
-        //        <common:CommandBinder 
-        //            Parameter="{Binding ElementName=textBox}" 
-        //            Command="{StaticResource command}"  
-        //            EventName="Click"  />
-        //    </common:CommandBinder.CommandBinder>            
-        //</Button>
+
 
         public class CommandBinderParameter
         {
@@ -1419,12 +1413,38 @@ namespace MVVMSidekick
 
         public static class TypeEventHelper
         {
-            public static void AddEventHandler<T>(this FrameworkElement target, EventInfo eventInfo, T handler) 
+            private static MethodInfo AddEventHandlerMethodInfo = typeof(TypeEventHelper)
+                .GetRuntimeMethods().Where(x => x.Name == "AddEventHandler").First();
+
+            public static void AddEventHandlerByType(this FrameworkElement target, Type eventHandlerType, EventInfo eventInfo, Action<object, object> handler)
             {
-                WindowsRuntimeMarshal.AddEventHandler<T>
+                var eventArgsHandlerType = eventHandlerType.GetRuntimeMethods().Where(x => x.Name == "Invoke").First().GetParameters().Last().ParameterType;   
+                AddEventHandlerMethodInfo.MakeGenericMethod(eventHandlerType, eventArgsHandlerType).Invoke(null, new Object[] { target, eventInfo, handler });
+            }
+            public static void AddEventHandler<THandler, TEventArgs>(this FrameworkElement target, EventInfo eventInfo, Action<object, object> handler) where THandler : class
+            {
+                //var lambda=Expression<T>
+                //    .Parameter 
+                //                Func<int, int> func = null;
+                Expression<Action<object, object>> bind = (o, e) => handler(o, e);
+                var par1 = Expression.Parameter(typeof(Object));
+                var par2 = Expression.Parameter(typeof(TEventArgs));
+                var expr = Expression.Invoke(bind, par1, par2);
+                var lambda = Expression.Lambda<THandler>(expr, par1, par2);
+                var compiled = lambda.Compile();
+                //Expression<Func<int>> lambda = Expression.Lambda<Func<int>>(expr);
+                //Func<int> compiled = lambda.Compile();
+                //Expression<Action<Object,EventArgs >> bind= (o,e)=> handler(o,e) ;
+                //Expression expr = Expression.Invoke ( bind , Expression.Parameter(typeof  )  )
+                //Expression<T> nh= Expression<T>.Invoke () 
+
+
+
+
+                WindowsRuntimeMarshal.AddEventHandler<THandler>
                                     (ev => (EventRegistrationToken)eventInfo.AddMethod.Invoke(target, new object[] { ev }),
                                       et => eventInfo.RemoveMethod.Invoke(target, new object[] { et }),
-                                        handler);
+                                        compiled);
 
             }
 
@@ -1489,7 +1509,7 @@ namespace MVVMSidekick
                 DependencyProperty.Register("EventName", typeof(string), typeof(CommandBinder), new PropertyMetadata(""));
 
 
-          
+
             public static CommandBinder GetCommandBinder(DependencyObject obj)
             {
                 return (CommandBinder)obj.GetValue(CommandBinderProperty);
@@ -1509,7 +1529,7 @@ namespace MVVMSidekick
                         (d, v) =>
                         {
 
-                            TryBind(d as FrameworkElement );
+                            TryBind(d as FrameworkElement);
                         }
                     ));
 
@@ -1521,34 +1541,33 @@ namespace MVVMSidekick
                 while (t != null)
                 {
                     Dictionary<string, EventInfo> es;
-                    es = t.GetOrCreateEventCache ();
+                    es = t.GetOrCreateEventCache();
                     EventInfo eventInfo;
                     if (es.TryGetValue(cb.EventName, out eventInfo))
                     {
 
+                        var hdlerType = eventInfo.EventHandlerType;
+                        var cmd = ((ICommand)cb.GetValue(CommandProperty));
 
-                        if (eventInfo.EventHandlerType == typeof (RoutedEventHandler ) )
-                        {
-                            d.AddEventHandler<RoutedEventHandler>(eventInfo, (o, e) =>
-                            {
-                                ((ICommand)cb.GetValue(CommandProperty))
-                                    .Execute(
-                                        new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d }
-                                        );
 
-                            });
-                        }
-                        else if (eventInfo.EventHandlerType == typeof (TappedEventHandler ) )
-                        {
-                            d.AddEventHandler<TappedEventHandler>(eventInfo, (o, e) =>
-                            {
-                                ((ICommand)cb.GetValue(CommandProperty))
-                                    .Execute(
-                                        new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d }
-                                        );
-
-                            });
-                        }
+                        d.AddEventHandlerByType(hdlerType, eventInfo,
+                            (o, e) =>
+                                    cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d })                         
+                            );
+                        //if (hdlerType == typeof(RoutedEventHandler))
+                        //{
+                        //    d.AddEventHandler<RoutedEventHandler, RoutedEventArgs>(eventInfo,
+                        //        (o, e) =>
+                        //            cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d })
+                        //    );
+                        //}
+                        //else if (hdlerType == typeof(TappedEventHandler))
+                        //{
+                        //    d.AddEventHandler<TappedEventHandler, TappedEventArgs>(eventInfo,
+                        //        (o, e) =>
+                        //            cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d })
+                        //    );
+                        //}
 
                         ////eventInfo.AddEventHandler(
                         ////    d,
@@ -1563,7 +1582,7 @@ namespace MVVMSidekick
 
             }
 
-          
+
         }
 
     }
@@ -1742,7 +1761,7 @@ namespace MVVMSidekick
             }
         }
 
-        public sealed class StringDoubleFormatConverter :IValueConverter
+        public sealed class StringDoubleFormatConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, string language)
             {
@@ -1753,7 +1772,7 @@ namespace MVVMSidekick
 
             public object ConvertBack(object value, Type targetType, object parameter, string language)
             {
-                return double.Parse(value.ToString ());
+                return double.Parse(value.ToString());
             }
         }
 
@@ -1764,7 +1783,7 @@ namespace MVVMSidekick
         {
             public object Convert(object value, Type targetType, object parameter, string language)
             {
-                return double.Parse(value.ToString ());
+                return double.Parse(value.ToString());
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, string language)

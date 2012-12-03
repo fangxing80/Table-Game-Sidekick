@@ -24,6 +24,7 @@ using System.Diagnostics;
 using MVVMSidekick.Commands;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.UI.Input;
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace MVVMSidekick.Controls
@@ -188,14 +189,20 @@ namespace MVVMSidekick.Controls
                        EventInfo ei;
                        if (cache.TryGetValue(e.NewValue.ToString(), out  ei))
                        {
-                           if (ei.EventHandlerType == typeof(RoutedEventHandler))
-                           {
-                               tb.AddEventHandler<RoutedEventHandler>(ei, (a, b) => CalcNumberPad_Model.ShowCommand(tb));
-                           }
-                           else if (ei.EventHandlerType == typeof(TappedEventHandler))
-                           {
-                               tb.AddEventHandler<TappedEventHandler>(ei, (a, b) => CalcNumberPad_Model.ShowCommand(tb));
-                           }
+
+                           tb.AddEventHandlerByType(ei.EventHandlerType, ei, (a, b) => CalcNumberPad_Model.ShowCommand(tb));
+
+
+                           //if (ei.EventHandlerType == typeof(RoutedEventHandler))
+                           //{
+                           //    tb.AddEventHandler<RoutedEventHandler, RoutedEventArgs>(ei, (a, b) => 
+                           //        CalcNumberPad_Model.ShowCommand(tb));
+                           //}
+                           //else if (ei.EventHandlerType == typeof(TappedEventHandler))
+                           //{
+                           //    tb.AddEventHandler<TappedEventHandler, TappedEventArgs>(ei, (a, b) => 
+                           //        CalcNumberPad_Model.ShowCommand(tb));
+                           //}
                        }
 
 
@@ -383,8 +390,6 @@ namespace MVVMSidekick.Controls
                 .Subscribe(
                   e =>
                   {
-
-                      // var pm = e.EventArgs.Parameter as CommandBinderParameter;
 
                       var fel = e.EventArgs.Parameter as FrameworkElement;
 

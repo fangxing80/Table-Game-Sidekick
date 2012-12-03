@@ -8,20 +8,26 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"    
     x:Name="page"
-    x:Class="TableGameSidekick_Metro.Games.DefaultTradeGame.Views.TradeGamePage"
+    x:Class="TableGameSidekick_Metro.Games.DefaultTradeGame.Views.TradeGamePage"    
+    mc:Ignorable="d"     
+    DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Mode=Self}}"
+    >
     
-    mc:Ignorable="d" DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Mode=Self}}" >
+    <!--DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Mode=Self}}"-->
     <common:LayoutAwarePage.DefaultViewModel>
         <model:TradeGamePage_Model/>
     </common:LayoutAwarePage.DefaultViewModel>
+    <!--<Page.DataContext>
+        <Binding Path="DefaultViewModel">
+            
+            <Binding.RelativeSource>
+                <RelativeSource Mode="Self" ></RelativeSource>
+            </Binding.RelativeSource>
+        </Binding></Page.DataContext>-->
 
-    <common:LayoutAwarePage.Resources>
-        <cmd:CommandBinder  EventName="Loaded" Command="{Binding DefaultViewModel.OnLoadCommand, ElementName=page, Mode=OneWay}"  x:Key="Onload" />
-        
-    </common:LayoutAwarePage.Resources>
-    <cmd:CommandBinder.CommandBinder >
-        <StaticResource ResourceKey="Onload"/>
-    </cmd:CommandBinder.CommandBinder>
+        <!--<cmd:CommandBinder.CommandBinder >
+        <cmd:CommandBinder  EventName="Loaded" Command="{Binding DefaultViewModel.CommandOnLoadCommand, ElementName=page, Mode=OneWay}"></cmd:CommandBinder>
+    </cmd:CommandBinder.CommandBinder>-->
 
     <!--
         This grid acts as a root panel for the page that defines two rows:
