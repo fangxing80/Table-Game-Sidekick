@@ -233,7 +233,7 @@ namespace MVVMSidekick.Controls
         void ConfigProperties()
         {
             //每次有内容修改
-            var obsCol = this.ActualInputChars.GetCollectionChangedObservable();//.Where(_ => IsActiveActualInputCharsCollectionChangedObservable);
+            var obsCol = this.ActualInputChars.GetCollectionChangedObservable (this);//.Where(_ => IsActiveActualInputCharsCollectionChangedObservable);
 
             obsCol
                 .Do //进行验证并且把结果输出到 ShowString属性

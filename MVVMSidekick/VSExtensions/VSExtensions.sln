@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVMSidekickDataModel.MordenUI", "MVVMSidekickDataModel.MordenUI\MVVMSidekickDataModel.MordenUI.csproj", "{4B0791D0-B232-4309-80B3-007FC70129D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assembly", "Assembly", "{0404C6EB-FBE9-4BBB-80CD-F5A6F9993AF8}"
+	ProjectSection(SolutionItems) = preProject
+		..\MVVMSidekick_Metro\Controls\CalcNumberPad.xaml = ..\MVVMSidekick_Metro\Controls\CalcNumberPad.xaml
+		..\MVVMSidekick_Metro\Controls\CalcNumberPad.xaml.cs = ..\MVVMSidekick_Metro\Controls\CalcNumberPad.xaml.cs
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleApps", "SampleApps", "{A0A8733F-90D6-45DE-B340-00E5EDB70809}"
 EndProject

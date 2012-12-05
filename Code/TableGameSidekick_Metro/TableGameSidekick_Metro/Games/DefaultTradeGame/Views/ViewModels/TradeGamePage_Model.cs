@@ -86,7 +86,6 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
             }
             else
             {
-
                 GameData = storage.Value;
             }
 
@@ -136,6 +135,8 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
             });
 
             IsValidationActivated = true;
+
+
 
             CommandOnLoadCommand.CommandCore
                 .Subscribe
@@ -201,7 +202,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         #endregion
 
 
-        
+
         public CommandModel<ReactiveCommand, String> CommandOnLoadCommand
         {
             get { return _CommandOnLoadCommandLocator(this).Value; }
@@ -220,6 +221,50 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         #endregion
 
 
+
+
+
+        
+        public PlayerData  TradeSeatOne
+        {
+            get { return _TradeSeatOneLocator(this).Value; }
+            set { _TradeSeatOneLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property PlayerData  TradeSeatOne Setup
+        protected Property<PlayerData > _TradeSeatOne = new Property<PlayerData > { LocatorFunc = _TradeSeatOneLocator };
+        static Func<BindableBase, ValueContainer<PlayerData >> _TradeSeatOneLocator = RegisterContainerLocator<PlayerData >("TradeSeatOne", model => model.Initialize("TradeSeatOne", ref model._TradeSeatOne, ref _TradeSeatOneLocator, _TradeSeatOneDefaultValueFactory));
+        static Func<PlayerData > _TradeSeatOneDefaultValueFactory =null;
+        #endregion
+        
+
+        public PlayerData  TrandeSeatTwo
+        {
+            get { return _TrandeSeatTwoLocator(this).Value; }
+            set { _TrandeSeatTwoLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property PlayerData  TrandeSeatTwo Setup
+        protected Property<PlayerData > _TrandeSeatTwo = new Property<PlayerData > { LocatorFunc = _TrandeSeatTwoLocator };
+        static Func<BindableBase, ValueContainer<PlayerData >> _TrandeSeatTwoLocator = RegisterContainerLocator<PlayerData >("TrandeSeatTwo", model => model.Initialize("TrandeSeatTwo", ref model._TrandeSeatTwo, ref _TrandeSeatTwoLocator, _TrandeSeatTwoDefaultValueFactory));
+        static Func<PlayerData > _TrandeSeatTwoDefaultValueFactory = null;
+        #endregion
+
+        
+        public CommandModel<ReactiveCommand, String> CommandTakeTaderSeat
+        {
+            get { return _CommandTakeTaderSeatLocator(this).Value; }
+            set { _CommandTakeTaderSeatLocator(this).SetValueAndTryNotify(value); }
+        }
+        #region Property CommandModel<ReactiveCommand, String> CommandTakeTaderSeat Setup
+        protected Property<CommandModel<ReactiveCommand, String>> _CommandTakeTaderSeat = new Property<CommandModel<ReactiveCommand, String>> { LocatorFunc = _CommandTakeTaderSeatLocator };
+        static Func<BindableBase, ValueContainer<CommandModel<ReactiveCommand, String>>> _CommandTakeTaderSeatLocator = RegisterContainerLocator<CommandModel<ReactiveCommand, String>>("CommandTakeTaderSeat", model => model.Initialize("CommandTakeTaderSeat", ref model._CommandTakeTaderSeat, ref _CommandTakeTaderSeatLocator, _CommandTakeTaderSeatDefaultValueFactory));
+        static Func<BindableBase, CommandModel<ReactiveCommand, String>> _CommandTakeTaderSeatDefaultValueFactory =
+            model =>
+            {
+                var cmd = new ReactiveCommand(canExecute: true) { ViewModel = model }; //New Command Core
+                //cmd.Subscribe (_=>{ } ).RegisterDisposeToViewModel(model); //Config it if needed
+                return cmd.CreateCommandModel("TakeTaderSeat");
+            };
+        #endregion
 
     }
 }

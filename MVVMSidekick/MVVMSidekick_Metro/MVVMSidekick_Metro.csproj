@@ -103,7 +103,7 @@
     <Compile Include="..\MVVMSidekick\MVVM\MVVM.cs">
       <Link>MVVM.cs</Link>
     </Compile>
-    <Compile Include="Controls\CalcNumberPad.xaml.cs">
+    <Compile Include="CalcNumberPad.xaml.cs">
       <DependentUpon>CalcNumberPad.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -131,7 +131,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\CalcNumberPad.xaml">
+    <Page Include="CalcNumberPad.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -141,19 +141,18 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>cd $(ProjectDir)
+    <PostBuildEvent>cd D:\Users\waywa\Documents\GitHub\Table-Game-Sidekick\MVVMSidekick\MVVMSidekick_Metro\
 
-copy "$(ProjectDir)$(OutDir)*.*" "..\VSExtensions\ProjectTemplates\BlankAppTemplate_MVVMSidekick\Assembly"
+copy "D:\Users\waywa\Documents\GitHub\Table-Game-Sidekick\MVVMSidekick\MVVMSidekick_Metro\bin\Release\*.*" "..\VSExtensions\ProjectTemplates\BlankAppTemplate_MVVMSidekick\Assembly"   
 
-copy "$(ProjectDir)$(OutDir)*.*" "..\VSExtensions\SampleProjects\BlankApp_MVVMSidekick\Assembly"
+copy "D:\Users\waywa\Documents\GitHub\Table-Game-Sidekick\MVVMSidekick\MVVMSidekick_Metro\bin\Release\*.*" "..\VSExtensions\SampleProjects\BlankApp_MVVMSidekick\Assembly" 
 
 
 
-copy "$(ProjectDir)$(OutDir)*.*" ..\VSExtensions\SampleProjects\GridApp_MVVMSidekick\Assembly"
+copy "D:\Users\waywa\Documents\GitHub\Table-Game-Sidekick\MVVMSidekick\MVVMSidekick_Metro\bin\Release\*.*" "..\VSExtensions\SampleProjects\GridApp_MVVMSidekick\Assembly" 
 
-copy "$(ProjectDir)$(OutDir)*.*" ..\VSExtensions\ProjectTemplates\GridAppTemplate_MVVMSidekick\Assembly"
-
-rem copy "$(ProjectDir)$(OutDir)*.*" "..\VSExtensions\SampleProjects\SplitApp_MVVMSidekick\Assembly"</PostBuildEvent>
+copy "D:\Users\waywa\Documents\GitHub\Table-Game-Sidekick\MVVMSidekick\MVVMSidekick_Metro\bin\Release\*.*" "..\VSExtensions\ProjectTemplates\GridAppTemplate_MVVMSidekick\Assembly" 
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

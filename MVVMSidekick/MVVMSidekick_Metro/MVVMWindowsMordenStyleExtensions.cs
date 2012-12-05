@@ -1367,10 +1367,10 @@ namespace MVVMSidekick
                    })
                 .Subscribe(
                   async ep =>
-                   {
-                       await Task.Delay(100);
-                       ((Frame)ep.EventArgs.TargetFrame).Navigate(ep.EventArgs.TargetViewType, ep.EventArgs.ParameterDictionary);
-                   }
+                  {
+                      await Task.Delay(100);
+                      ((Frame)ep.EventArgs.TargetFrame).Navigate(ep.EventArgs.TargetViewType, ep.EventArgs.ParameterDictionary);
+                  }
                 );
 
 
@@ -1416,36 +1416,55 @@ namespace MVVMSidekick
             private static MethodInfo AddEventHandlerMethodInfo = typeof(TypeEventHelper)
                 .GetRuntimeMethods().Where(x => x.Name == "AddEventHandler").First();
 
-            public static void AddEventHandlerByType(this FrameworkElement target, Type eventHandlerType, EventInfo eventInfo, Action<object, object> handler)
+            public static void AddEventHandlerByType(
+                this FrameworkElement target, 
+                Type eventHandlerType, 
+                EventInfo eventInfo, 
+                Action<object, object> handler)
             {
-                var eventArgsHandlerType = eventHandlerType.GetRuntimeMethods().Where(x => x.Name == "Invoke").First().GetParameters().Last().ParameterType;   
-                AddEventHandlerMethodInfo.MakeGenericMethod(eventHandlerType, eventArgsHandlerType).Invoke(null, new Object[] { target, eventInfo, handler });
+                var eventArgsHandlerType = eventHandlerType
+                    .GetRuntimeMethods()
+                    .Where(x => x.Name == "Invoke")
+                    .First()
+                    .GetParameters()
+                    .Last()
+                    .ParameterType;
+
+                AddEventHandlerMethodInfo
+                    .MakeGenericMethod(
+                        eventHandlerType,
+                        eventArgsHandlerType)
+                    .Invoke(
+                        null,
+                        new Object[] { target, eventInfo, handler });
             }
-            public static void AddEventHandler<THandler, TEventArgs>(this FrameworkElement target, EventInfo eventInfo, Action<object, object> handler) where THandler : class
+            public static void AddEventHandler<THandler, TEventArgs>(
+                this FrameworkElement target, 
+                EventInfo eventInfo, 
+                Action<object, object> handler) 
+                where THandler : class
             {
-                //var lambda=Expression<T>
-                //    .Parameter 
-                //                Func<int, int> func = null;
+
                 Expression<Action<object, object>> bind = (o, e) => handler(o, e);
+                var compiled = CreateHandler<THandler, TEventArgs>(bind);
+
+                WindowsRuntimeMarshal.AddEventHandler<THandler>(
+                    ev => (EventRegistrationToken)eventInfo.AddMethod.Invoke(target, new object[] { ev }),
+                    et => eventInfo.RemoveMethod.Invoke(target, new object[] { et }),
+                    compiled);
+
+            }
+
+            private static THandler CreateHandler<THandler, TEventArgs>(
+                Expression<Action<object, object>> bind)
+                where THandler : class
+            {
                 var par1 = Expression.Parameter(typeof(Object));
                 var par2 = Expression.Parameter(typeof(TEventArgs));
                 var expr = Expression.Invoke(bind, par1, par2);
                 var lambda = Expression.Lambda<THandler>(expr, par1, par2);
                 var compiled = lambda.Compile();
-                //Expression<Func<int>> lambda = Expression.Lambda<Func<int>>(expr);
-                //Func<int> compiled = lambda.Compile();
-                //Expression<Action<Object,EventArgs >> bind= (o,e)=> handler(o,e) ;
-                //Expression expr = Expression.Invoke ( bind , Expression.Parameter(typeof  )  )
-                //Expression<T> nh= Expression<T>.Invoke () 
-
-
-
-
-                WindowsRuntimeMarshal.AddEventHandler<THandler>
-                                    (ev => (EventRegistrationToken)eventInfo.AddMethod.Invoke(target, new object[] { ev }),
-                                      et => eventInfo.RemoveMethod.Invoke(target, new object[] { et }),
-                                        compiled);
-
+                return compiled;
             }
 
             public readonly static Dictionary<Type, Dictionary<string, EventInfo>> TypeEventDic
@@ -1534,10 +1553,10 @@ namespace MVVMSidekick
                     ));
 
 
-            public static void TryBind(FrameworkElement d)
+            public static void TryBind(FrameworkElement element)
             {
-                var t = d.GetType();
-                var cb = (CommandBinder)d.GetValue(CommandBinderProperty);
+                var t = element.GetType();
+                var cb = (CommandBinder)element.GetValue(CommandBinderProperty);
                 while (t != null)
                 {
                     Dictionary<string, EventInfo> es;
@@ -1546,13 +1565,13 @@ namespace MVVMSidekick
                     if (es.TryGetValue(cb.EventName, out eventInfo))
                     {
 
-                        var hdlerType = eventInfo.EventHandlerType;
+                        var handlerType = eventInfo.EventHandlerType;
                         var cmd = ((ICommand)cb.GetValue(CommandProperty));
 
 
-                        d.AddEventHandlerByType(hdlerType, eventInfo,
+                        element.AddEventHandlerByType(handlerType, eventInfo,
                             (o, e) =>
-                                    cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d })                         
+                                    cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = element })
                             );
                         //if (hdlerType == typeof(RoutedEventHandler))
                         //{

@@ -107,13 +107,25 @@ namespace MVVMSidekick
                     _ErrorsChanged(this, new DataErrorsChangedEventArgs(propertName));
                 }
             }
-            bool _IsValidationActivated = false;
 
+
+
+            private bool _IsValidationActivated = false;
             public bool IsValidationActivated
             {
                 get { return _IsValidationActivated; }
                 set { _IsValidationActivated = value; }
             }
+
+            private bool _IsNotificationActivated = true;
+            public bool IsNotificationActivated
+            {
+                get { return IsInDesignMode ? _IsNotificationActivated : false; }
+                set { _IsNotificationActivated = value; }
+            }
+
+
+
 
 
             static Lazy<bool> _IsInDesignMode =
@@ -147,7 +159,8 @@ namespace MVVMSidekick
                 return Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                         eh => this.PropertyChanged += eh,
                         eh => this.PropertyChanged -= eh
-                    );
+                    )
+                    .Where(_ => IsNotificationActivated);
             }
 
             /// <summary>
@@ -301,7 +314,7 @@ namespace MVVMSidekick
                 var rval = test();
                 if (rval)
                 {
-                    SetError(errorMessage);
+                    SetErrorAndTryNotify(errorMessage);
                 }
                 return rval;
 
@@ -324,7 +337,7 @@ namespace MVVMSidekick
 
             protected abstract void SetError(string value);
 
-
+            protected abstract void SetErrorAndTryNotify(string value);
             /// <summary>
             /// 对于每个字段，验证失败所产生的错误信息
             /// </summary>
@@ -815,10 +828,13 @@ namespace MVVMSidekick
 
             protected override void SetError(string value)
             {
-                _ErrorLocator(this).SetValueAndTryNotify(value);
+                _ErrorLocator(this).SetValue(value);
             }
 
-
+            protected override void SetErrorAndTryNotify(string value)
+            {
+                _ErrorLocator(this).SetValueAndTryNotify(value);
+            }
 
 
             #region Property string Error Setup
@@ -997,7 +1013,7 @@ namespace MVVMSidekick
                 }
                     )
                     .ToArray();
-                this.SetError(sb.ToString());
+                this.SetErrorAndTryNotify(sb.ToString());
 
 
             }
@@ -1931,14 +1947,14 @@ namespace MVVMSidekick
 
         public static class MVVMRxExtensions
         {
-            public static IObservable<EventPattern<NotifyCollectionChangedEventArgs>> GetCollectionChangedObservable<T>(this ObservableCollection<T> source)
+            public static IObservable<EventPattern<NotifyCollectionChangedEventArgs>> GetCollectionChangedObservable<T>(this ObservableCollection<T> source,BindableBase model )
             {
                 var rval = Observable
                   .FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>
                       (
                           ev => source.CollectionChanged += ev,
                           ev => source.CollectionChanged -= ev
-                      );
+                      ).Where(_ => model.IsNotificationActivated);
                 return rval;
             }
             public static IObservable<EventTuple<ValueContainer<TValue>, TValue>> GetValueChangedObservable<TValue>
@@ -2087,160 +2103,160 @@ namespace MVVMSidekick
         }
 
 
-        public enum ExeuteBehavior
-        {
+        //public enum ExeuteBehavior
+        //{
 
-            CannotExecute,
-            CanExecuteCancelRunningTask
+        //    CannotExecute,
+        //    CanExecuteCancelRunningTask
 
-        }
-
-
-        public class ReactiveAsyncCommand : ReactiveAsyncCommand<object>
-        {
-            public ReactiveAsyncCommand(ExeuteBehavior behavior)
-                : base(behavior)
-            {
-
-            }
-
-            public ReactiveAsyncCommand(bool canExecute = false, ExeuteBehavior behavior = Reactive.ExeuteBehavior.CannotExecute)
-                : base(canExecute, behavior)
-            {
-            }
-
-        }
+        //}
 
 
-        public class ReactiveAsyncCommand<TProgress> : EventCommandBase, ICommand, IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>
-        {
-            public ReactiveAsyncCommand(ExeuteBehavior behavior = Reactive.ExeuteBehavior.CannotExecute)
-            {
-                ExeuteBehavior = behavior;
-                CancellationTokenSource = new System.Threading.CancellationTokenSource();
-                ConfigReactive();
-            }
+        //public class ReactiveAsyncCommand : ReactiveAsyncCommand<object>
+        //{
+        //    public ReactiveAsyncCommand(ExeuteBehavior behavior)
+        //        : base(behavior)
+        //    {
 
-            public ReactiveAsyncCommand(bool canExecute = false, ExeuteBehavior behavior = Reactive.ExeuteBehavior.CannotExecute)
-                : this(behavior)
-            {
-                _CurrentCanExecuteObserverValue = canExecute;
-            }
+        //    }
 
-            protected Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>> _LazyObservableExecute;
-            protected Lazy<IObserver<bool>> _LazyObserverCanExecute;
-            protected bool _CurrentCanExecuteObserverValue;
-            public CancellationTokenSource CancellationTokenSource { get; private set; }
-            public ExeuteBehavior ExeuteBehavior { get; private set; }
-            public IProgress<TProgress> Progress { get; set; }
+        //    public ReactiveAsyncCommand(bool canExecute = false, ExeuteBehavior behavior = Reactive.ExeuteBehavior.CannotExecute)
+        //        : base(canExecute, behavior)
+        //    {
+        //    }
 
-            bool IsExecuting { get { return _ExecutingCount != 0; } }
-            internal int _ExecutingCount = 0;
-            public IDisposable Subscribe(IObserver<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>> observer)
-            {
-                return _LazyObservableExecute.Value.Subscribe(
-                        fac =>
-                        {
-                            if (IsExecuting && ExeuteBehavior == Reactive.ExeuteBehavior.CanExecuteCancelRunningTask)
-                            {
-                                if (CancellationTokenSource != null)
-                                {
-                                    CancellationTokenSource.Cancel();
-                                }
-
-                            }
-                            observer.OnNext(fac);
-
-                        }
-                    );
-            }
+        //}
 
 
+        //public class ReactiveAsyncCommand<TProgress> : EventCommandBase, ICommand, IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>
+        //{
+        //    public ReactiveAsyncCommand(ExeuteBehavior behavior = Reactive.ExeuteBehavior.CannotExecute)
+        //    {
+        //        ExeuteBehavior = behavior;
+        //        CancellationTokenSource = new System.Threading.CancellationTokenSource();
+        //        ConfigReactive();
+        //    }
 
-            virtual protected void ConfigReactive()
-            {
-                _LazyObservableExecute = new Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>>
-                (
-                    () =>
-                        Observable.FromEventPattern<EventHandler<EventCommandEventArgs>, EventCommandEventArgs>
-                    (
-                        eh => this.CommandExecute += eh,
-                        eh => this.CommandExecute -= eh
-                    )
-                    .Select(e =>
-                        EventTuple.Create(
-                          new Func<AsyncRunningDisposableContext>
-                          (
-                              () =>
-                                new AsyncRunningDisposableContext(this)
-                                {
-                                    CancellationToken = CancellationTokenSource == null ? CancellationToken.None : CancellationTokenSource.Token,
-                                    Parameter = e.EventArgs.Parameter,
-                                    Progress = this.Progress
+        //    public ReactiveAsyncCommand(bool canExecute = false, ExeuteBehavior behavior = Reactive.ExeuteBehavior.CannotExecute)
+        //        : this(behavior)
+        //    {
+        //        _CurrentCanExecuteObserverValue = canExecute;
+        //    }
 
-                                }
-                          ),
-                          e.EventArgs.Parameter
-                          )
-                    )
-                );
+        //    protected Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>> _LazyObservableExecute;
+        //    protected Lazy<IObserver<bool>> _LazyObserverCanExecute;
+        //    protected bool _CurrentCanExecuteObserverValue;
+        //    public CancellationTokenSource CancellationTokenSource { get; private set; }
+        //    public ExeuteBehavior ExeuteBehavior { get; private set; }
+        //    public IProgress<TProgress> Progress { get; set; }
 
-                _LazyObserverCanExecute = new Lazy<IObserver<bool>>
-                (
-                    () =>
-                        Observer.Create<bool>(
-                        canExe =>
-                        {
-                            var oldv = this._CurrentCanExecuteObserverValue;
-                            _CurrentCanExecuteObserverValue = canExe;
-                            if (oldv != canExe)
-                            {
-                                OnCanExecuteChanged();
-                            }
-                        }
-                        )
+        //    bool IsExecuting { get { return _ExecutingCount != 0; } }
+        //    internal int _ExecutingCount = 0;
+        //    public IDisposable Subscribe(IObserver<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>> observer)
+        //    {
+        //        return _LazyObservableExecute.Value.Subscribe(
+        //                fac =>
+        //                {
+        //                    if (IsExecuting && ExeuteBehavior == Reactive.ExeuteBehavior.CanExecuteCancelRunningTask)
+        //                    {
+        //                        if (CancellationTokenSource != null)
+        //                        {
+        //                            CancellationTokenSource.Cancel();
+        //                        }
 
-                );
-            }
-            public IObserver<bool> CanExecuteObserver { get { return _LazyObserverCanExecute.Value; } }
+        //                    }
+        //                    observer.OnNext(fac);
 
-            public override bool CanExecute(object parameter)
-            {
-                switch (this.ExeuteBehavior)
-                {
-                    case ExeuteBehavior.CannotExecute:
-                        return _CurrentCanExecuteObserverValue && (!IsExecuting);
-
-                    default:
-                        return _CurrentCanExecuteObserverValue;
-                }
-            }
-
-
-            public class AsyncRunningDisposableContext : IDisposable
-            {
-                internal AsyncRunningDisposableContext(ReactiveAsyncCommand<TProgress> command)
-                {
-                    Command = command;
-                    Interlocked.Increment(ref Command._ExecutingCount);
-                    Command.OnCanExecuteChanged();
-
-                }
-                public ReactiveAsyncCommand<TProgress> Command { get; set; }
-
-                public CancellationToken CancellationToken { get; set; }
-                public IProgress<TProgress> Progress { get; set; }
-                public Object Parameter { get; set; }
-                public void Dispose()
-                {
-                    Interlocked.Decrement(ref Command._ExecutingCount);
-                    Command.OnCanExecuteChanged();
-                }
-            }
+        //                }
+        //            );
+        //    }
 
 
 
-        }
+        //    virtual protected void ConfigReactive()
+        //    {
+        //        _LazyObservableExecute = new Lazy<IObservable<EventTuple<Func<ReactiveAsyncCommand<TProgress>.AsyncRunningDisposableContext>, object>>>
+        //        (
+        //            () =>
+        //                Observable.FromEventPattern<EventHandler<EventCommandEventArgs>, EventCommandEventArgs>
+        //            (
+        //                eh => this.CommandExecute += eh,
+        //                eh => this.CommandExecute -= eh
+        //            )
+        //            .Select(e =>
+        //                EventTuple.Create(
+        //                  new Func<AsyncRunningDisposableContext>
+        //                  (
+        //                      () =>
+        //                        new AsyncRunningDisposableContext(this)
+        //                        {
+        //                            CancellationToken = CancellationTokenSource == null ? CancellationToken.None : CancellationTokenSource.Token,
+        //                            Parameter = e.EventArgs.Parameter,
+        //                            Progress = this.Progress
+
+        //                        }
+        //                  ),
+        //                  e.EventArgs.Parameter
+        //                  )
+        //            )
+        //        );
+
+        //        _LazyObserverCanExecute = new Lazy<IObserver<bool>>
+        //        (
+        //            () =>
+        //                Observer.Create<bool>(
+        //                canExe =>
+        //                {
+        //                    var oldv = this._CurrentCanExecuteObserverValue;
+        //                    _CurrentCanExecuteObserverValue = canExe;
+        //                    if (oldv != canExe)
+        //                    {
+        //                        OnCanExecuteChanged();
+        //                    }
+        //                }
+        //                )
+
+        //        );
+        //    }
+        //    public IObserver<bool> CanExecuteObserver { get { return _LazyObserverCanExecute.Value; } }
+
+        //    public override bool CanExecute(object parameter)
+        //    {
+        //        switch (this.ExeuteBehavior)
+        //        {
+        //            case ExeuteBehavior.CannotExecute:
+        //                return _CurrentCanExecuteObserverValue && (!IsExecuting);
+
+        //            default:
+        //                return _CurrentCanExecuteObserverValue;
+        //        }
+        //    }
+
+
+        //    public class AsyncRunningDisposableContext : IDisposable
+        //    {
+        //        internal AsyncRunningDisposableContext(ReactiveAsyncCommand<TProgress> command)
+        //        {
+        //            Command = command;
+        //            Interlocked.Increment(ref Command._ExecutingCount);
+        //            Command.OnCanExecuteChanged();
+
+        //        }
+        //        public ReactiveAsyncCommand<TProgress> Command { get; set; }
+
+        //        public CancellationToken CancellationToken { get; set; }
+        //        public IProgress<TProgress> Progress { get; set; }
+        //        public Object Parameter { get; set; }
+        //        public void Dispose()
+        //        {
+        //            Interlocked.Decrement(ref Command._ExecutingCount);
+        //            Command.OnCanExecuteChanged();
+        //        }
+        //    }
+
+
+
+        //}
 
     }
 }
