@@ -9,9 +9,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Input;
-using System.Collections.Concurrent;
 using MVVMSidekick.ViewModels;
-using System.Dynamic;
 using MVVMSidekick.Commands;
 using System.Runtime.CompilerServices;
 using MVVMSidekick.Reactive;
@@ -29,8 +27,13 @@ using System.Reactive;
 using System.Collections.Specialized;
 using System.Reactive.Linq;
 using System.Collections.ObjectModel;
+using System.Collections.Concurrent;
 #else
 using System.Windows.Data;
+#endif
+#if SILVERLIGHT
+#else
+using System.Collections.Concurrent; 
 #endif
 #if NETFX_CORE
 // Summary:
@@ -120,7 +123,7 @@ namespace MVVMSidekick
             private bool _IsNotificationActivated = true;
             public bool IsNotificationActivated
             {
-                get { return IsInDesignMode ? _IsNotificationActivated : false; }
+                get { return (!IsInDesignMode) ? _IsNotificationActivated : false; }
                 set { _IsNotificationActivated = value; }
             }
 

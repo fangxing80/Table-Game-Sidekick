@@ -41,11 +41,14 @@ Table-Game-Sidekick
 
 另：请自行倒入 MVVMSidekick\CommonCode 下的MVVM.snippet文件
 
+或者使用Nuget  键入 
+
+Install-Package MVVMSidekick.Snippet 
+
 支持如下常用代码块：
 
 
 propvm  	在MVVMSidekick Binable/ViewModel 中增加属性
-
 
 vmcmd 		在MVVMSidekick Binable/ViewModel 中增加命令
 

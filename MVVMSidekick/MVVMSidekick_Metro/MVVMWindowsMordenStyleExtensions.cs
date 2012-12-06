@@ -1417,9 +1417,9 @@ namespace MVVMSidekick
                 .GetRuntimeMethods().Where(x => x.Name == "AddEventHandler").First();
 
             public static void AddEventHandlerByType(
-                this FrameworkElement target, 
-                Type eventHandlerType, 
-                EventInfo eventInfo, 
+                this FrameworkElement target,
+                Type eventHandlerType,
+                EventInfo eventInfo,
                 Action<object, object> handler)
             {
                 var eventArgsHandlerType = eventHandlerType
@@ -1439,9 +1439,9 @@ namespace MVVMSidekick
                         new Object[] { target, eventInfo, handler });
             }
             public static void AddEventHandler<THandler, TEventArgs>(
-                this FrameworkElement target, 
-                EventInfo eventInfo, 
-                Action<object, object> handler) 
+                this FrameworkElement target,
+                EventInfo eventInfo,
+                Action<object, object> handler)
                 where THandler : class
             {
 
@@ -1566,32 +1566,17 @@ namespace MVVMSidekick
                     {
 
                         var handlerType = eventInfo.EventHandlerType;
-                        var cmd = ((ICommand)cb.GetValue(CommandProperty));
+
 
 
                         element.AddEventHandlerByType(handlerType, eventInfo,
                             (o, e) =>
-                                    cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = element })
+                            {
+                                var cmd = ((ICommand)cb.GetValue(CommandProperty));
+                                cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = element });
+                            }
                             );
-                        //if (hdlerType == typeof(RoutedEventHandler))
-                        //{
-                        //    d.AddEventHandler<RoutedEventHandler, RoutedEventArgs>(eventInfo,
-                        //        (o, e) =>
-                        //            cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d })
-                        //    );
-                        //}
-                        //else if (hdlerType == typeof(TappedEventHandler))
-                        //{
-                        //    d.AddEventHandler<TappedEventHandler, TappedEventArgs>(eventInfo,
-                        //        (o, e) =>
-                        //            cmd.Execute(new CommandBinderParameter { EventArgs = e, EventName = cb.EventName, Paremeter = cb.Parameter, SourceObject = d })
-                        //    );
-                        //}
 
-                        ////eventInfo.AddEventHandler(
-                        ////    d,
-
-                        ////    );
                         return;
                     }
                     t = t.GetTypeInfo().BaseType;

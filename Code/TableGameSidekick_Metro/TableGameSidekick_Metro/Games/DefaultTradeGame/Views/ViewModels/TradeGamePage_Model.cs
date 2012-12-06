@@ -224,31 +224,33 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
 
 
 
-        
-        public PlayerData  TradeSeatOne
+
+        public PlayerData TradeSeatOne
         {
             get { return _TradeSeatOneLocator(this).Value; }
             set { _TradeSeatOneLocator(this).SetValueAndTryNotify(value); }
         }
         #region Property PlayerData  TradeSeatOne Setup
-        protected Property<PlayerData > _TradeSeatOne = new Property<PlayerData > { LocatorFunc = _TradeSeatOneLocator };
-        static Func<BindableBase, ValueContainer<PlayerData >> _TradeSeatOneLocator = RegisterContainerLocator<PlayerData >("TradeSeatOne", model => model.Initialize("TradeSeatOne", ref model._TradeSeatOne, ref _TradeSeatOneLocator, _TradeSeatOneDefaultValueFactory));
-        static Func<PlayerData > _TradeSeatOneDefaultValueFactory =null;
+        protected Property<PlayerData> _TradeSeatOne = new Property<PlayerData> { LocatorFunc = _TradeSeatOneLocator };
+        static Func<BindableBase, ValueContainer<PlayerData>> _TradeSeatOneLocator = RegisterContainerLocator<PlayerData>("TradeSeatOne", model => model.Initialize("TradeSeatOne", ref model._TradeSeatOne, ref _TradeSeatOneLocator, _TradeSeatOneDefaultValueFactory));
+        static Func<PlayerData> _TradeSeatOneDefaultValueFactory = null;
         #endregion
-        
 
-        public PlayerData  TrandeSeatTwo
+
+
+        public PlayerData TradeSeatTwo
         {
-            get { return _TrandeSeatTwoLocator(this).Value; }
-            set { _TrandeSeatTwoLocator(this).SetValueAndTryNotify(value); }
+            get { return _TradeSeatTwoLocator(this).Value; }
+            set { _TradeSeatTwoLocator(this).SetValueAndTryNotify(value); }
         }
-        #region Property PlayerData  TrandeSeatTwo Setup
-        protected Property<PlayerData > _TrandeSeatTwo = new Property<PlayerData > { LocatorFunc = _TrandeSeatTwoLocator };
-        static Func<BindableBase, ValueContainer<PlayerData >> _TrandeSeatTwoLocator = RegisterContainerLocator<PlayerData >("TrandeSeatTwo", model => model.Initialize("TrandeSeatTwo", ref model._TrandeSeatTwo, ref _TrandeSeatTwoLocator, _TrandeSeatTwoDefaultValueFactory));
-        static Func<PlayerData > _TrandeSeatTwoDefaultValueFactory = null;
+        #region Property PlayerData TradeSeatTwo Setup
+        protected Property<PlayerData> _TradeSeatTwo = new Property<PlayerData> { LocatorFunc = _TradeSeatTwoLocator };
+        static Func<BindableBase, ValueContainer<PlayerData>> _TradeSeatTwoLocator = RegisterContainerLocator<PlayerData>("TradeSeatTwo", model => model.Initialize("TradeSeatTwo", ref model._TradeSeatTwo, ref _TradeSeatTwoLocator, _TradeSeatTwoDefaultValueFactory));
+        static Func<PlayerData> _TradeSeatTwoDefaultValueFactory = null;
         #endregion
 
-        
+
+
         public CommandModel<ReactiveCommand, String> CommandTakeTaderSeat
         {
             get { return _CommandTakeTaderSeatLocator(this).Value; }
@@ -260,11 +262,49 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views.ViewModels
         static Func<BindableBase, CommandModel<ReactiveCommand, String>> _CommandTakeTaderSeatDefaultValueFactory =
             model =>
             {
+                var acturalM = model as TradeGamePage_Model;
                 var cmd = new ReactiveCommand(canExecute: true) { ViewModel = model }; //New Command Core
-                //cmd.Subscribe (_=>{ } ).RegisterDisposeToViewModel(model); //Config it if needed
+                cmd
+                    .Where(_ => acturalM.TradeSeatOne == null && acturalM.TradeSeatTwo == null)
+                    .Subscribe(
+                        e =>
+                        {
+
+                            var containerOne = acturalM.GetValueContainer(x => x.TradeSeatOne);
+                            var containerTwo = acturalM.GetValueContainer(x => x.TradeSeatTwo);
+
+
+                            switch (e.EventArgs.Parameter.ToString())
+                            {
+                                case "1":
+                                    if (containerOne.Value == null)
+                                    {
+                                        containerOne.SetValueAndTryNotify(null);
+                                    }
+                                    if (containerTwo.Value ==null )
+                                    {
+                                        containerTwo.SetValueAndTryNotify(null);
+                                    }
+
+                                    break;
+                                case "2":
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                        }
+                    ).DisposeWith(model);
+
                 return cmd.CreateCommandModel("TakeTaderSeat");
             };
         #endregion
 
+
+
     }
+
+
+
+
 }

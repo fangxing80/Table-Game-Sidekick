@@ -109,22 +109,6 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views
         }
 
         /// <summary>
-        /// Invoked when an item within the list is selected.
-        /// </summary>
-        /// <param name="sender">The GridView (or ListView when the application is Snapped)
-        /// displaying the selected item.</param>
-        /// <param name="e">Event data that describes how the selection was changed.</param>
-        void ItemListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Invalidate the view state when logical page navigation is in effect, as a change
-            // in selection may cause a corresponding change in the current logical page.  When
-            // an item is selected this has the effect of changing from displaying the item list
-            // to showing the selected item's details.  When the selection is cleared this has the
-            // opposite effect.
-            if (this.UsingLogicalPageNavigation()) this.InvalidateVisualState();
-        }
-
-        /// <summary>
         /// Invoked when the page's back button is pressed.
         /// </summary>
         /// <param name="sender">The back button instance.</param>
@@ -181,5 +165,7 @@ namespace TableGameSidekick_Metro.Games.DefaultTradeGame.Views
         }
 
         #endregion
+
+   
     }
 }
